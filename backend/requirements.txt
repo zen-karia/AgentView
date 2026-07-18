@@ -1,0 +1,8 @@
+# Stub mode (python3 run.py) needs NONE of these -- pure stdlib.
+# Install these only when wiring real mode:
+#   playwright        -> PlaywrightDriver (real browser). Then: playwright install chromium
+#   google-genai      -> Gemini translator + reasoner (Layer 0)
+#   pymongo           -> Mongo run logging (Lane B2)
+playwright>=1.44
+google-genai>=0.3
+pymongo>=4.7

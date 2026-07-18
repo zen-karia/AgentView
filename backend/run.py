@@ -1,0 +1,48 @@
+"""CLI: run a task under one or all conditions and print the result.
+
+  python3 run.py                    # t01, translated, stub
+  python3 run.py --condition raw
+  python3 run.py --all-conditions   # race raw vs markdown vs translated (the demo)
+
+Run from inside backend/ so the flat module imports resolve.
+"""
+from __future__ import annotations
+
+import argparse
+
+from harness import run_task
+from logger import save_run
+from tasks import TASKS
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--task", default="t01_cheapest_blue_shirt")
+    ap.add_argument(
+        "--condition",
+        default="translated",
+        choices=["translated", "raw", "markdown_baseline"],
+    )
+    ap.add_argument("--model", default="stub", choices=["stub", "gemini", "trained"])
+    ap.add_argument("--all-conditions", action="store_true")
+    args = ap.parse_args()
+
+    task = TASKS[args.task]
+    conditions = (
+        ["raw", "markdown_baseline", "translated"]
+        if args.all_conditions
+        else [args.condition]
+    )
+
+    for cond in conditions:
+        run = run_task(task, cond, args.model)
+        save_run(run)
+        mark = "PASS" if run.success else "FAIL"
+        print(
+            f"[{mark}] task={run.task_id} condition={cond:<17} model={run.model} "
+            f"steps={run.steps} tokens={run.tokens} latency={run.latency_ms}ms"
+        )
+
+
+if __name__ == "__main__":
+    main()

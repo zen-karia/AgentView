@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Demo Shop</title>
+</head>
+<body>
+  <h1>Shop</h1>
+  <!-- Selectors mirror backend/driver.py FakeShopDriver exactly: #add-{product_id} -->
+  <ul id="products">
+    <li>Blue Shirt &mdash; $19 (blue) <button id="add-p1" onclick="add('p1')">Add</button></li>
+    <li>Blue Shirt Premium &mdash; $25 (blue) <button id="add-p2" onclick="add('p2')">Add</button></li>
+    <li>Red Shirt &mdash; $15 (red) <button id="add-p3" onclick="add('p3')">Add</button></li>
+    <li>Green Hat &mdash; $30 (green) <button id="add-p4" onclick="add('p4')">Add</button></li>
+  </ul>
+
+  <div id="cart">Cart: <span id="cart-items"></span></div>
+
+  <script>
+    // Deterministic state the PlaywrightDriver.state() reads for the verifier.
+    window.__CART__ = [];
+    function add(id) {
+      window.__CART__.push(id);
+      document.getElementById('cart-items').textContent = window.__CART__.join(', ');
+    }
+  </script>
+</body>
+</html>

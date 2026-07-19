@@ -30,6 +30,11 @@ def _cheapest_overall_in_cart(driver) -> bool:
     return "p3" in driver.state()["cart"]
 
 
+def _green_item_in_cart(driver) -> bool:
+    # Only green item is p4.
+    return "p4" in driver.state()["cart"]
+
+
 TASKS: dict[str, Task] = {
     "t01_cheapest_blue_shirt": Task(
         id="t01_cheapest_blue_shirt",
@@ -42,5 +47,11 @@ TASKS: dict[str, Task] = {
         goal="Add the cheapest item to the cart",
         make_driver=FakeShopDriver,
         check=_cheapest_overall_in_cart,
+    ),
+    "t03_green_item": Task(
+        id="t03_green_item",
+        goal="Add a green item to the cart",
+        make_driver=FakeShopDriver,
+        check=_green_item_in_cart,
     ),
 }

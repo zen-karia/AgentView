@@ -144,3 +144,7 @@ vite.config.ts.timestamp-*
 
 # AgentView run logs (generated)
 backend/runs/
+
+# Python bytecode
+__pycache__/
+*.pyc

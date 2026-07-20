@@ -23,7 +23,10 @@ def main() -> None:
         default="translated",
         choices=["translated", "raw", "markdown_baseline"],
     )
-    ap.add_argument("--model", default="stub", choices=["stub", "gemini", "trained"])
+    ap.add_argument("--model", default="stub", choices=["stub", "gemini", "trained"],
+                    help="translator model (produces the AgentView)")
+    ap.add_argument("--agent-model", default="stub", choices=["stub", "gemini"],
+                    help="reasoner model (consumes the AgentView, picks actions)")
     ap.add_argument("--all-conditions", action="store_true")
     args = ap.parse_args()
 
@@ -35,7 +38,7 @@ def main() -> None:
     )
 
     for cond in conditions:
-        run = run_task(task, cond, args.model)
+        run = run_task(task, cond, args.model, agent_model=args.agent_model)
         save_run(run)
         mark = "PASS" if run.success else "FAIL"
         print(

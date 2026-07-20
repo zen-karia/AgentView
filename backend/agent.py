@@ -63,7 +63,7 @@ def _gemini_decide(goal: str, view: AgentView, history: list[dict]) -> ActionCho
 
     api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
     if not api_key:
-        raise RuntimeError("set GEMINI_API_KEY (or GOOGLE_API_KEY) to use --model gemini")
+        raise RuntimeError("set GEMINI_API_KEY (or GOOGLE_API_KEY) to use --agent-model gemini")
 
     client = genai.Client(api_key=api_key)
 

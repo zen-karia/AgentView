@@ -298,9 +298,9 @@
     // the public key; Email Services -> Service ID; Email Templates -> Template ID).
     // The public key is meant to be public; lock it down with EmailJS's allowed-
     // origins list so only your deployed domain can use your quota.
-    const EMAILJS_PUBLIC_KEY  = "CYFg0VY1ZLv9LRj42";
-    const EMAILJS_SERVICE_ID  = "service_bvquakn";
-    const EMAILJS_TEMPLATE_ID = "template_wbd3bis";
+    const EMAILJS_PUBLIC_KEY  = "YOUR_EMAILJS_PUBLIC_KEY";
+    const EMAILJS_SERVICE_ID  = "YOUR_EMAILJS_SERVICE_ID";
+    const EMAILJS_TEMPLATE_ID = "YOUR_EMAILJS_TEMPLATE_ID";
     if (window.emailjs) emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
 
     // State the AgentView driver reads back as the "final page state".

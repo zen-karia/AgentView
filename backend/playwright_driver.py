@@ -46,6 +46,13 @@ class PlaywrightDriver:
         cart = self._page.evaluate("() => window.__CART__ || []")
         return {"cart": cart}
 
+    @property
+    def products(self) -> list[dict[str, Any]]:
+        """Structured product data for the stub translator, read from the live page.
+        The real Gemini translator parses the DOM instead; this keeps the stub path
+        working end-to-end through a real browser."""
+        return self._page.evaluate("() => window.__PRODUCTS__ || []")
+
     def close(self) -> None:
         self._browser.close()
         self._pw.stop()

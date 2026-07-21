@@ -13,6 +13,23 @@ python3 run.py --all-conditions   # race raw vs markdown vs translated
 Expected: `raw` and `markdown_baseline` FAIL, `translated` PASSES. That contrast is
 the demo thesis, visible with no API keys and no browser.
 
+## Run it on a real browser (no API key)
+
+```bash
+pip install playwright && playwright install chromium
+python3 run.py --driver playwright --all-conditions
+```
+
+Same result, but a real Chromium clicks the real demo site. Proves the execution
+path independently of any LLM.
+
+## Run it with a real agent (needs a key)
+
+```bash
+export GEMINI_API_KEY=your_key
+python3 run.py --agent-model gemini            # optionally add --driver playwright
+```
+
 ## The seams (where each lane plugs in)
 
 | Piece | File | Owner | Status |
@@ -20,8 +37,8 @@ the demo thesis, visible with no API keys and no browser.
 | Data contracts | `schemas.py` | frozen | done |
 | Translator (Layer 0 prompt) | `translator.py` `_gemini_translate` | Model | TODO |
 | Trained translator (Layer 1) | `translator.py` `_trained_translate` | Model | TODO |
-| Agent reasoner | `agent.py` `_gemini_decide` | B1 | TODO |
-| Real browser | `driver.py` PlaywrightDriver | B1 | TODO |
+| Agent reasoner | `agent.py` `_gemini_decide` | B1 | done (needs key) |
+| Real browser | `playwright_driver.py` | B1 | done |
 | Verifier / grounding | `verifier.py` | B2 | done (extend per task) |
 | Tasks + checks | `tasks.py` | B2 | 1 of ~15-20 |
 | Mongo logging | `logger.py` | B2 | swap point marked |

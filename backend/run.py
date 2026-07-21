@@ -9,10 +9,20 @@ Run from inside backend/ so the flat module imports resolve.
 from __future__ import annotations
 
 import argparse
+import pathlib
 
 from harness import run_task
 from logger import save_run
 from tasks import TASKS
+
+_SHOP_URL = (pathlib.Path(__file__).parent / "sites" / "shop" / "index.html").as_uri()
+
+
+def _playwright_factory():
+    """Build a fresh real-browser driver pointed at the demo shop."""
+    from playwright_driver import PlaywrightDriver
+
+    return lambda: PlaywrightDriver(_SHOP_URL)
 
 
 def main() -> None:
@@ -27,8 +37,12 @@ def main() -> None:
                     help="translator model (produces the AgentView)")
     ap.add_argument("--agent-model", default="stub", choices=["stub", "gemini"],
                     help="reasoner model (consumes the AgentView, picks actions)")
+    ap.add_argument("--driver", default="fake", choices=["fake", "playwright"],
+                    help="fake = in-memory; playwright = real browser on the demo site")
     ap.add_argument("--all-conditions", action="store_true")
     args = ap.parse_args()
+
+    make_driver = _playwright_factory() if args.driver == "playwright" else None
 
     task = TASKS[args.task]
     conditions = (
@@ -38,7 +52,10 @@ def main() -> None:
     )
 
     for cond in conditions:
-        run = run_task(task, cond, args.model, agent_model=args.agent_model)
+        run = run_task(
+            task, cond, args.model,
+            agent_model=args.agent_model, make_driver=make_driver,
+        )
         save_run(run)
         mark = "PASS" if run.success else "FAIL"
         print(

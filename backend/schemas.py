@@ -67,9 +67,13 @@ class RunLog:
     model: str       # gemini | trained | stub
     success: bool
     steps: int
-    tokens: int
+    tokens: int  # total = translator_tokens + agent_tokens (keeps spec section 6)
     latency_ms: int
     timestamp: str
+    # Additive breakdown: a compact AgentView shrinks the AGENT's input, so the
+    # cost win shows up here, split by seat. This is the Deloitte/Freesolo number.
+    translator_tokens: int = 0
+    agent_tokens: int = 0
     # Additive beyond spec: the per-turn trace. This IS the training data for the
     # Model lane (keep success:true AgentViews) AND powers the dashboard's middle
     # "kept vs stripped" panel. Do not drop it.

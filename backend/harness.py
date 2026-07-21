@@ -33,7 +33,8 @@ def run_task(
     driver = factory()
     history: list[dict] = []
     turns: list[dict] = []
-    tokens = 0
+    translator_tokens = 0
+    agent_tokens = 0
     t0 = time.time()
 
     for step in range(MAX_STEPS):
@@ -41,9 +42,10 @@ def run_task(
         view, tok = translate(
             TranslatorInput(task.goal, page), condition, translator_model, driver
         )
-        tokens += tok
+        translator_tokens += tok
 
-        choice = decide(task.goal, view, history, agent_model)
+        choice, atok = decide(task.goal, view, history, agent_model)
+        agent_tokens += atok
         if choice.done or not choice.name:
             turns.append({"step": step, "action": None, "thought": choice.thought})
             break
@@ -71,10 +73,12 @@ def run_task(
         model=translator_model,
         success=success,
         steps=len(history),
-        tokens=tokens,
+        tokens=translator_tokens + agent_tokens,
         latency_ms=int((time.time() - t0) * 1000),
         timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
         turns=turns,
+        translator_tokens=translator_tokens,
+        agent_tokens=agent_tokens,
     )
     # Real drivers (Playwright) hold a browser open; release it.
     if hasattr(driver, "close"):

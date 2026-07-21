@@ -20,22 +20,43 @@ from schemas import ActionChoice, AgentView
 _GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
 
 
-def decide(goal: str, view: AgentView, history: list[dict], model: str) -> ActionChoice:
+def decide(
+    goal: str, view: AgentView, history: list[dict], model: str
+) -> tuple[ActionChoice, int]:
+    """Return (chosen action, agent input tokens). The token count is what makes the
+    cost story measurable: the agent reads the whole view, so a compact translated
+    view costs far fewer agent tokens than a raw HTML dump."""
     if model == "stub":
         return _stub_decide(goal, view, history)
     if model == "gemini":
-        return _gemini_decide(goal, view, history)  # TODO(model-lane)
+        return _gemini_decide(goal, view, history)
     raise ValueError(f"unknown agent model: {model}")
 
 
-def _stub_decide(goal: str, view: AgentView, history: list[dict]) -> ActionChoice:
+def _estimate_input_tokens(goal: str, view: AgentView, history: list[dict]) -> int:
+    """Char/4 estimate of what a reasoner ingests: the FULL view, not just the bit
+    the stub happens to use. So raw (summary = whole HTML) costs a lot; translated
+    (compact) costs little -- the delta the demo is about."""
+    blob = goal + view.summary
+    blob += json.dumps([{"id": c.id, "text": c.text, "meta": c.meta} for c in view.relevant_content])
+    blob += json.dumps([{"name": a.name, "description": a.description, "params": a.params}
+                        for a in view.actions])
+    blob += json.dumps(history)
+    return max(1, len(blob) // 4)
+
+
+def _stub_decide(
+    goal: str, view: AgentView, history: list[dict]
+) -> tuple[ActionChoice, int]:
     """Placeholder for the LLM reasoner. Handles 'add cheapest <color> ... to cart'.
     Deliberately simple: if there are no surfaced actions (raw/markdown baselines),
     it gives up -> that's why those conditions fail and translated succeeds."""
+    tokens = _estimate_input_tokens(goal, view, history)
+
     if any(h.get("name") == "add_to_cart" for h in history):
-        return ActionChoice(name="", done=True, thought="item already added; done")
+        return ActionChoice(name="", done=True, thought="item already added; done"), tokens
     if not view.actions:
-        return ActionChoice(name="", done=True, thought="no actions surfaced; giving up")
+        return ActionChoice(name="", done=True, thought="no actions surfaced; giving up"), tokens
 
     color = next((c for c in ("blue", "red", "green") if c in goal.lower()), None)
     items = [
@@ -43,18 +64,20 @@ def _stub_decide(goal: str, view: AgentView, history: list[dict]) -> ActionChoic
         if color is None or c.meta.get("color") == color
     ]
     if not items:
-        return ActionChoice(name="", done=True, thought="no matching item found")
+        return ActionChoice(name="", done=True, thought="no matching item found"), tokens
 
     pick = min(items, key=lambda c: c.meta.get("price", float("inf")))
     return ActionChoice(
         name="add_to_cart",
         params={"product_id": pick.id},
         thought=f"cheapest {color or 'item'} is {pick.id} at ${pick.meta.get('price')}",
-    )
+    ), tokens
 
 
-def _gemini_decide(goal: str, view: AgentView, history: list[dict]) -> ActionChoice:
-    """Real LLM reasoner. Reads the AgentView, returns the next action as JSON.
+def _gemini_decide(
+    goal: str, view: AgentView, history: list[dict]
+) -> tuple[ActionChoice, int]:
+    """Real LLM reasoner. Reads the AgentView, returns (action, real input tokens).
 
     Needs GEMINI_API_KEY (or GOOGLE_API_KEY) in the env and `pip install google-genai`.
     """
@@ -97,16 +120,22 @@ Reply with JSON only: {{"thought": string, "done": boolean, "name": string, "par
     )
     data = json.loads(resp.text)
 
+    # Real input-token usage; fall back to the estimate if the field is absent.
+    usage = getattr(resp, "usage_metadata", None)
+    tokens = getattr(usage, "prompt_token_count", None) or _estimate_input_tokens(
+        goal, view, history
+    )
+
     name = (data.get("name") or "").strip()
     # Enforce the action-hallucination guarantee in code, not just in the prompt.
     if name and view.action_by_name(name) is None:
         return ActionChoice(
             name="", done=True,
             thought=f"model chose unsurfaced action '{name}'; refusing",
-        )
+        ), tokens
     return ActionChoice(
         name=name,
         params=data.get("params") or {},
         done=bool(data.get("done", False)),
         thought=data.get("thought", ""),
-    )
+    ), tokens

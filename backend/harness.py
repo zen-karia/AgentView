@@ -25,8 +25,12 @@ def run_task(
     condition: str,
     translator_model: str,
     agent_model: str = "stub",
+    make_driver=None,
 ) -> RunLog:
-    driver = task.make_driver()
+    # make_driver overrides the task's default (e.g. a real PlaywrightDriver).
+    # Each run gets a fresh driver so state (the cart) never leaks between runs.
+    factory = make_driver or task.make_driver
+    driver = factory()
     history: list[dict] = []
     turns: list[dict] = []
     tokens = 0
@@ -61,7 +65,7 @@ def run_task(
         history.append({"name": choice.name, "params": choice.params})
 
     success = bool(task.check(driver))
-    return RunLog(
+    log = RunLog(
         task_id=task.id,
         condition=condition,
         model=translator_model,
@@ -72,3 +76,7 @@ def run_task(
         timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
         turns=turns,
     )
+    # Real drivers (Playwright) hold a browser open; release it.
+    if hasattr(driver, "close"):
+        driver.close()
+    return log

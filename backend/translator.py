@@ -41,10 +41,17 @@ def translate(
     raise ValueError(f"unknown condition: {condition}")
 
 
+_COLORS = ("blue", "red", "green", "black", "white", "grey")
+
+
 def _stub_translate(inp: TranslatorInput, driver) -> tuple[AgentView, int]:
-    """Deterministic stand-in for Gemini. Task-conditioned: surfaces products as
-    content plus the add_to_cart action schema. This is the shape Gemini must emit."""
+    """Deterministic stand-in for Gemini. TASK-CONDITIONED: if the goal names a
+    color, surface only those items -- the whole point of translation is to distill
+    the page down to what the goal needs, not dump all 30 products."""
     products = driver.products if driver is not None else []
+    goal_color = next((c for c in _COLORS if c in inp.goal.lower()), None)
+    if goal_color is not None:
+        products = [p for p in products if p["color"] == goal_color]
     content = [
         ContentItem(
             id=p["id"],
@@ -66,7 +73,10 @@ def _stub_translate(inp: TranslatorInput, driver) -> tuple[AgentView, int]:
         relevant_content=content,
         actions=actions,
     )
-    return view, 120  # faked token count for stub mode
+    # Honest cost model: a translator must READ the whole raw page, so its input
+    # cost scales with the page, not the tidy output. (In real mode this is the
+    # model's actual usage.) This is what the cost model later weights by price.
+    return view, len(inp.page.html) // 4
 
 
 def _raw_view(inp: TranslatorInput) -> tuple[AgentView, int]:

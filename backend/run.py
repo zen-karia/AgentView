@@ -59,8 +59,9 @@ def main() -> None:
         save_run(run)
         mark = "PASS" if run.success else "FAIL"
         print(
-            f"[{mark}] task={run.task_id} condition={cond:<17} model={run.model} "
-            f"steps={run.steps} tokens={run.tokens} latency={run.latency_ms}ms"
+            f"[{mark}] {cond:<17} steps={run.steps} "
+            f"tok(transl/agent/total)={run.translator_tokens}/{run.agent_tokens}/{run.tokens} "
+            f"latency={run.latency_ms}ms"
         )
 
 

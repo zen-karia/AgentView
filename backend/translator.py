@@ -15,7 +15,12 @@ true usage so the benchmark and the Deloitte cost numbers are honest.
 """
 from __future__ import annotations
 
+import json
+import os
+
 from schemas import ActionDef, AgentView, ContentItem, TranslatorInput
+
+_GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
 
 
 def translate(
@@ -75,9 +80,65 @@ def _markdown_view(inp: TranslatorInput) -> tuple[AgentView, int]:
 
 
 def _gemini_translate(inp: TranslatorInput) -> tuple[AgentView, int]:
-    raise NotImplementedError(
-        "Model lane: prompt Gemini with the goal + page, parse JSON into AgentView."
+    """Layer 0: Gemini reads the RAW HTML (no planted structure) and produces the
+    AgentView. Returns (view, real input tokens). This is the first honest translator.
+
+    Needs GEMINI_API_KEY (or GOOGLE_API_KEY) and `pip install google-genai`.
+    Prompt mirrors backend/translate_prompt.md -- keep them in sync.
+    """
+    from google import genai
+    from google.genai import types
+
+    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+    if not api_key:
+        raise RuntimeError("set GEMINI_API_KEY (or GOOGLE_API_KEY) to use --model gemini")
+
+    client = genai.Client(api_key=api_key)
+
+    prompt = f"""You convert a human-facing web page plus a goal into a compact,
+agent-legible JSON view. Return ONLY JSON matching this schema:
+{{"summary": str,
+  "relevant_content": [{{"id": str, "text": str, "meta": object}}],
+  "actions": [{{"name": str, "description": str, "params": object,
+                "target_selector": str}}]}}
+
+Rules:
+- Task-conditioned: include only content/actions relevant to the goal.
+- Every target_selector must use a real id/attribute from the HTML (e.g. "#add-{{product_id}}").
+  Never invent an element that isn't in the HTML.
+- Output strict JSON, no markdown fences.
+
+GOAL: {inp.goal}
+URL: {inp.page.url}
+HTML:
+{inp.page.html}"""
+
+    resp = client.models.generate_content(
+        model=_GEMINI_MODEL,
+        contents=prompt,
+        config=types.GenerateContentConfig(response_mime_type="application/json"),
     )
+    data = json.loads(resp.text)
+
+    view = AgentView(
+        summary=data.get("summary", ""),
+        relevant_content=[
+            ContentItem(id=c.get("id", ""), text=c.get("text", ""), meta=c.get("meta", {}))
+            for c in data.get("relevant_content", [])
+        ],
+        actions=[
+            ActionDef(
+                name=a["name"],
+                description=a.get("description", ""),
+                params=a.get("params", {}),
+                target_selector=a.get("target_selector", ""),
+            )
+            for a in data.get("actions", [])
+        ],
+    )
+    usage = getattr(resp, "usage_metadata", None)
+    tokens = getattr(usage, "prompt_token_count", None) or len(inp.page.html) // 4
+    return view, tokens
 
 
 def _trained_translate(inp: TranslatorInput) -> tuple[AgentView, int]:

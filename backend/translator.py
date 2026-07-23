@@ -80,13 +80,15 @@ def _stub_translate(inp: TranslatorInput, driver) -> tuple[AgentView, int]:
 
 
 def _raw_view(inp: TranslatorInput) -> tuple[AgentView, int]:
-    """Baseline: dump raw HTML, surface no actions. The agent must cope alone."""
-    return AgentView(summary=inp.page.html, relevant_content=[], actions=[]), len(inp.page.html) // 4
+    """Baseline: dump raw HTML straight to the agent. No translator model runs, so
+    there's no translator cost -- the whole (big) page hits the agent instead."""
+    return AgentView(summary=inp.page.html, relevant_content=[], actions=[]), 0
 
 
 def _markdown_view(inp: TranslatorInput) -> tuple[AgentView, int]:
-    """Baseline: text-only dump, no actions surfaced."""
-    return AgentView(summary=inp.page.text, relevant_content=[], actions=[]), len(inp.page.text) // 4
+    """Baseline: deterministic text extraction (like html2text) -- no LLM, so ~free.
+    Cheap, but drowns the agent in irrelevant content and surfaces no actions."""
+    return AgentView(summary=inp.page.text, relevant_content=[], actions=[]), 0
 
 
 def _gemini_translate(inp: TranslatorInput) -> tuple[AgentView, int]:

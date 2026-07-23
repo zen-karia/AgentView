@@ -104,3 +104,48 @@ class FakeShopDriver:
     def products(self) -> list[dict[str, Any]]:
         """Structured access for the stub translator (stands in for Gemini parsing)."""
         return _PRODUCTS
+
+
+# ---------------- FakeFormDriver: in-memory multi-field checkout form ----------------
+_FORM_FIELDS = ["name", "email", "city", "zip"]
+
+
+class FakeFormDriver:
+    """A multi-field form -> multi-turn tasks (fill each field, then submit)."""
+
+    def __init__(self) -> None:
+        self.values: dict[str, str] = {}
+        self.submitted = False
+
+    def snapshot(self) -> Page:
+        inputs = "".join(
+            f'<label for="field-{f}">{f}</label>'
+            f'<input id="field-{f}" name="{f}" />'
+            for f in _FORM_FIELDS
+        )
+        html = (
+            "<html><body>"
+            f"{_NAV}{_HIDDEN_SEO}<h1>Checkout</h1>"
+            f"<form>{inputs}<button id='submit'>Place order</button></form>"
+            f"{_FOOTER}<script>console.log('checkout loaded');</script></body></html>"
+        )
+        text = "Checkout form fields: " + ", ".join(_FORM_FIELDS)
+        return Page(url="fake://form", html=html, text=text)
+
+    def selector_exists(self, selector: str) -> bool:
+        return selector == "#submit" or any(selector == f"#field-{f}" for f in _FORM_FIELDS)
+
+    def execute(self, selector: str, action_name: str, params: dict[str, Any]) -> None:
+        if action_name == "fill":
+            field, value = params.get("field"), params.get("value")
+            if field in _FORM_FIELDS:
+                self.values[field] = value
+        elif action_name == "submit":
+            self.submitted = True
+
+    def state(self) -> dict[str, Any]:
+        return {"values": dict(self.values), "submitted": self.submitted}
+
+    @property
+    def form_fields(self) -> list[str]:
+        return _FORM_FIELDS

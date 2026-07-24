@@ -35,16 +35,21 @@ class PlaywrightDriver:
         return self._page.query_selector(selector) is not None
 
     def execute(self, selector: str, action_name: str, params: dict[str, Any]) -> None:
-        element = self._page.query_selector(selector)
-        if element is None:
+        if self._page.query_selector(selector) is None:
             return
-        if action_name == "add_to_cart":
-            element.click()
-        # TODO(B1): fill/select branches for the form + search tasks
+        if action_name == "fill":
+            self._page.fill(selector, str(params.get("value", "")))
+        else:
+            # add_to_cart, submit, and other click-style actions
+            self._page.click(selector)
 
     def state(self) -> dict[str, Any]:
-        cart = self._page.evaluate("() => window.__CART__ || []")
-        return {"cart": cart}
+        # Generic: a form exposes window.__STATE__ (values/submitted); the shop
+        # exposes __CART__ + __PRODUCTS__, which the shop task checks read.
+        return self._page.evaluate(
+            "() => window.__STATE__ || "
+            "{ cart: window.__CART__ || [], products: window.__PRODUCTS__ || [] }"
+        )
 
     @property
     def products(self) -> list[dict[str, Any]]:
@@ -52,6 +57,12 @@ class PlaywrightDriver:
         The real Gemini translator parses the DOM instead; this keeps the stub path
         working end-to-end through a real browser."""
         return self._page.evaluate("() => window.__PRODUCTS__ || []")
+
+    @property
+    def form_fields(self) -> list[str]:
+        """Form field names, if this page is a form (empty otherwise). Lets the stub
+        translator pick the form vs shop branch by content."""
+        return self._page.evaluate("() => window.__FORM_FIELDS__ || []")
 
     def close(self) -> None:
         self._browser.close()

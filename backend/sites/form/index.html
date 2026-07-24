@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Checkout &mdash; DemoShop</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; }
+    nav a { margin-right: 12px; }
+    form { padding: 12px; max-width: 320px; }
+    label { display: block; margin-top: 8px; }
+    footer div { display: inline-block; margin-right: 12px; color: #666; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/">Home</a><a href="/deals">Deals</a><a href="/account">Account</a>
+    <a href="/cart">Cart</a>
+  </nav>
+
+  <div style="display:none">
+    secure checkout fast shipping trusted payment 2026 promo apply coupon
+  </div>
+
+  <h1>Checkout</h1>
+  <!-- Field selectors mirror FakeFormDriver: #field-{name}, #submit -->
+  <form onsubmit="return false">
+    <label for="field-name">name</label><input id="field-name" name="name" />
+    <label for="field-email">email</label><input id="field-email" name="email" />
+    <label for="field-city">city</label><input id="field-city" name="city" />
+    <label for="field-zip">zip</label><input id="field-zip" name="zip" />
+    <button id="submit" type="button" onclick="submitForm()">Place order</button>
+  </form>
+
+  <footer>
+    <div>Privacy Policy</div><div>Terms</div><div>Returns</div><div>Contact</div>
+    <p>&copy; 2026 DemoShop Inc.</p>
+  </footer>
+
+  <script>
+    window.__FORM_FIELDS__ = ['name', 'email', 'city', 'zip'];
+    // Deterministic state the PlaywrightDriver.state() reads for the verifier.
+    window.__STATE__ = { values: {}, submitted: false };
+
+    window.__FORM_FIELDS__.forEach(function (f) {
+      document.getElementById('field-' + f).addEventListener('input', function (e) {
+        window.__STATE__.values[f] = e.target.value;
+      });
+    });
+
+    function submitForm() {
+      window.__STATE__.submitted = true;
+    }
+  </script>
+</body>
+</html>

@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 
 from schemas import ActionChoice, AgentView
 
@@ -53,12 +54,19 @@ def _stub_decide(
     it gives up -> that's why those conditions fail and translated succeeds."""
     tokens = _estimate_input_tokens(goal, view, history)
 
-    if any(h.get("name") == "add_to_cart" for h in history):
-        return ActionChoice(name="", done=True, thought="item already added; done"), tokens
     if not view.actions:
         return ActionChoice(name="", done=True, thought="no actions surfaced; giving up"), tokens
 
-    color = next((c for c in ("blue", "red", "green") if c in goal.lower()), None)
+    # Form site: multi-turn fill each target field, then submit.
+    if view.action_by_name("fill") is not None:
+        return _stub_decide_form(goal, view, history), tokens
+
+    # Shop site: single add_to_cart.
+    if any(h.get("name") == "add_to_cart" for h in history):
+        return ActionChoice(name="", done=True, thought="item already added; done"), tokens
+
+    color = next((c for c in ("blue", "red", "green", "black", "white", "grey")
+                  if c in goal.lower()), None)
     items = [
         c for c in view.relevant_content
         if color is None or c.meta.get("color") == color
@@ -72,6 +80,24 @@ def _stub_decide(
         params={"product_id": pick.id},
         thought=f"cheapest {color or 'item'} is {pick.id} at ${pick.meta.get('price')}",
     ), tokens
+
+
+def _stub_decide_form(goal: str, view: AgentView, history: list[dict]) -> ActionChoice:
+    """Fill each target field named in the goal ('field=value'), one per turn, then
+    submit. Multi-turn: the reward lands only after the final submit."""
+    targets = dict(re.findall(r"(\w+)=([^\s,]+)", goal))
+    filled = {h["params"].get("field") for h in history if h.get("name") == "fill"}
+    submitted = any(h.get("name") == "submit" for h in history)
+
+    if submitted:
+        return ActionChoice(name="", done=True, thought="form submitted; done")
+    for field, value in targets.items():
+        if field not in filled:
+            return ActionChoice(
+                name="fill", params={"field": field, "value": value},
+                thought=f"filling {field}",
+            )
+    return ActionChoice(name="submit", thought="all fields filled; submitting")
 
 
 def _gemini_decide(

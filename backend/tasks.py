@@ -9,7 +9,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Callable
 
-from driver import FakeShopDriver
+from driver import FakeFormDriver, FakeShopDriver
 
 _COLORS = ["blue", "red", "green", "black", "white", "grey"]
 
@@ -61,3 +61,22 @@ for _i, _c in enumerate(["green", "white", "grey"], start=8):
     _id = f"t{_i:02d}_any_{_c}"
     TASKS[_id] = Task(_id, f"Add any {_c} item to the cart",
                       FakeShopDriver, _any_of_color(_c))
+
+
+# ---- Form site: multi-turn fill + submit ----
+def _form_submitted_with(expected: dict[str, str]) -> Callable[[Any], bool]:
+    def check(driver) -> bool:
+        st = driver.state()
+        return st["submitted"] and all(st["values"].get(k) == v for k, v in expected.items())
+    return check
+
+
+_FORM_CASES = [
+    ("t11_form_alice", {"name": "Alice", "email": "alice@example.com", "city": "Toronto", "zip": "M5V"}),
+    ("t12_form_bob", {"name": "Bob", "email": "bob@example.com", "city": "Ottawa", "zip": "K1A"}),
+    ("t13_form_cara", {"name": "Cara", "email": "cara@example.com", "city": "Waterloo", "zip": "N2L"}),
+]
+for _tid, _vals in _FORM_CASES:
+    _pairs = " ".join(f"{k}={v}" for k, v in _vals.items())
+    TASKS[_tid] = Task(_tid, f"Fill the checkout form with {_pairs} then submit",
+                       FakeFormDriver, _form_submitted_with(_vals))

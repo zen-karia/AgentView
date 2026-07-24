@@ -45,9 +45,44 @@ _COLORS = ("blue", "red", "green", "black", "white", "grey")
 
 
 def _stub_translate(inp: TranslatorInput, driver) -> tuple[AgentView, int]:
-    """Deterministic stand-in for Gemini. TASK-CONDITIONED: if the goal names a
-    color, surface only those items -- the whole point of translation is to distill
-    the page down to what the goal needs, not dump all 30 products."""
+    """Deterministic stand-in for Gemini. Branches by site (duck-typed on driver)."""
+    if driver is not None and hasattr(driver, "form_fields"):
+        return _stub_translate_form(inp, driver)
+    return _stub_translate_shop(inp, driver)
+
+
+def _stub_translate_form(inp: TranslatorInput, driver) -> tuple[AgentView, int]:
+    """Surface the form's fields as content plus fill + submit action schemas."""
+    fields = driver.form_fields
+    content = [ContentItem(id=f"field:{f}", text=f, meta={}) for f in fields]
+    actions = [
+        ActionDef(
+            name="fill",
+            description="Fill a form field with a value",
+            params={
+                "field": {"type": "string", "required": True},
+                "value": {"type": "string", "required": True},
+            },
+            target_selector="#field-{field}",
+        ),
+        ActionDef(
+            name="submit",
+            description="Submit the form",
+            params={},
+            target_selector="#submit",
+        ),
+    ]
+    view = AgentView(
+        summary=f"Checkout form with {len(fields)} fields: {', '.join(fields)}",
+        relevant_content=content,
+        actions=actions,
+    )
+    return view, len(inp.page.html) // 4
+
+
+def _stub_translate_shop(inp: TranslatorInput, driver) -> tuple[AgentView, int]:
+    """TASK-CONDITIONED: if the goal names a color, surface only those items -- the
+    whole point of translation is to distill the page to what the goal needs."""
     products = driver.products if driver is not None else []
     goal_color = next((c for c in _COLORS if c in inp.goal.lower()), None)
     if goal_color is not None:

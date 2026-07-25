@@ -46,7 +46,9 @@ _COLORS = ("blue", "red", "green", "black", "white", "grey")
 
 def _stub_translate(inp: TranslatorInput, driver) -> tuple[AgentView, int]:
     """Deterministic stand-in for Gemini. Branches by site (duck-typed on driver)."""
-    if driver is not None and hasattr(driver, "form_fields"):
+    # Dispatch on content, not attribute presence: PlaywrightDriver serves both
+    # sites, so it exposes both accessors -- pick by which one is non-empty.
+    if driver is not None and getattr(driver, "form_fields", None):
         return _stub_translate_form(inp, driver)
     return _stub_translate_shop(inp, driver)
 

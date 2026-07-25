@@ -149,3 +149,60 @@ class FakeFormDriver:
     @property
     def form_fields(self) -> list[str]:
         return _FORM_FIELDS
+
+
+# ---------------- FakeDocsDriver: in-memory help center (find + open article) ----------------
+_DOCS = [
+    {"id": "d1", "title": "Getting Started Guide", "topic": "onboarding"},
+    {"id": "d2", "title": "Billing and Invoices", "topic": "billing"},
+    {"id": "d3", "title": "Reset Your Password", "topic": "password"},
+    {"id": "d4", "title": "API Rate Limits", "topic": "api"},
+    {"id": "d5", "title": "Export Your Data", "topic": "export"},
+    {"id": "d6", "title": "Two-Factor Security", "topic": "security"},
+    {"id": "d7", "title": "Managing Teams", "topic": "teams"},
+    {"id": "d8", "title": "Third-Party Integrations", "topic": "integrations"},
+    {"id": "d9", "title": "Keyboard Shortcuts", "topic": "shortcuts"},
+    {"id": "d10", "title": "Notification Settings", "topic": "notifications"},
+    {"id": "d11", "title": "Deleting Your Account", "topic": "deletion"},
+    {"id": "d12", "title": "Mobile App Setup", "topic": "mobile"},
+]
+
+
+class FakeDocsDriver:
+    """A help center: a long article list where the task is to open the right one."""
+
+    def __init__(self) -> None:
+        self.opened: str | None = None
+
+    def snapshot(self) -> Page:
+        rows = "\n".join(
+            f'<li class="doc" data-topic="{d["topic"]}">'
+            f'<span class="title">{d["title"]}</span> '
+            f'<button id="open-{d["id"]}">Open</button></li>'
+            for d in _DOCS
+        )
+        html = (
+            "<html><body>"
+            f"{_NAV}{_HIDDEN_SEO}<h1>Help Center</h1>"
+            "<input id='search' placeholder='Search articles' />"
+            f"<ul class='articles'>{rows}</ul>{_FOOTER}"
+            "<script>console.log('help center loaded');</script></body></html>"
+        )
+        text = " ".join(f'{d["title"]} ({d["topic"]})' for d in _DOCS)
+        return Page(url="fake://docs", html=html, text=text)
+
+    def selector_exists(self, selector: str) -> bool:
+        return any(selector == f"#open-{d['id']}" for d in _DOCS)
+
+    def execute(self, selector: str, action_name: str, params: dict[str, Any]) -> None:
+        if action_name == "open_doc":
+            doc_id = params.get("doc_id")
+            if any(d["id"] == doc_id for d in _DOCS):
+                self.opened = doc_id
+
+    def state(self) -> dict[str, Any]:
+        return {"opened": self.opened, "docs": _DOCS}
+
+    @property
+    def docs(self) -> list[dict[str, Any]]:
+        return _DOCS

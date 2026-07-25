@@ -27,10 +27,9 @@ def run_task(
     agent_model: str = "stub",
     make_driver=None,
 ) -> RunLog:
-    # make_driver overrides the task's default (e.g. a real PlaywrightDriver).
-    # Each run gets a fresh driver so state (the cart) never leaks between runs.
-    factory = make_driver or task.make_driver
-    driver = factory()
+    # make_driver(task) overrides the task's default (e.g. a real PlaywrightDriver
+    # pointed at the task's site). Each run gets a fresh driver so state never leaks.
+    driver = make_driver(task) if make_driver is not None else task.make_driver()
     history: list[dict] = []
     turns: list[dict] = []
     translator_tokens = 0

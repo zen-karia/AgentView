@@ -9,20 +9,17 @@ Run from inside backend/ so the flat module imports resolve.
 from __future__ import annotations
 
 import argparse
-import pathlib
 
 from harness import run_task
 from logger import save_run
-from tasks import TASKS
-
-_SHOP_URL = (pathlib.Path(__file__).parent / "sites" / "shop" / "index.html").as_uri()
+from tasks import SITES, TASKS
 
 
 def _playwright_factory():
-    """Build a fresh real-browser driver pointed at the demo shop."""
+    """Return a factory that builds a fresh real-browser driver on a task's site."""
     from playwright_driver import PlaywrightDriver
 
-    return lambda: PlaywrightDriver(_SHOP_URL)
+    return lambda task: PlaywrightDriver(SITES[task.site])
 
 
 def main() -> None:

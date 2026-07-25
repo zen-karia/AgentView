@@ -6,12 +6,20 @@ never an LLM. Lane B2 extends this toward the spec's 15-20 across more sites.
 """
 from __future__ import annotations
 
+import pathlib
 from dataclasses import dataclass
 from typing import Any, Callable
 
 from driver import FakeFormDriver, FakeShopDriver
 
 _COLORS = ["blue", "red", "green", "black", "white", "grey"]
+
+# file:// URLs for the PlaywrightDriver, one per demo site.
+_SITES_DIR = pathlib.Path(__file__).parent / "sites"
+SITES: dict[str, str] = {
+    "shop": (_SITES_DIR / "shop" / "index.html").as_uri(),
+    "form": (_SITES_DIR / "form" / "index.html").as_uri(),
+}
 
 
 @dataclass
@@ -20,6 +28,7 @@ class Task:
     goal: str
     make_driver: Callable[[], Any]
     check: Callable[[Any], bool]  # given the final driver, did we succeed?
+    site: str = "shop"            # which demo site (for the real-browser path)
 
 
 def _cheapest_of_color(color: str) -> Callable[[Any], bool]:
@@ -79,4 +88,4 @@ _FORM_CASES = [
 for _tid, _vals in _FORM_CASES:
     _pairs = " ".join(f"{k}={v}" for k, v in _vals.items())
     TASKS[_tid] = Task(_tid, f"Fill the checkout form with {_pairs} then submit",
-                       FakeFormDriver, _form_submitted_with(_vals))
+                       FakeFormDriver, _form_submitted_with(_vals), site="form")

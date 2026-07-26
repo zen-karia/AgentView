@@ -64,6 +64,11 @@ class PlaywrightDriver:
         translator pick the form vs shop branch by content."""
         return self._page.evaluate("() => window.__FORM_FIELDS__ || []")
 
+    @property
+    def docs(self) -> list[dict[str, Any]]:
+        """Article list, if this page is the help center (empty otherwise)."""
+        return self._page.evaluate("() => window.__DOCS__ || []")
+
     def close(self) -> None:
         self._browser.close()
         self._pw.stop()

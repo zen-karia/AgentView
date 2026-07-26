@@ -46,11 +46,39 @@ _COLORS = ("blue", "red", "green", "black", "white", "grey")
 
 def _stub_translate(inp: TranslatorInput, driver) -> tuple[AgentView, int]:
     """Deterministic stand-in for Gemini. Branches by site (duck-typed on driver)."""
-    # Dispatch on content, not attribute presence: PlaywrightDriver serves both
-    # sites, so it exposes both accessors -- pick by which one is non-empty.
+    # Dispatch on content, not attribute presence: PlaywrightDriver serves every
+    # site, so it exposes all accessors -- pick by which one is non-empty.
     if driver is not None and getattr(driver, "form_fields", None):
         return _stub_translate_form(inp, driver)
+    if driver is not None and getattr(driver, "docs", None):
+        return _stub_translate_docs(inp, driver)
     return _stub_translate_shop(inp, driver)
+
+
+def _stub_translate_docs(inp: TranslatorInput, driver) -> tuple[AgentView, int]:
+    """TASK-CONDITIONED: surface only articles whose topic the goal mentions, plus
+    the open_doc action -- distilling a long help center to the relevant article."""
+    docs = driver.docs
+    goal = inp.goal.lower()
+    matching = [d for d in docs if d["topic"] in goal] or docs
+    content = [
+        ContentItem(id=d["id"], text=d["title"], meta={"topic": d["topic"]})
+        for d in matching
+    ]
+    actions = [
+        ActionDef(
+            name="open_doc",
+            description="Open a help article",
+            params={"doc_id": {"type": "string", "required": True}},
+            target_selector="#open-{doc_id}",
+        )
+    ]
+    view = AgentView(
+        summary=f"Help center with {len(docs)} articles",
+        relevant_content=content,
+        actions=actions,
+    )
+    return view, len(inp.page.html) // 4
 
 
 def _stub_translate_form(inp: TranslatorInput, driver) -> tuple[AgentView, int]:

@@ -61,6 +61,14 @@ def _stub_decide(
     if view.action_by_name("fill") is not None:
         return _stub_decide_form(goal, view, history), tokens
 
+    # Docs site: open the surfaced (already task-conditioned) article.
+    if view.action_by_name("open_doc") is not None:
+        if any(h.get("name") == "open_doc" for h in history) or not view.relevant_content:
+            return ActionChoice(name="", done=True, thought="article opened; done"), tokens
+        pick = view.relevant_content[0]
+        return ActionChoice(name="open_doc", params={"doc_id": pick.id},
+                            thought=f"opening {pick.id}"), tokens
+
     # Shop site: single add_to_cart.
     if any(h.get("name") == "add_to_cart" for h in history):
         return ActionChoice(name="", done=True, thought="item already added; done"), tokens

@@ -18,6 +18,7 @@ from __future__ import annotations
 import json
 import os
 
+from prompts import translate_prompt
 from schemas import ActionDef, AgentView, ContentItem, TranslatorInput
 
 _GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
@@ -172,23 +173,7 @@ def _gemini_translate(inp: TranslatorInput) -> tuple[AgentView, int]:
 
     client = genai.Client(api_key=api_key)
 
-    prompt = f"""You convert a human-facing web page plus a goal into a compact,
-agent-legible JSON view. Return ONLY JSON matching this schema:
-{{"summary": str,
-  "relevant_content": [{{"id": str, "text": str, "meta": object}}],
-  "actions": [{{"name": str, "description": str, "params": object,
-                "target_selector": str}}]}}
-
-Rules:
-- Task-conditioned: include only content/actions relevant to the goal.
-- Every target_selector must use a real id/attribute from the HTML (e.g. "#add-{{product_id}}").
-  Never invent an element that isn't in the HTML.
-- Output strict JSON, no markdown fences.
-
-GOAL: {inp.goal}
-URL: {inp.page.url}
-HTML:
-{inp.page.html}"""
+    prompt = translate_prompt(inp.goal, inp.page.url, inp.page.html)
 
     resp = client.models.generate_content(
         model=_GEMINI_MODEL,

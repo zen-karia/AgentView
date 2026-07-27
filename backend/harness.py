@@ -10,8 +10,10 @@ from __future__ import annotations
 
 import datetime
 import time
+from dataclasses import asdict
 
 from agent import decide
+from prompts import translate_prompt
 from schemas import RunLog, TranslatorInput
 from tasks import Task
 from translator import translate
@@ -26,6 +28,7 @@ def run_task(
     translator_model: str,
     agent_model: str = "stub",
     make_driver=None,
+    record_training: bool = False,
 ) -> RunLog:
     # make_driver(task) overrides the task's default (e.g. a real PlaywrightDriver
     # pointed at the task's site). Each run gets a fresh driver so state never leaks.
@@ -43,10 +46,19 @@ def run_task(
         )
         translator_tokens += tok
 
+        # Training pair for this turn: (translator input -> AgentView it produced).
+        # Kept only from success:true runs by the data-gen script.
+        train = None
+        if record_training:
+            train = {
+                "prompt": translate_prompt(task.goal, page.url, page.html),
+                "agentview": asdict(view),
+            }
+
         choice, atok = decide(task.goal, view, history, agent_model)
         agent_tokens += atok
         if choice.done or not choice.name:
-            turns.append({"step": step, "action": None, "thought": choice.thought})
+            turns.append({"step": step, "action": None, "thought": choice.thought, "train": train})
             break
 
         grounded, info = ground_check(view, choice, driver)
@@ -57,6 +69,7 @@ def run_task(
             "grounded": grounded,
             "info": info,
             "thought": choice.thought,
+            "train": train,
         })
         if not grounded:
             # Translator surfaced an ungroundable action -> defect signal. Stop.

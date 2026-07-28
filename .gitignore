@@ -148,3 +148,6 @@ backend/runs/
 # Python bytecode
 __pycache__/
 *.pyc
+
+# generated training data
+backend/dataset/

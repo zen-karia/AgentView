@@ -181,8 +181,16 @@ def _gemini_translate(inp: TranslatorInput) -> tuple[AgentView, int]:
         config=types.GenerateContentConfig(response_mime_type="application/json"),
     )
     data = json.loads(resp.text)
+    view = _agentview_from_dict(data)
+    usage = getattr(resp, "usage_metadata", None)
+    tokens = getattr(usage, "prompt_token_count", None) or len(inp.page.html) // 4
+    return view, tokens
 
-    view = AgentView(
+
+def _agentview_from_dict(data: dict) -> AgentView:
+    """Parse the JSON a translator model returns into an AgentView. Shared by the
+    Gemini (Layer 0) and Freesolo-trained (Layer 1) paths."""
+    return AgentView(
         summary=data.get("summary", ""),
         relevant_content=[
             ContentItem(id=c.get("id", ""), text=c.get("text", ""), meta=c.get("meta", {}))
@@ -198,10 +206,37 @@ def _gemini_translate(inp: TranslatorInput) -> tuple[AgentView, int]:
             for a in data.get("actions", [])
         ],
     )
-    usage = getattr(resp, "usage_metadata", None)
-    tokens = getattr(usage, "prompt_token_count", None) or len(inp.page.html) // 4
-    return view, tokens
 
 
 def _trained_translate(inp: TranslatorInput) -> tuple[AgentView, int]:
-    raise NotImplementedError("Layer 1: call the Freesolo-trained model behind the flag.")
+    """Layer 1: the Freesolo-trained small model on its OpenAI-compatible endpoint.
+    Same prompt as Layer 0; response_format pins the AgentView JSON schema.
+
+    From `flash deploy` / `flash deployments --json`, set:
+      FREESOLO_API_KEY, FREESOLO_BASE_URL (openai_base_url), FREESOLO_MODEL (<run-id>).
+    """
+    import freesolo
+    from openai import OpenAI
+
+    api_key = os.getenv(freesolo.API_KEY_ENV)
+    base_url = os.getenv(freesolo.BASE_URL_ENV)
+    model = os.getenv(freesolo.MODEL_ENV)
+    if not (api_key and base_url and model):
+        raise RuntimeError(
+            f"set {freesolo.API_KEY_ENV}, {freesolo.BASE_URL_ENV} "
+            f"(from `flash deployments --json`), and {freesolo.MODEL_ENV} (<run-id>)"
+        )
+
+    client = OpenAI(base_url=base_url, api_key=api_key)
+    resp = client.chat.completions.create(
+        model=model,
+        messages=[{"role": "user",
+                   "content": translate_prompt(inp.goal, inp.page.url, inp.page.html)}],
+        response_format={"type": "json_schema",
+                         "json_schema": {"schema": freesolo.AGENTVIEW_SCHEMA}},
+    )
+    data = json.loads(resp.choices[0].message.content)
+    view = _agentview_from_dict(data)
+    usage = getattr(resp, "usage", None)
+    tokens = getattr(usage, "prompt_tokens", None) or len(inp.page.html) // 4
+    return view, tokens

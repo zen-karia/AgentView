@@ -2,7 +2,10 @@
 # Install these only when wiring real mode:
 #   playwright        -> PlaywrightDriver (real browser). Then: playwright install chromium
 #   google-genai      -> Gemini translator + reasoner (Layer 0)
+#   openai            -> call the Freesolo-trained model (OpenAI-compatible endpoint, Layer 1)
 #   pymongo           -> Mongo run logging (Lane B2)
+# Freesolo training itself uses the `flash` CLI: uv tool install freesolo-flash
 playwright>=1.44
 google-genai>=0.3
+openai>=1.0
 pymongo>=4.7

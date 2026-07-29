@@ -59,7 +59,7 @@ python3 benchmark.py --model gemini --agent-model gemini --driver playwright
 | Verifier / grounding | `verifier.py` | B2 | done |
 | Tasks + checks | `tasks.py` | B2 | 17 across shop/form/docs |
 | Demo sites | `sites/` | B2 | shop + form + docs |
-| Mongo logging | `logger.py` | B2 | swap point marked |
+| Mongo logging | `logger.py` | B2 | done (set MONGODB_URI) |
 
 ## Switches
 

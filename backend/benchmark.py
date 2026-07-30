@@ -12,9 +12,12 @@ from __future__ import annotations
 import argparse
 
 from costs import frontier_tokens, token_cost_usd
+from envload import load_env
 from harness import run_task
 from logger import save_run
 from tasks import TASKS
+
+load_env()
 
 CONDITIONS = ["raw", "markdown_baseline", "translated"]
 

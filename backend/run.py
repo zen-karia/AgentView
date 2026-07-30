@@ -10,9 +10,12 @@ from __future__ import annotations
 
 import argparse
 
+from envload import load_env
 from harness import run_task
 from logger import save_run
 from tasks import SITES, TASKS
+
+load_env()  # pull backend/.env into the environment before anything reads a key
 
 
 def _playwright_factory():

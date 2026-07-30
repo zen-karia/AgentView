@@ -17,9 +17,12 @@ import argparse
 import json
 import pathlib
 
+from envload import load_env
 from freesolo import to_record
 from harness import run_task
 from tasks import TASKS
+
+load_env()
 
 
 def main() -> None:

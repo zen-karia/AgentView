@@ -14,10 +14,20 @@ import json
 
 # Env vars we read at inference time (translator.py `_trained_translate`).
 API_KEY_ENV = "FREESOLO_API_KEY"
-BASE_URL_ENV = "FREESOLO_BASE_URL"  # the openai_base_url from `flash deployments --json`
+BASE_URL_ENV = "FREESOLO_BASE_URL"  # override ONLY for a non-default deployment
 MODEL_ENV = "FREESOLO_MODEL"        # the deployed <run-id>
 
+# Per docs, the CLI/client defaults to https://api.freesolo.co; FREESOLO_BASE_URL
+# overrides it for a non-default deployment. So base URL is optional, not required.
+DEFAULT_BASE_URL = "https://api.freesolo.co"
 DEFAULT_BASE_MODEL = "Qwen/Qwen3.5-4B"
+
+
+def resolve_base_url(override: str | None) -> str:
+    """Default to Freesolo's endpoint; honor an override. Ensure an OpenAI-style
+    /v1 suffix so the OpenAI client hits /v1/chat/completions."""
+    base = (override or DEFAULT_BASE_URL).rstrip("/")
+    return base if base.endswith("/v1") else base + "/v1"
 
 # JSON schema for the AgentView. Passed as response_format so the trained model is
 # guaranteed to emit valid AgentView JSON at inference (Freesolo structured outputs).

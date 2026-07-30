@@ -216,17 +216,20 @@ def _trained_translate(inp: TranslatorInput) -> tuple[AgentView, int]:
       FREESOLO_API_KEY, FREESOLO_BASE_URL (openai_base_url), FREESOLO_MODEL (<run-id>).
     """
     import freesolo
-    from openai import OpenAI
 
+    # Base URL is optional: defaults to Freesolo's endpoint, overridden by
+    # FREESOLO_BASE_URL only for a non-default deployment. Only key + run-id required.
     api_key = os.getenv(freesolo.API_KEY_ENV)
-    base_url = os.getenv(freesolo.BASE_URL_ENV)
     model = os.getenv(freesolo.MODEL_ENV)
-    if not (api_key and base_url and model):
+    if not (api_key and model):
         raise RuntimeError(
-            f"set {freesolo.API_KEY_ENV}, {freesolo.BASE_URL_ENV} "
-            f"(from `flash deployments --json`), and {freesolo.MODEL_ENV} (<run-id>)"
+            f"set {freesolo.API_KEY_ENV} and {freesolo.MODEL_ENV} (<run-id>); "
+            f"{freesolo.BASE_URL_ENV} is optional (defaults to {freesolo.DEFAULT_BASE_URL})"
         )
 
+    from openai import OpenAI
+
+    base_url = freesolo.resolve_base_url(os.getenv(freesolo.BASE_URL_ENV))
     client = OpenAI(base_url=base_url, api_key=api_key)
     resp = client.chat.completions.create(
         model=model,

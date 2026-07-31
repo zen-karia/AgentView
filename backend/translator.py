@@ -217,15 +217,13 @@ def _trained_translate(inp: TranslatorInput) -> tuple[AgentView, int]:
     """
     import freesolo
 
-    # Base URL is optional: defaults to Freesolo's endpoint, overridden by
-    # FREESOLO_BASE_URL only for a non-default deployment. Only key + run-id required.
+    # Only the API key is truly required. Model defaults to DEFAULT_MODEL until a
+    # <run-id> is supplied via FREESOLO_MODEL / --freesolo-model. Base URL defaults
+    # to Freesolo's endpoint, overridden by FREESOLO_BASE_URL for a non-default one.
     api_key = os.getenv(freesolo.API_KEY_ENV)
-    model = os.getenv(freesolo.MODEL_ENV)
-    if not (api_key and model):
-        raise RuntimeError(
-            f"set {freesolo.API_KEY_ENV} and {freesolo.MODEL_ENV} (<run-id>); "
-            f"{freesolo.BASE_URL_ENV} is optional (defaults to {freesolo.DEFAULT_BASE_URL})"
-        )
+    if not api_key:
+        raise RuntimeError(f"set {freesolo.API_KEY_ENV} to use --model trained")
+    model = os.getenv(freesolo.MODEL_ENV) or freesolo.DEFAULT_MODEL
 
     from openai import OpenAI
 

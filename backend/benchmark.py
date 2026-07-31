@@ -10,6 +10,7 @@ Holds the AGENT constant across conditions and varies only the perception layer.
 from __future__ import annotations
 
 import argparse
+import os
 
 from costs import frontier_tokens, token_cost_usd
 from envload import load_env
@@ -27,7 +28,12 @@ def main() -> None:
     ap.add_argument("--model", default="stub", choices=["stub", "gemini", "trained"])
     ap.add_argument("--agent-model", default="stub", choices=["stub", "gemini"])
     ap.add_argument("--driver", default="fake", choices=["fake", "playwright"])
+    ap.add_argument("--freesolo-model", default=None,
+                    help="override the trained-translator model (<run-id>)")
     args = ap.parse_args()
+
+    if args.freesolo_model:  # CLI flag wins over .env / default
+        os.environ["FREESOLO_MODEL"] = args.freesolo_model
 
     make_driver = None
     if args.driver == "playwright":

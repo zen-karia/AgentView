@@ -9,6 +9,7 @@ Run from inside backend/ so the flat module imports resolve.
 from __future__ import annotations
 
 import argparse
+import os
 
 from envload import load_env
 from harness import run_task
@@ -39,8 +40,14 @@ def main() -> None:
                     help="reasoner model (consumes the AgentView, picks actions)")
     ap.add_argument("--driver", default="fake", choices=["fake", "playwright"],
                     help="fake = in-memory; playwright = real browser on the demo site")
+    ap.add_argument("--freesolo-model", default=None,
+                    help="override the trained-translator model (<run-id>); "
+                         "defaults to FREESOLO_MODEL, then Freesolo's default model")
     ap.add_argument("--all-conditions", action="store_true")
     args = ap.parse_args()
+
+    if args.freesolo_model:  # CLI flag wins over .env / default
+        os.environ["FREESOLO_MODEL"] = args.freesolo_model
 
     make_driver = _playwright_factory() if args.driver == "playwright" else None
 

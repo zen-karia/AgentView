@@ -22,6 +22,10 @@ MODEL_ENV = "FREESOLO_MODEL"        # the deployed <run-id>
 DEFAULT_BASE_URL = "https://api.freesolo.co"
 DEFAULT_BASE_MODEL = "Qwen/Qwen3.5-4B"
 
+# Model the trained-translator seat calls until it's overridden by FREESOLO_MODEL
+# (env) or the --freesolo-model CLI flag with a fine-tuned <run-id>.
+DEFAULT_MODEL = "Qwen/Qwen3.5-9B"
+
 
 def resolve_base_url(override: str | None) -> str:
     """Default to Freesolo's endpoint; honor an override. Ensure an OpenAI-style

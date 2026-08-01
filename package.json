@@ -1,0 +1,13 @@
+{
+  "name": "agentview",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Goal-conditioned (page, goal) -> AgentView JSON contract: schema, pretrim, validator, golden examples",
+  "scripts": {
+    "check": "node scripts/check-golden.js && node scripts/check-negative.js"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "jsdom": "^25.0.1"
+  }
+}

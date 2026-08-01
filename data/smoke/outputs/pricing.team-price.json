@@ -1,0 +1,8 @@
+{
+  "schema_version": "1",
+  "relevant_content": [
+    { "id": "c1", "text": "Team", "selector": "[data-plan=\"team\"] .pn" },
+    { "id": "c2", "text": "$99", "selector": "[data-plan=\"team\"] .pp" }
+  ],
+  "actions": []
+}

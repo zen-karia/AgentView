@@ -1,0 +1,5 @@
+{
+  "comment": "Generator seeds reserved for held-out eval. The data pipeline must refuse to emit training data from these ranges. Tasks themselves are committed under eval/heldout-tasks/ before any training data is generated.",
+  "reserved_seed_ranges": [[9000, 9999]],
+  "heldout_tasks_committed": false
+}

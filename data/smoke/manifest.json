@@ -1,0 +1,24 @@
+{
+  "comment": "Smoke-slice dataset: the 4 goldens + 15 hand-authored cases. Every case must pass the validator or the build fails. Never eval data.",
+  "cases": [
+    { "name": "shop / add-cheapest-wireless", "page": "golden/shop.html", "goal": "Add the cheapest wireless headphones to the cart", "output": "golden/shop.cheapest-wireless.json" },
+    { "name": "shop / shipping-policy", "page": "golden/shop.html", "goal": "Find the shipping policy", "output": "golden/shop.shipping-policy.json" },
+    { "name": "checkout / fill-and-submit", "page": "golden/checkout.html", "goal": "Fill out and submit the checkout form as Jordan Lee, jordan@example.com, shipping to Canada", "output": "golden/checkout.fill-submit.json" },
+    { "name": "shop / empty-goal-enumerate", "page": "golden/shop.html", "goal": "", "output": "golden/shop.empty-goal.json" },
+    { "name": "shop / dismiss-banner", "page": "golden/shop.html", "goal": "Dismiss the promotional banner", "output": "data/smoke/outputs/shop.dismiss-banner.json" },
+    { "name": "shop / newsletter-signup", "page": "golden/shop.html", "goal": "Sign up for the newsletter with the email deals@example.com", "output": "data/smoke/outputs/shop.newsletter.json" },
+    { "name": "shop / open-cart", "page": "golden/shop.html", "goal": "Open the shopping cart", "output": "data/smoke/outputs/shop.open-cart.json" },
+    { "name": "shop / returns-policy", "page": "golden/shop.html", "goal": "Find the returns policy", "output": "data/smoke/outputs/shop.returns-policy.json" },
+    { "name": "shop / impossible-goal", "page": "golden/shop.html", "goal": "Track the status of an existing order", "output": "data/smoke/outputs/shop.impossible-goal.json" },
+    { "name": "checkout / order-total", "page": "golden/checkout.html", "goal": "Find the order total", "output": "data/smoke/outputs/checkout.order-total.json" },
+    { "name": "checkout / get-help", "page": "golden/checkout.html", "goal": "Get help with the checkout", "output": "data/smoke/outputs/checkout.get-help.json" },
+    { "name": "login / sign-in", "page": "data/smoke/pages/login.html", "goal": "Log in as sam@example.com with password hunter2", "output": "data/smoke/outputs/login.sign-in.json" },
+    { "name": "login / forgot-password", "page": "data/smoke/pages/login.html", "goal": "Find the link to reset a forgotten password", "output": "data/smoke/outputs/login.forgot-password.json" },
+    { "name": "pricing / choose-pro", "page": "data/smoke/pages/pricing.html", "goal": "Choose the Pro plan", "output": "data/smoke/outputs/pricing.choose-pro.json" },
+    { "name": "pricing / team-price", "page": "data/smoke/pages/pricing.html", "goal": "Find the monthly price of the Team plan", "output": "data/smoke/outputs/pricing.team-price.json" },
+    { "name": "search / usbc-cables", "page": "data/smoke/pages/search.html", "goal": "Search for usb-c cables", "output": "data/smoke/outputs/search.usbc-cables.json" },
+    { "name": "search / open-charger", "page": "data/smoke/pages/search.html", "goal": "Open the search result about the wireless charger", "output": "data/smoke/outputs/search.open-charger.json" },
+    { "name": "docs / install-command", "page": "data/smoke/pages/docs.html", "goal": "Find the command to install the library", "output": "data/smoke/outputs/docs.install-command.json" },
+    { "name": "docs / api-reference", "page": "data/smoke/pages/docs.html", "goal": "Go to the API Reference section", "output": "data/smoke/outputs/docs.api-reference.json" }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "schema_version": "1",
+  "relevant_content": [
+    { "id": "c1", "text": "Returns", "selector": ".ft a[href=\"/returns\"]" }
+  ],
+  "actions": [
+    { "id": "a1", "kind": "click", "description": "Open the Returns page", "target_selector": "[data-av-id=\"12\"]", "content_refs": ["c1"] }
+  ]
+}

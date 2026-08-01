@@ -1,0 +1,13 @@
+{
+  "schema_version": "1",
+  "relevant_content": [
+    { "id": "c1", "text": "Order Summary", "selector": ".sum-t" },
+    { "id": "c2", "text": "$89.99", "selector": "#tot" }
+  ],
+  "actions": [
+    { "id": "a1", "kind": "type", "description": "Enter the full name", "target_selector": "[data-av-id=\"1\"]", "value_hint": "Jordan Lee" },
+    { "id": "a2", "kind": "type", "description": "Enter the email address", "target_selector": "[data-av-id=\"2\"]", "value_hint": "jordan@example.com" },
+    { "id": "a3", "kind": "select", "description": "Choose the shipping country", "target_selector": "[data-av-id=\"3\"]", "value_hint": "Canada" },
+    { "id": "a4", "kind": "click", "description": "Place the order", "target_selector": "[data-av-id=\"9\"]", "content_refs": ["c2"] }
+  ]
+}

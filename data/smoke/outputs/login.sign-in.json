@@ -1,0 +1,11 @@
+{
+  "schema_version": "1",
+  "relevant_content": [
+    { "id": "c1", "text": "Sign in to gadgetbin", "selector": ".fh" }
+  ],
+  "actions": [
+    { "id": "a1", "kind": "type", "description": "Enter the email address", "target_selector": "[data-av-id=\"1\"]", "value_hint": "sam@example.com" },
+    { "id": "a2", "kind": "type", "description": "Enter the password", "target_selector": "[data-av-id=\"2\"]", "value_hint": "hunter2" },
+    { "id": "a3", "kind": "click", "description": "Sign in", "target_selector": "[data-av-id=\"4\"]", "content_refs": ["c1"] }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "schema_version": "1",
+  "relevant_content": [
+    { "id": "c1", "text": "Belkin Qi Wireless Charger Pad", "selector": "a[href=\"/p/belkin-qi\"]" },
+    { "id": "c2", "text": "$24.50", "selector": ".rs .r:nth-of-type(2) .rp" }
+  ],
+  "actions": [
+    { "id": "a1", "kind": "click", "description": "Open the Belkin Qi Wireless Charger Pad result", "target_selector": "[data-av-id=\"4\"]", "content_refs": ["c1", "c2"] }
+  ]
+}

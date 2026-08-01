@@ -1,0 +1,10 @@
+{
+  "schema_version": "1",
+  "relevant_content": [
+    { "id": "c1", "text": "Get deals in your inbox", "selector": ".nl-t" }
+  ],
+  "actions": [
+    { "id": "a1", "kind": "type", "description": "Enter the email address for the newsletter", "target_selector": "[data-av-id=\"9\"]", "value_hint": "deals@example.com", "content_refs": ["c1"] },
+    { "id": "a2", "kind": "click", "description": "Submit the newsletter signup", "target_selector": "[data-av-id=\"10\"]" }
+  ]
+}

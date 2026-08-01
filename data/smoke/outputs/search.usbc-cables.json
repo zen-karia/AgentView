@@ -1,0 +1,8 @@
+{
+  "schema_version": "1",
+  "relevant_content": [],
+  "actions": [
+    { "id": "a1", "kind": "type", "description": "Enter the search query", "target_selector": "[data-av-id=\"1\"]", "value_hint": "usb-c cables" },
+    { "id": "a2", "kind": "click", "description": "Run the search", "target_selector": "[data-av-id=\"2\"]" }
+  ]
+}

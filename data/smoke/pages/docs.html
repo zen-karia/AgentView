@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>gadgetkit — docs</title>
+<style>.wr{display:flex}.sd{width:200px}.doc{flex:1;padding:0 20px}pre{background:#f4f4f4;padding:10px}</style></head>
+<body>
+<div class="wr">
+  <div class="sd">
+    <div class="sd-t">gadgetkit docs</div>
+    <a href="/docs/guide">Getting started</a>
+    <a href="/docs/api">API Reference</a>
+    <a href="/docs/faq">FAQ</a>
+  </div>
+  <div class="doc">
+    <div class="h1x">Getting started</div>
+    <p>Install the library from npm and initialize a client.</p>
+    <pre><code>npm install gadgetkit</code></pre>
+    <p>Then create a client with your key:</p>
+    <pre><code>const gk = require('gadgetkit');
+const client = gk.init({ key: process.env.GK_KEY });</code></pre>
+  </div>
+</div>
+</body>
+</html>

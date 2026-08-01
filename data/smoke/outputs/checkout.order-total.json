@@ -1,0 +1,8 @@
+{
+  "schema_version": "1",
+  "relevant_content": [
+    { "id": "c1", "text": "Total", "selector": ".tot .ln-n" },
+    { "id": "c2", "text": "$89.99", "selector": "#tot" }
+  ],
+  "actions": []
+}

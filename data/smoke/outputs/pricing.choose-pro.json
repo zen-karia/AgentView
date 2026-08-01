@@ -1,0 +1,10 @@
+{
+  "schema_version": "1",
+  "relevant_content": [
+    { "id": "c1", "text": "Pro", "selector": "[data-plan=\"pro\"] .pn" },
+    { "id": "c2", "text": "$29", "selector": "[data-plan=\"pro\"] .pp" }
+  ],
+  "actions": [
+    { "id": "a1", "kind": "click", "description": "Choose the Pro plan", "target_selector": "[data-av-id=\"4\"]", "content_refs": ["c1", "c2"] }
+  ]
+}

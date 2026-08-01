@@ -1,0 +1,29 @@
+{
+  "comment": "Format anchors for schema v1. Same-page-different-goal pair (cases 1+2) pins goal-conditioning. Never eval data.",
+  "cases": [
+    {
+      "name": "shop / add-cheapest-wireless",
+      "page": "golden/shop.html",
+      "goal": "Add the cheapest wireless headphones to the cart",
+      "output": "golden/shop.cheapest-wireless.json"
+    },
+    {
+      "name": "shop / shipping-policy",
+      "page": "golden/shop.html",
+      "goal": "Find the shipping policy",
+      "output": "golden/shop.shipping-policy.json"
+    },
+    {
+      "name": "checkout / fill-and-submit",
+      "page": "golden/checkout.html",
+      "goal": "Fill out and submit the checkout form as Jordan Lee, jordan@example.com, shipping to Canada",
+      "output": "golden/checkout.fill-submit.json"
+    },
+    {
+      "name": "shop / empty-goal-enumerate",
+      "page": "golden/shop.html",
+      "goal": "",
+      "output": "golden/shop.empty-goal.json"
+    }
+  ]
+}

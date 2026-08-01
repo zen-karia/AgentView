@@ -1,0 +1,157 @@
+{
+  "schema_version": "1",
+  "relevant_content": [
+    {
+      "id": "c1",
+      "text": "SoundMax Pro Wireless Headphones",
+      "selector": "[data-sku=\"hp-01\"] .t"
+    },
+    {
+      "id": "c2",
+      "text": "$89.99",
+      "selector": "[data-sku=\"hp-01\"] .pr"
+    },
+    {
+      "id": "c3",
+      "text": "AudioPhile X2 Wireless Headphones",
+      "selector": "[data-sku=\"hp-02\"] .t"
+    },
+    {
+      "id": "c4",
+      "text": "$249.00",
+      "selector": "[data-sku=\"hp-02\"] .pr"
+    },
+    {
+      "id": "c5",
+      "text": "BassKing Wired Headphones",
+      "selector": "[data-sku=\"hp-03\"] .t"
+    },
+    {
+      "id": "c6",
+      "text": "$34.99",
+      "selector": "[data-sku=\"hp-03\"] .pr"
+    },
+    {
+      "id": "c7",
+      "text": "BoomBox Mini Bluetooth Speaker",
+      "selector": "[data-sku=\"sp-01\"] .t"
+    },
+    {
+      "id": "c8",
+      "text": "$59.99",
+      "selector": "[data-sku=\"sp-01\"] .pr"
+    },
+    {
+      "id": "c9",
+      "text": "up to 60% off audio gear this week only.",
+      "selector": ".bnr-in"
+    },
+    {
+      "id": "c10",
+      "text": "Cart (0)",
+      "selector": ".nv-c"
+    }
+  ],
+  "actions": [
+    {
+      "id": "a1",
+      "kind": "click",
+      "description": "Add SoundMax Pro Wireless Headphones ($89.99) to cart",
+      "target_selector": "[data-av-id=\"5\"]",
+      "content_refs": [
+        "c1",
+        "c2"
+      ]
+    },
+    {
+      "id": "a2",
+      "kind": "click",
+      "description": "Add AudioPhile X2 Wireless Headphones ($249.00) to cart",
+      "target_selector": "[data-av-id=\"6\"]",
+      "content_refs": [
+        "c3",
+        "c4"
+      ]
+    },
+    {
+      "id": "a3",
+      "kind": "click",
+      "description": "Add BassKing Wired Headphones ($34.99) to cart",
+      "target_selector": "[data-av-id=\"7\"]",
+      "content_refs": [
+        "c5",
+        "c6"
+      ]
+    },
+    {
+      "id": "a4",
+      "kind": "click",
+      "description": "Add BoomBox Mini Bluetooth Speaker ($59.99) to cart",
+      "target_selector": "[data-av-id=\"8\"]",
+      "content_refs": [
+        "c7",
+        "c8"
+      ]
+    },
+    {
+      "id": "a5",
+      "kind": "click",
+      "description": "Open the cart",
+      "target_selector": "[data-av-id=\"3\"]",
+      "content_refs": [
+        "c10"
+      ]
+    },
+    {
+      "id": "a6",
+      "kind": "click",
+      "description": "Go to the Home page",
+      "target_selector": "[data-av-id=\"1\"]"
+    },
+    {
+      "id": "a7",
+      "kind": "click",
+      "description": "Go to the Deals page",
+      "target_selector": "[data-av-id=\"2\"]"
+    },
+    {
+      "id": "a8",
+      "kind": "click",
+      "description": "Dismiss the promo banner",
+      "target_selector": "[data-av-id=\"4\"]",
+      "content_refs": [
+        "c9"
+      ]
+    },
+    {
+      "id": "a9",
+      "kind": "type",
+      "description": "Enter an email address for the newsletter",
+      "target_selector": "[data-av-id=\"9\"]"
+    },
+    {
+      "id": "a10",
+      "kind": "click",
+      "description": "Sign up for the newsletter",
+      "target_selector": "[data-av-id=\"10\"]"
+    },
+    {
+      "id": "a11",
+      "kind": "click",
+      "description": "Open the Shipping Policy page",
+      "target_selector": "[data-av-id=\"11\"]"
+    },
+    {
+      "id": "a12",
+      "kind": "click",
+      "description": "Open the Returns page",
+      "target_selector": "[data-av-id=\"12\"]"
+    },
+    {
+      "id": "a13",
+      "kind": "click",
+      "description": "Open the Contact page",
+      "target_selector": "[data-av-id=\"13\"]"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "schema_version": "1",
+  "relevant_content": [
+    { "id": "c1", "text": "npm install gadgetkit", "selector": ".doc pre:nth-of-type(1) code" }
+  ],
+  "actions": []
+}

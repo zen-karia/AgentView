@@ -1,0 +1,134 @@
+# LOGBOOK — the master record
+
+Everything decided, built, measured, rejected, and parked, in one place. Where a decision has a
+full write-up elsewhere, this is the index; where it only existed in conversation, this is the
+record. Last updated: **2026-07-18** (Stage A complete).
+
+## Where everything lives
+
+| Doc | Holds |
+|---|---|
+| [DECISIONS.md](../DECISIONS.md) | The 18 numbered decisions (frozen contracts, policies, kill rules) |
+| [contracts/](../contracts/) | Schema v1, frozen prompt template, EVAL contract, held-out seed reservations |
+| [docs/PLAN.md](PLAN.md) | Stage A–E roadmap, data source table, Freesolo feature coverage, dependency graph |
+| [docs/FREESOLO.md](FREESOLO.md) | Platform playbook + **measured** run numbers |
+| [docs/PRIOR-ART.md](PRIOR-ART.md) | Research synthesis + the judge-facing decision-lineage table |
+| [docs/BENCHMARKS.md](BENCHMARKS.md) | Public benchmark survey, scoring adapters, numbers to beat |
+| this file | Decision index, implementation decisions, artifact registry, measured results, review record, rejected alternatives, parked ideas, risks |
+
+## Decision index (full text in DECISIONS.md)
+
+- **D1** Function signature: (raw HTML, goal) → AgentView JSON; goal always present; empty-goal = enumerate mode; empty/empty = "goal impossible here"; *AgentView selects, the agent decides*.
+- **D2** Schema v1 frozen; click/type/select only; array caps as anti-gaming bounds; goldens are normative.
+- **D3** Input pipeline = annotate (`data-av-id`) → pretrim; two-tier token budget (12k soft target / 28k hard gate — Flash cap raised to 32,768, see update entry below); identical pipeline for teacher/student/baselines; state write-back required.
+- **D4** Selector dialect: unique in both DOMs AND same element (structural-path identity); bans: html/body, comma lists, :*-child, +/~; action targets use `[data-av-id]`; value_hint rules.
+- **D5** Text grounding: verbatim, in trimmed AND raw DOM, tightest element, non-empty.
+- **D6** Playwright (library) is executor/verifier; generator must emit (page, goal, success_predicate); spine/RFT only from own sites; Gemini-synthetic bulk-only; Mind2Web eval-only.
+- **D7** Metrics: end-to-end success primary; element recall reported separately; validator pass rate never a headline; four arms incl. raw-a11y-snapshot baseline.
+- **D8** Held-out: 5 tasks committed pre-generation; seeds 9000–9999 reserved; ≥2 third-party pages; 100–300-pair held-out page set; goldens never eval.
+- **D9** One frozen prompt template, hash-stamped on every row; only content varies, never format.
+- **D10** Training: SFT → GRPO warm-start (validator-port reward) → OPD branch (glm-5.2); quality gates not clock gates; final day training-free; ablations planned.
+- **D11** RFT reward design: validator = gate, success predicate = reward; prompt pool in the 20–70% success band.
+- **D12** Every example logged to Mongo with source/tier/seed/hashes; gemini-synthetic ≤50% of any mix.
+- **D13** Flash platform facts (resolved from docs + measured); smoke slice before any mass labeling.
+- **D14** Base model by bake-off (2B/4B/9B, identical data); 35B excluded (4k ctx); GLM/DeepSeek/Kimi are teachers, not bases; capture zero-shot before training.
+- **D15** Dataset rows emitted in Flash's exact {input, output, metadata} format from example one.
+- **D16** Spine mechanics: hindsight relabeling + independent judge + mid-flight pruning + env-feedback filters + failure-seeded curriculum.
+- **D17** Decode settings pinned for all arms: temp 0, repetition_penalty 1.05–1.08, max ~2,000 completion tokens, guided decoding, loop-stop; prefix-cache-friendly prompt order.
+- **D18** Playwright MCP: baseline arm + dev tool; never in our harness; AgentView-as-MCP-server parked as a demo idea.
+
+## Implementation decisions (unnumbered, made while building)
+
+1. **Flash CLI runs in WSL Ubuntu** (`~/.flash` venv): v1.0.1 imports Unix-only `fcntl` and pins Python <3.13 — native Windows impossible. Invoke: `wsl -d Ubuntu -- ~/.flash/bin/flash …`.
+2. **`environment.py` carries the system prompt from a generated file** (`system_prompt.txt`, written by the emitter from the frozen template) — `build_prompt_messages` returns [system, user], keeping the template the single source of truth across training and serving. Includes a contract-shape reward stub to be upgraded for GRPO.
+3. **Smoke dataset (19 examples) hand-authored, not teacher-labeled** — no Gemini key was configured yet, and for a format-proof run, validator-passed hand labels are equivalent. Composition chosen for coverage: multi-action, select+value_hint, content-only (2), impossible-goal (1), empty-goal enumerate (1), same-page-different-goal clusters (shop ×9).
+4. **Golden/smoke action selectors use `[data-av-id]`; content selectors stay semantic** — mirrors the template rule so goldens remain normative.
+5. **`scripts/av-ids.js` authoring helper** — prints each interactive element with the id annotate will assign; makes hand-labeling mechanical and id-drift visible.
+6. **Harness (`pipeline/infer.js`) is arm-agnostic** — same entrypoint for Flash adapter / base zero-shot / Gemini; `repetition_penalty: 1.08` added after live degeneration (see Measured); parser tolerates code fences and `<think>` blocks.
+7. **`data/fixtures/` = never-train pages** — megashop.html (55 interactive elements, sold-out trap, base64 tracking attrs) is a qualitative eval panel with 7 canonical goals; candidate held-out material.
+8. **npm `check` = golden suite + negative suite**; harness hashes printed on every run (current: schema `a1a5f3931aa6`, template `1ae340e484d3`, annotate v1, pretrim v2).
+
+## Artifact registry
+
+| Artifact | Value |
+|---|---|
+| Flash org / env | `ht6-team` (pre-funded — no card needed, verified by accepted run) / `ht6-team/agentview` |
+| Smoke run | `flash-1784358075-7999e3c4` — SFT, Qwen3.5-0.8B, rank 32/α64/LR 1e-4/2 epochs/19 examples |
+| Adapter endpoint | `https://clado-ai--freesolo-lora-serving.modal.run/v1`, model = run id, Bearer = org `fslo_` key (left deployed; idle costs $0) |
+| Adapter HF mirror | `Freesolo-Co/flashrun-ht6-team-agentview-b699ab9910de5e97` |
+| Toolchain | Windows Node 22.18 (repo pipeline) · WSL Ubuntu 24.04 / Python 3.12.3 (Flash CLI) · flash 1.0.1 |
+| Repo pipeline | annotate v1 · pretrim v2 · schema v1 · template `1ae340e484d3` |
+
+## Measured results (Stage A smoke slice, 2026-07-18)
+
+- Quote $0.01 → billed **$0.0088**. Queue **12 s** (vast.ai A100 SXM). Setup ~5 min (unbilled). 8 train steps. **Submit→done 6.4 min.** Deploy ~1 min. Inference ~3 s/call (0.8B).
+- Trained goal ("Find the shipping policy", shop.html): **validator PASS** — byte-correct contract output.
+- Unseen goal, trained page: **degeneration loop** (verbatim `"actions"` repetition to the 2,000-token cap) — the exact ReaderLM failure mode; `repetition_penalty 1.08` stopped it on the first try. Post-fix output well-formed but semantically hallucinated → validator rejected (`matches 0 elements`).
+- Unseen page (megashop): different loop shape (incrementing `content_refs` ids c1→c408) — motivates harness loop-stop + `structured_outputs` schema caps (content_refs ≤10) at GRPO/serve time.
+- Interpretation on record: 19 examples buys format, not semantics. Generalization is Stage B's job. All 25 `npm run check` cases green throughout.
+
+## Adversarial review record (every exploit reproduced, then fixed, then made a regression test)
+
+1. Count-only dual-DOM check gameable → comma selector-lists / truncated-attribute collisions resolve to *different* elements while unique in both → **fixed**: structural-path identity + comma ban.
+2. Text grounding accepted any on-page phrase attributed to any container → **fixed**: tightest-element rule.
+3. Lone `…`/whitespace text skipped grounding entirely → **fixed**: rejected as ungroundable.
+4. Clicks on `<title>`/decoration/dead divs passed → **fixed**: interactivity requirement (bubbling-aware).
+5. Pretrim forced quirks-mode pages into standards mode (selector case-semantics drift) → **fixed**: doctype presence preserved.
+6. `<pre>`/`<textarea>` whitespace corruption; non-ASCII token underestimate; date-picker typing; select on ARIA divs; value_hint unvalidated/undefined; template↔validator drift (template never showed the schema shape; empty-goal contradicted caps); golden violated its own relevance rule → **all fixed** (validator, pretrim, template, D-log updated).
+Consolidated consequence: 21-case negative suite; every entry is a formerly-working exploit.
+
+## Rejected alternatives (and why — judges ask)
+
+- **A11y snapshot as model input** — degrades on ARIA-poor pages, the exact target distribution (D3).
+- **Goal-free contract** — would compete with a free deterministic serializer; goal-conditioning is the moat (D1).
+- **Model-authored-only selectors** — every production system mints harness ids; small models hallucinate selector syntax; hybrid adopted (D4).
+- **Qwen3.6-35B-A3B** — 4,096-token context can't fit the page budget (D14). **GLM 5.2 as base** — not in the trainable catalog; used as OPD teacher instead (D10/D14).
+- **Validator pass-rate as headline metric** — gameable by trivially-safe outputs (D7).
+- **Mind2Web as training data** — conversion is a subproject; eval-only (D6).
+- **WebArena during the event** — hosting weight; WebArena-Lite is a multi-day stretch only (BENCHMARKS).
+- **Sequence packing** — examples nearly fill the window; bucketing by length instead (FREESOLO).
+- **HTML pretraining, 256k context extension, checkpoint merging, DPO, trained ORM, CDP bookkeeping** — right ideas, wrong timescale (PRIOR-ART "not copied" list).
+
+## Parked ideas (not scheduled, not forgotten)
+
+- AgentView as an MCP server (`agentview_snapshot(goal)`) — closing demo beat (D18).
+- OPD as a data-free fourth tier on the same prompt pool (D10).
+- WebShop as an extra spine environment if Docker cooperates (D6).
+- Validator-rejected outputs harvested as DPO pairs (ReaderLM trick) if a preference-training option ever appears.
+- Graded 1–5 quality scores as sampling weights (OS-Genesis) — binary gate suffices for now.
+- W&B `[wandb]` config for live loss curves on the dashboard; `flash export` of the winner to a team HF repo.
+
+## Open items / risks
+
+1. **Gemini API key not yet configured** — blocks bulk-tier labeling (Stage B). Also decide teacher model version.
+2. **Site generator + verifier not built** — the Stage A remainder; blocks spine tier, held-out freeze, baselines.
+3. **Held-out tasks not yet authored/committed** — `heldout-seeds.json` still says `tasks_committed: false`; must happen before any mass generation.
+4. **Base zero-shot serving path — RESOLVED (surveyed 2026-07-18).** No hosted free tier serves
+   small Qwen3.5 (0.8B–4B) at all; OpenRouter has only the 9B, paid (~$1–1.50 for our whole eval
+   after a one-time $10 top-up); Groq/Cerebras/GitHub/Cloudflare/Together/Mistral host no Qwen3.5;
+   NVIDIA NIM is free but only the 397B. Chosen path, in order:
+   (a) **Identity-LoRA trick on Flash**: train each base with `max_steps=1, learning_rate≈1e-9`
+   (LoRA init has B=0 ⇒ the adapter is a no-op ⇒ the deployed run IS the base model) — base
+   zero-shot served through the *identical* endpoint/stack/quantization as the fine-tune, ~$0.01
+   per size from existing org credits; verify with `--dry-run` before relying on it.
+   (b) **ollama locally** (official `qwen3.5:0.8b/2b/4b/9b` tags, OpenAI-compatible at
+   localhost:11434/v1) — free/offline backup; use official tags (third-party GGUF imports broken)
+   and Q8 if fidelity matters (default tags are ~4-bit; document quant in eval metadata).
+   (c) OpenRouter $10 top-up for a managed 9B if needed.
+5. **GRPO reward port (Python/lxml)** — written but not started; needed before Pass 2; Node in reward workers assumed unavailable.
+6. **jsdom vs Chromium selector semantics** — residual risk (D4); plan a sampled Playwright-side audit.
+7. **Security**: the org `fslo_` API key was pasted in a chat session — **rotate it at freesolo.co before sharing the transcript or repo access**; it is stored in WSL by the CLI and deliberately absent from every repo file.
+
+## Update 2026-07-18 (later): context cap 8k → 32k
+
+Freesolo dev tip verified server-side: `--cost`/`--dry-run` accept `max_context_tokens = 32768`
+on sub-10B models (client 1.0.1 unchanged — cap is server-side). Measured catch: 0.8B@32k quotes
+on a B200 ($5.89/hr) vs A100 ($1.39/hr) at 8k — context length is now the main cost lever.
+Changes made: two-tier budget in pretrim.js (`PAGE_TOKEN_TARGET` 12,000 soft / `PAGE_TOKEN_BUDGET`
+28,000 hard), D3 updated, FREESOLO.md + BENCHMARKS.md updated. Strategy consequences recorded:
+(1) real-web eval pages (Mind2Web/REAL) now fit — trim-recall stops being the binding ceiling;
+(2) generator gains a long-page tier (~15% of data, ReaderLM-style short→long mix — degeneration
+risk grows with length, so long examples are a slice, not the default); (3) NEW ABLATION unlocked:
+pretrim-vs-raw-input on pages that fit either way — the first honest measurement of what pretrim
+itself buys; (4) pretrim's pitch reframed from "fit the window" to "signal density + 3–10× cheaper
+tokens per call".

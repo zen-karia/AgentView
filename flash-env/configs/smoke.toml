@@ -1,0 +1,19 @@
+# Smoke slice (PLAN.md Stage A): 19 hand-authored examples on the smallest
+# base. Purpose is proving every format handoff end-to-end and measuring real
+# queue + wall-clock — NOT model quality. Quote first: flash train configs/smoke.toml --cost
+
+model = "Qwen/Qwen3.5-0.8B"
+algorithm = "sft"
+seed = 42
+
+[environment]
+id = "ht6-team/agentview"
+
+[train]
+epochs = 2
+max_examples = 19
+lora_rank = 32
+lora_alpha = 64
+learning_rate = 1e-4
+batch_size = 4
+max_context_tokens = 8192

@@ -1,0 +1,13 @@
+{
+  "schema_version": "1",
+  "relevant_content": [
+    { "id": "c1", "text": "SoundMax Pro Wireless Headphones", "selector": "[data-sku=\"hp-01\"] .t" },
+    { "id": "c2", "text": "$89.99", "selector": "[data-sku=\"hp-01\"] .pr" },
+    { "id": "c3", "text": "AudioPhile X2 Wireless Headphones", "selector": "[data-sku=\"hp-02\"] .t" },
+    { "id": "c4", "text": "$249.00", "selector": "[data-sku=\"hp-02\"] .pr" }
+  ],
+  "actions": [
+    { "id": "a1", "kind": "click", "description": "Add SoundMax Pro Wireless Headphones ($89.99) to cart", "target_selector": "[data-av-id=\"5\"]", "content_refs": ["c1", "c2"] },
+    { "id": "a2", "kind": "click", "description": "Add AudioPhile X2 Wireless Headphones ($249.00) to cart", "target_selector": "[data-av-id=\"6\"]", "content_refs": ["c3", "c4"] }
+  ]
+}

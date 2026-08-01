@@ -1,0 +1,9 @@
+{
+  "schema_version": "1",
+  "relevant_content": [
+    { "id": "c1", "text": "up to 60% off audio gear this week only.", "selector": ".bnr-in" }
+  ],
+  "actions": [
+    { "id": "a1", "kind": "click", "description": "Dismiss the promotional banner", "target_selector": "[data-av-id=\"4\"]", "content_refs": ["c1"] }
+  ]
+}

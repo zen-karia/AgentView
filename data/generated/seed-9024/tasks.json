@@ -1,0 +1,145 @@
+{
+  "meta": {
+    "seed": 9024,
+    "scheme": 1,
+    "classes": {
+      "wr": "page",
+      "grid": "plist",
+      "item": "card",
+      "media": "thumb",
+      "title": "ttl",
+      "meta": "row",
+      "price": "amt",
+      "was": "strk",
+      "stock": "avail",
+      "add": "atc",
+      "nav": "topnav",
+      "navItem": "tn-l",
+      "cart": "tn-cart",
+      "bnr": "promo",
+      "bnrIn": "promo-in",
+      "bnrX": "promo-x",
+      "ck": "cookiebar",
+      "ckA": "cb-ok",
+      "ckD": "cb-no",
+      "nl": "subscribe",
+      "nlT": "sub-t",
+      "nlE": "sub-e",
+      "nlB": "sub-b",
+      "ft": "footer",
+      "srt": "sortsel"
+    },
+    "shop": "techtrove",
+    "products": [
+      {
+        "sku": "ch-01",
+        "name": "Volt 65W GaN Wall Charger",
+        "price": 29.99
+      },
+      {
+        "sku": "eb-01",
+        "name": "SoundMax Buds Air Wireless Earbuds",
+        "price": 59.99
+      },
+      {
+        "sku": "hp-03",
+        "name": "BassKing Wired Headphones",
+        "price": 34.99
+      },
+      {
+        "sku": "eb-02",
+        "name": "Volt Pods Mini Wireless Earbuds",
+        "price": 34.5
+      },
+      {
+        "sku": "sp-02",
+        "name": "BassKing Tower Speaker",
+        "price": 189
+      },
+      {
+        "sku": "cb-01",
+        "name": "Volt 100W USB-C Cable 2m",
+        "price": 12.99
+      },
+      {
+        "sku": "ch-02",
+        "name": "MagPad Wireless Charger",
+        "price": 24.5
+      },
+      {
+        "sku": "hp-02",
+        "name": "AudioPhile X2 Wireless Headphones",
+        "price": 249
+      },
+      {
+        "sku": "hp-01",
+        "name": "SoundMax Pro Wireless Headphones",
+        "price": 89.99
+      },
+      {
+        "sku": "sp-03",
+        "name": "PartyCube 360 Speaker",
+        "price": 79
+      }
+    ],
+    "feats": {
+      "cookie": false,
+      "banner": true,
+      "newsletter": false,
+      "sort": false,
+      "wrapDepth": 1
+    }
+  },
+  "tasks": [
+    {
+      "id": "add-eb-01",
+      "type": "actionable",
+      "goal": "Add the SoundMax Buds Air Wireless Earbuds to the cart",
+      "target_sku": "eb-01",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"eb-01\"] .atc"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('eb-01')"
+    },
+    {
+      "id": "add-hp-03",
+      "type": "actionable",
+      "goal": "Add the BassKing Wired Headphones to the cart",
+      "target_sku": "hp-03",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"hp-03\"] .atc"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('hp-03')"
+    },
+    {
+      "id": "add-cheapest-wireless-hp",
+      "type": "actionable",
+      "goal": "Add the cheapest wireless headphones to the cart",
+      "target_sku": "hp-01",
+      "candidate_skus": [
+        "hp-02",
+        "hp-01"
+      ],
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"hp-01\"] .atc"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('hp-01')"
+    },
+    {
+      "id": "impossible",
+      "type": "impossible",
+      "goal": "Track the status of an existing order",
+      "gold_actions": [],
+      "predicate": "true"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "kind": "mind2web",
+  "website": "nba",
+  "annotation_id": "3284c80e-860e-4734-ae95-7b151d4d0591",
+  "action_uid": "dd635e00-aac0-46cb-a514-48793e2e49ec",
+  "goal": "play the video where Larry Bird made his NBA debut vs the Houston Rockets.",
+  "history": [],
+  "gold_backend_node_ids": [
+    "400"
+  ],
+  "page": "eval/heldout-tasks/m2w-2/page.html",
+  "page_sha256": "a9d32f42daf9bebca893873854cb65d50e52c952574c8d12d5b0ebd0d8d09f40"
+}

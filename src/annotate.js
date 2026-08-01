@@ -42,4 +42,12 @@ function annotate(html) {
   return doctype + doc.documentElement.outerHTML;
 }
 
-module.exports = { annotate, ANNOTATE_VERSION };
+module.exports = {
+  annotate,
+  ANNOTATE_VERSION,
+  // Exported so the Playwright verifier injects IDENTICAL criteria into live
+  // pages — if these lists and the browser-side walker ever diverge from
+  // annotate(), ids diverge and selectors stop transferring.
+  INTERACTIVE_TAGS: Array.from(INTERACTIVE_TAGS),
+  INTERACTIVE_ROLES: Array.from(INTERACTIVE_ROLES),
+};

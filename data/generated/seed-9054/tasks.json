@@ -1,0 +1,108 @@
+{
+  "meta": {
+    "seed": 9054,
+    "scheme": 1,
+    "classes": {
+      "wr": "page",
+      "grid": "plist",
+      "item": "card",
+      "media": "thumb",
+      "title": "ttl",
+      "meta": "row",
+      "price": "amt",
+      "was": "strk",
+      "stock": "avail",
+      "add": "atc",
+      "nav": "topnav",
+      "navItem": "tn-l",
+      "cart": "tn-cart",
+      "bnr": "promo",
+      "bnrIn": "promo-in",
+      "bnrX": "promo-x",
+      "ck": "cookiebar",
+      "ckA": "cb-ok",
+      "ckD": "cb-no",
+      "nl": "subscribe",
+      "nlT": "sub-t",
+      "nlE": "sub-e",
+      "nlB": "sub-b",
+      "ft": "footer",
+      "srt": "sortsel"
+    },
+    "shop": "techtrove",
+    "products": [
+      {
+        "sku": "hp-04",
+        "name": "NimbusLite Wireless Headphones",
+        "price": 59
+      },
+      {
+        "sku": "ch-02",
+        "name": "MagPad Wireless Charger",
+        "price": 24.5
+      },
+      {
+        "sku": "hp-03",
+        "name": "BassKing Wired Headphones",
+        "price": 34.99
+      },
+      {
+        "sku": "eb-02",
+        "name": "Volt Pods Mini Wireless Earbuds",
+        "price": 34.5
+      },
+      {
+        "sku": "sp-03",
+        "name": "PartyCube 360 Speaker",
+        "price": 79
+      },
+      {
+        "sku": "cb-02",
+        "name": "HDMI 2.1 Braided Cable 3m",
+        "price": 18.5
+      }
+    ],
+    "feats": {
+      "cookie": false,
+      "banner": false,
+      "newsletter": false,
+      "sort": false,
+      "wrapDepth": 1
+    }
+  },
+  "tasks": [
+    {
+      "id": "add-sp-03",
+      "type": "actionable",
+      "goal": "Add the PartyCube 360 Speaker to the cart",
+      "target_sku": "sp-03",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"sp-03\"] .atc"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('sp-03')"
+    },
+    {
+      "id": "add-eb-02",
+      "type": "actionable",
+      "goal": "Add the Volt Pods Mini Wireless Earbuds to the cart",
+      "target_sku": "eb-02",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"eb-02\"] .atc"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('eb-02')"
+    },
+    {
+      "id": "impossible",
+      "type": "impossible",
+      "goal": "Track the status of an existing order",
+      "gold_actions": [],
+      "predicate": "true"
+    }
+  ]
+}

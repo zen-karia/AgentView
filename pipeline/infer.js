@@ -9,10 +9,11 @@
 // Decode settings pinned per D17.
 
 const fs = require('fs');
-const { annotate } = require('../src/annotate');
-const { pretrim } = require('../src/pretrim');
+const { annotate, ANNOTATE_VERSION } = require('../src/annotate');
+const { pretrim, PRETRIM_VERSION } = require('../src/pretrim');
 const { validate } = require('../src/validate');
 const { systemPrompt, renderUser } = require('../src/render');
+const log = require('../src/log');
 
 async function main() {
   const [baseUrl, model, pagePath, goal] = process.argv.slice(2);
@@ -58,18 +59,44 @@ async function main() {
   console.log(text);
 
   let parsed;
+  let verdict;
+  let errors = [];
   try {
     // tolerate accidental code fences and <think> blocks
     const cleaned = text.replace(/^[\s\S]*?<\/think>/, '').replace(/```(?:json)?/g, '').trim();
     parsed = JSON.parse(cleaned);
   } catch (e) {
-    console.log(`\nVERDICT: FAIL — response is not parseable JSON (${e.message})`);
-    process.exit(1);
+    verdict = false;
+    errors = [`unparseable JSON: ${e.message}`];
   }
-  const res = validate(parsed, trimmed, raw);
-  console.log(`\nVERDICT: ${res.valid ? 'PASS — valid AgentView output' : 'FAIL — validator rejected'}`);
-  for (const err of res.errors) console.log(`  - ${err}`);
-  process.exit(res.valid ? 0 : 1);
+  if (parsed) {
+    const res = validate(parsed, trimmed, raw);
+    verdict = res.valid;
+    errors = res.errors;
+  }
+  console.log(`\nVERDICT: ${verdict ? 'PASS — valid AgentView output' : 'FAIL — validator rejected'}`);
+  for (const err of errors) console.log(`  - ${err}`);
+
+  // Receipt row per EVAL.md (no-op when MONGODB_URI is unset).
+  if (log.enabled()) {
+    const r = await log.logRow('inference', {
+      kind: 'inference',
+      model,
+      base_url: baseUrl,
+      page: pagePath,
+      goal,
+      valid: verdict,
+      errors,
+      latency_ms: ms,
+      completion_tokens: data.usage?.completion_tokens ?? null,
+      prompt_tokens: data.usage?.prompt_tokens ?? null,
+      annotate_version: ANNOTATE_VERSION,
+      pretrim_version: PRETRIM_VERSION,
+    });
+    console.log(`(logged ${r.logged} row to MongoDB)`);
+    await log.close();
+  }
+  process.exit(verdict ? 0 : 1);
 }
 
 main().catch((e) => {

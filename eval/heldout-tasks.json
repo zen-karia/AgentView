@@ -1,0 +1,59 @@
+{
+  "frozen_at": "2026-07-18T13:47:15.101Z",
+  "rule": "These 5 tasks and the page set below are EVAL-ONLY. No training example may derive from these pages/seeds (enforced by the generator blocklist and Mongo source tags).",
+  "demo_tasks": [
+    {
+      "kind": "generated",
+      "seed": 9001,
+      "page": "data/generated/seed-9001/page.html",
+      "task_id": "add-cheapest-wireless-hp",
+      "goal": "Add the cheapest wireless headphones to the cart",
+      "predicate": "window.__st.cart.includes('hp-04')"
+    },
+    {
+      "kind": "generated",
+      "seed": 9002,
+      "page": "data/generated/seed-9002/page.html",
+      "task_id": "newsletter",
+      "goal": "Sign up for the newsletter with the email user248@example.com",
+      "predicate": "document.querySelector('.n-e').value==='user248@example.com' && window.__st.nl===true"
+    },
+    {
+      "kind": "generated",
+      "seed": 9003,
+      "page": "data/generated/seed-9003/page.html",
+      "task_id": "sort-price-asc",
+      "goal": "Sort the products by price from low to high",
+      "predicate": "document.querySelector('select.os').value==='plh'"
+    }
+  ],
+  "third_party_tasks": [
+    {
+      "kind": "mind2web",
+      "website": "tiktok.music",
+      "annotation_id": "013781df-4391-4533-bcb1-15f6819064f6",
+      "action_uid": "79c4a963-4aa9-49c1-9257-6b0d5069c551",
+      "goal": "What are the romantic reggae musics from BCD Studio that can be used in tik tok series in andorra",
+      "history": [],
+      "gold_backend_node_ids": [
+        "110",
+        "828"
+      ],
+      "page": "eval/heldout-tasks/m2w-1/page.html",
+      "page_sha256": "3501403d83cf7ad56fa79dbae861c895e6122ae97992cb9e269fbc6b4a2c29f2"
+    },
+    {
+      "kind": "mind2web",
+      "website": "nba",
+      "annotation_id": "3284c80e-860e-4734-ae95-7b151d4d0591",
+      "action_uid": "dd635e00-aac0-46cb-a514-48793e2e49ec",
+      "goal": "play the video where Larry Bird made his NBA debut vs the Houston Rockets.",
+      "history": [],
+      "gold_backend_node_ids": [
+        "400"
+      ],
+      "page": "eval/heldout-tasks/m2w-2/page.html",
+      "page_sha256": "a9d32f42daf9bebca893873854cb65d50e52c952574c8d12d5b0ebd0d8d09f40"
+    }
+  ]
+}

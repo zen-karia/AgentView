@@ -1,0 +1,14 @@
+{
+  "kind": "mind2web",
+  "website": "tiktok.music",
+  "annotation_id": "013781df-4391-4533-bcb1-15f6819064f6",
+  "action_uid": "79c4a963-4aa9-49c1-9257-6b0d5069c551",
+  "goal": "What are the romantic reggae musics from BCD Studio that can be used in tik tok series in andorra",
+  "history": [],
+  "gold_backend_node_ids": [
+    "110",
+    "828"
+  ],
+  "page": "eval/heldout-tasks/m2w-1/page.html",
+  "page_sha256": "3501403d83cf7ad56fa79dbae861c895e6122ae97992cb9e269fbc6b4a2c29f2"
+}

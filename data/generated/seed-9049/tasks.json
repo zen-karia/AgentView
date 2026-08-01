@@ -1,0 +1,113 @@
+{
+  "meta": {
+    "seed": 9049,
+    "scheme": 0,
+    "classes": {
+      "wr": "wr",
+      "grid": "grid",
+      "item": "itm",
+      "media": "im",
+      "title": "t",
+      "meta": "mt",
+      "price": "pr",
+      "was": "was",
+      "stock": "st",
+      "add": "go",
+      "nav": "nv",
+      "navItem": "nv-i",
+      "cart": "nv-c",
+      "bnr": "bnr",
+      "bnrIn": "bnr-in",
+      "bnrX": "bnr-x",
+      "ck": "ckb",
+      "ckA": "ck-a",
+      "ckD": "ck-d",
+      "nl": "nl",
+      "nlT": "nl-t",
+      "nlE": "nl-e",
+      "nlB": "nl-b",
+      "ft": "ft",
+      "srt": "ssel"
+    },
+    "shop": "wirewarehouse",
+    "products": [
+      {
+        "sku": "hp-05",
+        "name": "StudioOne Monitor Headphones",
+        "price": 129
+      },
+      {
+        "sku": "eb-02",
+        "name": "Volt Pods Mini Wireless Earbuds",
+        "price": 34.5
+      },
+      {
+        "sku": "hp-01",
+        "name": "SoundMax Pro Wireless Headphones",
+        "price": 89.99
+      },
+      {
+        "sku": "hp-03",
+        "name": "BassKing Wired Headphones",
+        "price": 34.99
+      },
+      {
+        "sku": "sp-01",
+        "name": "BoomBox Mini Bluetooth Speaker",
+        "price": 59.99
+      },
+      {
+        "sku": "cb-01",
+        "name": "Volt 100W USB-C Cable 2m",
+        "price": 12.99
+      },
+      {
+        "sku": "ch-01",
+        "name": "Volt 65W GaN Wall Charger",
+        "price": 29.99
+      }
+    ],
+    "feats": {
+      "cookie": false,
+      "banner": true,
+      "newsletter": false,
+      "sort": false,
+      "wrapDepth": 1
+    }
+  },
+  "tasks": [
+    {
+      "id": "add-cb-01",
+      "type": "actionable",
+      "goal": "Add the Volt 100W USB-C Cable 2m to the cart",
+      "target_sku": "cb-01",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"cb-01\"] .go"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('cb-01')"
+    },
+    {
+      "id": "add-eb-02",
+      "type": "actionable",
+      "goal": "Add the Volt Pods Mini Wireless Earbuds to the cart",
+      "target_sku": "eb-02",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"eb-02\"] .go"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('eb-02')"
+    },
+    {
+      "id": "impossible",
+      "type": "impossible",
+      "goal": "Track the status of an existing order",
+      "gold_actions": [],
+      "predicate": "true"
+    }
+  ]
+}

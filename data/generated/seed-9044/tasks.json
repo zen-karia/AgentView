@@ -1,0 +1,113 @@
+{
+  "meta": {
+    "seed": 9044,
+    "scheme": 2,
+    "classes": {
+      "wr": "main-wrap",
+      "grid": "gr",
+      "item": "pi",
+      "media": "pic",
+      "title": "nm",
+      "meta": "ln",
+      "price": "prc",
+      "was": "old",
+      "stock": "stk",
+      "add": "buy",
+      "nav": "hdr-nav",
+      "navItem": "h-l",
+      "cart": "h-cart",
+      "bnr": "hero-strip",
+      "bnrIn": "hs-in",
+      "bnrX": "hs-close",
+      "ck": "gdpr",
+      "ckA": "g-acc",
+      "ckD": "g-dec",
+      "nl": "newsl",
+      "nlT": "n-t",
+      "nlE": "n-e",
+      "nlB": "n-go",
+      "ft": "btm",
+      "srt": "os"
+    },
+    "shop": "techtrove",
+    "products": [
+      {
+        "sku": "ch-02",
+        "name": "MagPad Wireless Charger",
+        "price": 24.5
+      },
+      {
+        "sku": "hp-05",
+        "name": "StudioOne Monitor Headphones",
+        "price": 129
+      },
+      {
+        "sku": "eb-03",
+        "name": "AquaBuds Sport Earbuds",
+        "price": 44
+      },
+      {
+        "sku": "hp-02",
+        "name": "AudioPhile X2 Wireless Headphones",
+        "price": 249
+      },
+      {
+        "sku": "eb-02",
+        "name": "Volt Pods Mini Wireless Earbuds",
+        "price": 34.5
+      },
+      {
+        "sku": "eb-01",
+        "name": "SoundMax Buds Air Wireless Earbuds",
+        "price": 59.99
+      },
+      {
+        "sku": "sp-03",
+        "name": "PartyCube 360 Speaker",
+        "price": 79
+      }
+    ],
+    "feats": {
+      "cookie": false,
+      "banner": true,
+      "newsletter": false,
+      "sort": false,
+      "wrapDepth": 3
+    }
+  },
+  "tasks": [
+    {
+      "id": "add-hp-05",
+      "type": "actionable",
+      "goal": "Add the StudioOne Monitor Headphones to the cart",
+      "target_sku": "hp-05",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"hp-05\"] .buy"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('hp-05')"
+    },
+    {
+      "id": "add-eb-01",
+      "type": "actionable",
+      "goal": "Add the SoundMax Buds Air Wireless Earbuds to the cart",
+      "target_sku": "eb-01",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"eb-01\"] .buy"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('eb-01')"
+    },
+    {
+      "id": "impossible",
+      "type": "impossible",
+      "goal": "Track the status of an existing order",
+      "gold_actions": [],
+      "predicate": "true"
+    }
+  ]
+}

@@ -100,8 +100,19 @@ Consolidated consequence: 21-case negative suite; every entry is a formerly-work
 
 ## Open items / risks
 
-1. **Gemini API key not yet configured** — blocks bulk-tier labeling (Stage B). Also decide teacher model version.
-2. **Site generator + verifier not built** — the Stage A remainder; blocks spine tier, held-out freeze, baselines.
+1. **Gemini API key** — user has it (2026-07-18); pending: add `GEMINI_API_KEY=` to `.env`, then verify with a models-list call. Teacher plan: Gemini primary; optional GLM-5.2 second teacher for the synthetic-page slice (loop-breaking) if a Z.ai/OpenRouter key appears.
+   **MongoDB logging: LIVE** — Atlas M0, `.env` configured, write+read verified (~1s round trip); `src/log.js` layer + inference receipts wired; collections: meta (live), inference (wired), examples/eval (with the generator build).
+2. **Site generator + verifier: LIVE (2026-07-18).** `pipeline/generate-site.js` — seeded
+   (mulberry32, hash-identical regeneration verified), 3 class-name schemes, feature toggles
+   (cookie/banner/newsletter/sort/wrapper-depth), emits (page, tasks) where every task carries
+   goal + gold_actions + a JS success predicate; held-out seed blocklist enforced both directions.
+   `pipeline/verify.js` — Playwright/Chromium, injects the identical data-av-id annotation
+   (criteria imported from src/annotate.js), executes actions, evaluates predicates in-page,
+   logs to Mongo `verify`. Verified: seeds 1–2 all gold tasks PASS; `--no-act` sanity mode
+   confirms predicates are false without actions (no trivially-true GRPO rewards). Generated
+   pages trim to ~1k tokens — small; a long-page tier (multi-category/long lists) is the next
+   generator upgrade. Remaining before mass data: goal-phrasing diversity (teacher paraphrases)
+   and the gold-output emitter (generator → AgentView JSON training rows).
 3. **Held-out tasks not yet authored/committed** — `heldout-seeds.json` still says `tasks_committed: false`; must happen before any mass generation.
 4. **Base zero-shot serving path — RESOLVED (surveyed 2026-07-18).** No hosted free tier serves
    small Qwen3.5 (0.8B–4B) at all; OpenRouter has only the 9B, paid (~$1–1.50 for our whole eval

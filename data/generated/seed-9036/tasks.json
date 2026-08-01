@@ -1,0 +1,131 @@
+{
+  "meta": {
+    "seed": 9036,
+    "scheme": 2,
+    "classes": {
+      "wr": "main-wrap",
+      "grid": "gr",
+      "item": "pi",
+      "media": "pic",
+      "title": "nm",
+      "meta": "ln",
+      "price": "prc",
+      "was": "old",
+      "stock": "stk",
+      "add": "buy",
+      "nav": "hdr-nav",
+      "navItem": "h-l",
+      "cart": "h-cart",
+      "bnr": "hero-strip",
+      "bnrIn": "hs-in",
+      "bnrX": "hs-close",
+      "ck": "gdpr",
+      "ckA": "g-acc",
+      "ckD": "g-dec",
+      "nl": "newsl",
+      "nlT": "n-t",
+      "nlE": "n-e",
+      "nlB": "n-go",
+      "ft": "btm",
+      "srt": "os"
+    },
+    "shop": "gadgetbin",
+    "products": [
+      {
+        "sku": "cb-01",
+        "name": "Volt 100W USB-C Cable 2m",
+        "price": 12.99
+      },
+      {
+        "sku": "cb-02",
+        "name": "HDMI 2.1 Braided Cable 3m",
+        "price": 18.5
+      },
+      {
+        "sku": "eb-02",
+        "name": "Volt Pods Mini Wireless Earbuds",
+        "price": 34.5
+      },
+      {
+        "sku": "ch-02",
+        "name": "MagPad Wireless Charger",
+        "price": 24.5
+      },
+      {
+        "sku": "eb-01",
+        "name": "SoundMax Buds Air Wireless Earbuds",
+        "price": 59.99
+      },
+      {
+        "sku": "hp-05",
+        "name": "StudioOne Monitor Headphones",
+        "price": 129
+      },
+      {
+        "sku": "pb-01",
+        "name": "Volt PowerBank 20000mAh",
+        "price": 44.99
+      }
+    ],
+    "feats": {
+      "cookie": false,
+      "banner": true,
+      "newsletter": true,
+      "sort": false,
+      "wrapDepth": 2
+    }
+  },
+  "tasks": [
+    {
+      "id": "add-pb-01",
+      "type": "actionable",
+      "goal": "Add the Volt PowerBank 20000mAh to the cart",
+      "target_sku": "pb-01",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"pb-01\"] .buy"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('pb-01')"
+    },
+    {
+      "id": "add-cb-01",
+      "type": "actionable",
+      "goal": "Add the Volt 100W USB-C Cable 2m to the cart",
+      "target_sku": "cb-01",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"cb-01\"] .buy"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('cb-01')"
+    },
+    {
+      "id": "newsletter",
+      "type": "actionable",
+      "goal": "Sign up for the newsletter with the email user894@example.com",
+      "email": "user894@example.com",
+      "gold_actions": [
+        {
+          "kind": "type",
+          "selector": ".n-e",
+          "value": "user894@example.com"
+        },
+        {
+          "kind": "click",
+          "selector": ".n-go"
+        }
+      ],
+      "predicate": "document.querySelector('.n-e').value==='user894@example.com' && window.__st.nl===true"
+    },
+    {
+      "id": "impossible",
+      "type": "impossible",
+      "goal": "Track the status of an existing order",
+      "gold_actions": [],
+      "predicate": "true"
+    }
+  ]
+}

@@ -18,7 +18,7 @@ import re
 from schemas import ActionChoice, AgentView
 
 # Override with GEMINI_MODEL. Flash is cheap + fast, right for a fixed reasoner.
-_GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
+_GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-flash-latest")
 
 
 def decide(
@@ -152,7 +152,9 @@ Reply with JSON only: {{"thought": string, "done": boolean, "name": string, "par
         contents=prompt,
         config=types.GenerateContentConfig(response_mime_type="application/json"),
     )
-    data = json.loads(resp.text)
+    from translator import loads_first_json
+
+    data = loads_first_json(resp.text)
 
     # Real input-token usage; fall back to the estimate if the field is absent.
     usage = getattr(resp, "usage_metadata", None)

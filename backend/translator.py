@@ -21,7 +21,18 @@ import os
 from prompts import translate_prompt
 from schemas import ActionDef, AgentView, ContentItem, TranslatorInput
 
-_GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
+_GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-flash-latest")
+
+
+def loads_first_json(text: str) -> dict:
+    """Parse the first JSON object out of an LLM response, tolerating markdown
+    fences and any trailing 'extra data' some models append after the object."""
+    s = text.strip()
+    start = s.find("{")
+    if start > 0:  # skip a leading ```json fence or any prose before the object
+        s = s[start:]
+    obj, _ = json.JSONDecoder().raw_decode(s)  # ignores trailing extra data
+    return obj
 
 
 def translate(
@@ -180,7 +191,7 @@ def _gemini_translate(inp: TranslatorInput) -> tuple[AgentView, int]:
         contents=prompt,
         config=types.GenerateContentConfig(response_mime_type="application/json"),
     )
-    data = json.loads(resp.text)
+    data = loads_first_json(resp.text)
     view = _agentview_from_dict(data)
     usage = getattr(resp, "usage_metadata", None)
     tokens = getattr(usage, "prompt_token_count", None) or len(inp.page.html) // 4
@@ -236,7 +247,7 @@ def _trained_translate(inp: TranslatorInput) -> tuple[AgentView, int]:
         response_format={"type": "json_schema",
                          "json_schema": {"schema": freesolo.AGENTVIEW_SCHEMA}},
     )
-    data = json.loads(resp.choices[0].message.content)
+    data = loads_first_json(resp.choices[0].message.content)
     view = _agentview_from_dict(data)
     usage = getattr(resp, "usage", None)
     tokens = getattr(usage, "prompt_tokens", None) or len(inp.page.html) // 4

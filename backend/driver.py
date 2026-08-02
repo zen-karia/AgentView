@@ -93,7 +93,14 @@ class FakeShopDriver:
 
     def execute(self, selector: str, action_name: str, params: dict[str, Any]) -> None:
         if action_name == "add_to_cart":
-            pid = params.get("product_id")
+            # Selector-driven, like a real browser click: the resolved selector
+            # ("#add-p1") is the source of truth. Fall back to a product_id param.
+            # Robust whether the translator parameterized the action or baked the id
+            # into the selector (real Gemini does the latter).
+            pid = None
+            if selector.startswith("#add-"):
+                pid = selector[len("#add-"):]
+            pid = pid or params.get("product_id")
             if pid and any(p["id"] == pid for p in _PRODUCTS):
                 self.cart.append(pid)
 

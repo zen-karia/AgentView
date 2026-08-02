@@ -21,7 +21,7 @@ import os
 from prompts import translate_prompt
 from schemas import ActionDef, AgentView, ContentItem, TranslatorInput
 
-_GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-flash-latest")
+_GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.1-flash-lite")
 
 
 def loads_first_json(text: str) -> dict:
@@ -186,11 +186,13 @@ def _gemini_translate(inp: TranslatorInput) -> tuple[AgentView, int]:
 
     prompt = translate_prompt(inp.goal, inp.page.url, inp.page.html)
 
-    resp = client.models.generate_content(
+    from gemini_retry import with_retry
+
+    resp = with_retry(lambda: client.models.generate_content(
         model=_GEMINI_MODEL,
         contents=prompt,
         config=types.GenerateContentConfig(response_mime_type="application/json"),
-    )
+    ))
     data = loads_first_json(resp.text)
     view = _agentview_from_dict(data)
     usage = getattr(resp, "usage_metadata", None)

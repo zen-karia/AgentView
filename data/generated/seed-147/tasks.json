@@ -1,0 +1,143 @@
+{
+  "meta": {
+    "seed": 147,
+    "scheme": 1,
+    "classes": {
+      "wr": "page",
+      "grid": "plist",
+      "item": "card",
+      "media": "thumb",
+      "title": "ttl",
+      "meta": "row",
+      "price": "amt",
+      "was": "strk",
+      "stock": "avail",
+      "add": "atc",
+      "nav": "topnav",
+      "navItem": "tn-l",
+      "cart": "tn-cart",
+      "bnr": "promo",
+      "bnrIn": "promo-in",
+      "bnrX": "promo-x",
+      "ck": "cookiebar",
+      "ckA": "cb-ok",
+      "ckD": "cb-no",
+      "nl": "subscribe",
+      "nlT": "sub-t",
+      "nlE": "sub-e",
+      "nlB": "sub-b",
+      "ft": "footer",
+      "srt": "sortsel"
+    },
+    "shop": "gadgetbin",
+    "products": [
+      {
+        "sku": "ch-01",
+        "name": "Volt 65W GaN Wall Charger",
+        "price": 29.99
+      },
+      {
+        "sku": "sp-02",
+        "name": "BassKing Tower Speaker",
+        "price": 189
+      },
+      {
+        "sku": "hp-02",
+        "name": "AudioPhile X2 Wireless Headphones",
+        "price": 249
+      },
+      {
+        "sku": "sp-03",
+        "name": "PartyCube 360 Speaker",
+        "price": 79
+      },
+      {
+        "sku": "hp-01",
+        "name": "SoundMax Pro Wireless Headphones",
+        "price": 89.99
+      },
+      {
+        "sku": "sp-01",
+        "name": "BoomBox Mini Bluetooth Speaker",
+        "price": 59.99
+      }
+    ],
+    "feats": {
+      "cookie": false,
+      "banner": true,
+      "newsletter": true,
+      "sort": false,
+      "wrapDepth": 2
+    }
+  },
+  "tasks": [
+    {
+      "id": "add-hp-02",
+      "type": "actionable",
+      "goal": "Add the AudioPhile X2 Wireless Headphones to the cart",
+      "target_sku": "hp-02",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"hp-02\"] .atc"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('hp-02')"
+    },
+    {
+      "id": "add-sp-03",
+      "type": "actionable",
+      "goal": "Add the PartyCube 360 Speaker to the cart",
+      "target_sku": "sp-03",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"sp-03\"] .atc"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('sp-03')"
+    },
+    {
+      "id": "add-cheapest-wireless-hp",
+      "type": "actionable",
+      "goal": "Add the cheapest wireless headphones to the cart",
+      "target_sku": "hp-01",
+      "candidate_skus": [
+        "hp-02",
+        "hp-01"
+      ],
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"hp-01\"] .atc"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('hp-01')"
+    },
+    {
+      "id": "newsletter",
+      "type": "actionable",
+      "goal": "Sign up for the newsletter with the email user653@example.com",
+      "email": "user653@example.com",
+      "gold_actions": [
+        {
+          "kind": "type",
+          "selector": ".sub-e",
+          "value": "user653@example.com"
+        },
+        {
+          "kind": "click",
+          "selector": ".sub-b"
+        }
+      ],
+      "predicate": "document.querySelector('.sub-e').value==='user653@example.com' && window.__st.nl===true"
+    },
+    {
+      "id": "impossible",
+      "type": "impossible",
+      "goal": "Track the status of an existing order",
+      "gold_actions": [],
+      "predicate": "true"
+    }
+  ]
+}

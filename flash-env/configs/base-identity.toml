@@ -1,0 +1,23 @@
+# Identity-LoRA zero-shot baseline (LOGBOOK: base zero-shot serving path).
+# LoRA init has B=0, so an adapter trained for 1 step at lr~0 IS the base model
+# — deployed through the identical Flash serving stack as the real fine-tunes.
+# Submit per size with:
+#   flash train configs/base-identity.toml --set model=Qwen/Qwen3.5-2B --cost
+#   flash train configs/base-identity.toml --set model=Qwen/Qwen3.5-2B --background
+
+model = "Qwen/Qwen3.5-2B"
+algorithm = "sft"
+seed = 42
+
+[environment]
+id = "ht6-team/agentview"
+
+[train]
+epochs = 1
+max_examples = 19
+max_steps = 1
+lora_rank = 8
+lora_alpha = 16
+learning_rate = 1e-9
+batch_size = 4
+max_context_tokens = 8192

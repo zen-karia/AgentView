@@ -1,0 +1,140 @@
+{
+  "meta": {
+    "seed": 103,
+    "scheme": 0,
+    "classes": {
+      "wr": "wr",
+      "grid": "grid",
+      "item": "itm",
+      "media": "im",
+      "title": "t",
+      "meta": "mt",
+      "price": "pr",
+      "was": "was",
+      "stock": "st",
+      "add": "go",
+      "nav": "nv",
+      "navItem": "nv-i",
+      "cart": "nv-c",
+      "bnr": "bnr",
+      "bnrIn": "bnr-in",
+      "bnrX": "bnr-x",
+      "ck": "ckb",
+      "ckA": "ck-a",
+      "ckD": "ck-d",
+      "nl": "nl",
+      "nlT": "nl-t",
+      "nlE": "nl-e",
+      "nlB": "nl-b",
+      "ft": "ft",
+      "srt": "ssel"
+    },
+    "shop": "audioalley",
+    "products": [
+      {
+        "sku": "hp-04",
+        "name": "NimbusLite Wireless Headphones",
+        "price": 59
+      },
+      {
+        "sku": "ch-02",
+        "name": "MagPad Wireless Charger",
+        "price": 24.5
+      },
+      {
+        "sku": "eb-02",
+        "name": "Volt Pods Mini Wireless Earbuds",
+        "price": 34.5
+      },
+      {
+        "sku": "cb-01",
+        "name": "Volt 100W USB-C Cable 2m",
+        "price": 12.99
+      },
+      {
+        "sku": "cb-02",
+        "name": "HDMI 2.1 Braided Cable 3m",
+        "price": 18.5
+      },
+      {
+        "sku": "sp-01",
+        "name": "BoomBox Mini Bluetooth Speaker",
+        "price": 59.99
+      },
+      {
+        "sku": "sp-02",
+        "name": "BassKing Tower Speaker",
+        "price": 189
+      },
+      {
+        "sku": "sp-03",
+        "name": "PartyCube 360 Speaker",
+        "price": 79
+      },
+      {
+        "sku": "hp-02",
+        "name": "AudioPhile X2 Wireless Headphones",
+        "price": 249
+      }
+    ],
+    "feats": {
+      "cookie": false,
+      "banner": true,
+      "newsletter": false,
+      "sort": false,
+      "wrapDepth": 2
+    }
+  },
+  "tasks": [
+    {
+      "id": "add-eb-02",
+      "type": "actionable",
+      "goal": "Add the Volt Pods Mini Wireless Earbuds to the cart",
+      "target_sku": "eb-02",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"eb-02\"] .go"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('eb-02')"
+    },
+    {
+      "id": "add-hp-02",
+      "type": "actionable",
+      "goal": "Add the AudioPhile X2 Wireless Headphones to the cart",
+      "target_sku": "hp-02",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"hp-02\"] .go"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('hp-02')"
+    },
+    {
+      "id": "add-cheapest-wireless-hp",
+      "type": "actionable",
+      "goal": "Add the cheapest wireless headphones to the cart",
+      "target_sku": "hp-04",
+      "candidate_skus": [
+        "hp-04",
+        "hp-02"
+      ],
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"hp-04\"] .go"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('hp-04')"
+    },
+    {
+      "id": "impossible",
+      "type": "impossible",
+      "goal": "Track the status of an existing order",
+      "gold_actions": [],
+      "predicate": "true"
+    }
+  ]
+}

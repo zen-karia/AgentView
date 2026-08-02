@@ -143,3 +143,43 @@ risk grows with length, so long examples are a slice, not the default); (3) NEW 
 pretrim-vs-raw-input on pages that fit either way — the first honest measurement of what pretrim
 itself buys; (4) pretrim's pitch reframed from "fit the window" to "signal density + 3–10× cheaper
 tokens per call".
+
+## Update 2026-07-18 (evening): Stage B/C foundations executed
+
+- **Held-out freeze COMMITTED** (`b8a7901`, pushed to main): 5 tasks — 3 on reserved seeds
+  (9001 cheapest-wireless, 9002 newsletter, 9003 sort) + 2 Mind2Web real-web pages
+  (tiktok.music, nba; action-level gold = backend_node_ids); held-out page set = seeds
+  9010–9059, 50 pages / 256 goals, sha256-manifested in eval/pageset-manifest.json.
+  contracts/heldout-seeds.json flipped to committed. Mind2Web pages fetched via the HF
+  datasets-server rows API (full 85KB cleaned_html with embedded backend_node_id — no bulk download).
+- **Gold emitter LIVE** (pipeline/emit-gold.js): 267 validator-passed spine rows from seeds
+  100–149 → data/rows/gold-100-149.jsonl, all logged to Mongo `examples`
+  (source=parametric-gold, tier=spine). Zero teacher cost; refuses held-out seeds.
+- **Teacher labeler BUILT** (pipeline/teacher.js: Gemini OpenAI-compat endpoint, frozen template,
+  validator rejection-sampling, per-attempt Mongo logging, pass-rate report). First batch
+  BLOCKED: the Gemini key's project has **depleted prepayment credits**
+  (429 RESOURCE_EXHAUSTED, "prepayment credits are depleted") — user action: add credits or
+  mint a free-tier key at ai.studio/projects. Pipeline is ready to run unchanged.
+- **Identity-LoRA baselines TRAINED** (max_steps=1, lr=1e-9 — accepted by the platform):
+  2B flash-1784382648-91484fce ($0.0022), 4B flash-1784382650-2530171a ($0.0046),
+  9B flash-1784382651-5d5bd3f9 ($0.0094). Deployments in progress.
+- **Eval harness BUILT** (pipeline/eval.js): scores validator pass, element recall vs gold
+  elements (isSameNode), step match (element+kind), full-task match, impossible-goal handling;
+  logs rows + summary to Mongo `eval`.
+- Session spend so far: ~**$0.03** total training. Budget cap $149/session — untouched.
+
+## First baseline numbers (held-out seeds 9010-9014, 26 tasks/arm, logged to Mongo `eval`)
+
+| Arm (zero-shot via identity-LoRA) | valid rate | element recall | full-task match | impossible OK | avg latency |
+|---|---|---|---|---|---|
+| base-2b (flash-1784382648-91484fce) | 0.0% | 0.0% | 0.0% | 0% | 4.8 s |
+| base-4b (flash-1784382650-2530171a) | 23.1% | 4.2% | 4.8% | 100% | 6.1 s |
+| base-9b (flash-1784382651-5d5bd3f9) | 23.1% | 4.2% | 4.8% | 100% | 9.8 s |
+
+Reading: zero-shot bases produce plausible-shaped JSON but fail the strict contract — the 2B broke
+contract rules (value_hint on click) and picked wrong elements; 4B/9B pass essentially only the
+impossible-goal cases (both emit empty arrays correctly — 100% impossible handling) plus one lucky
+element. Differentiation probe confirmed distinct models (4B classified a USB-C cable as wireless
+headphones; 9B picked the correct candidate set). These are the "before" rows of the headline
+table. Gemini arm + teacher batch BLOCKED on depleted Gemini project credits (user fixing).
+Identity-LoRA total cost: $0.016. Session spend to date ≈ $0.05 of the $149 cap.

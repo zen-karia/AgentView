@@ -1,0 +1,171 @@
+{
+  "meta": {
+    "seed": 133,
+    "scheme": 1,
+    "classes": {
+      "wr": "page",
+      "grid": "plist",
+      "item": "card",
+      "media": "thumb",
+      "title": "ttl",
+      "meta": "row",
+      "price": "amt",
+      "was": "strk",
+      "stock": "avail",
+      "add": "atc",
+      "nav": "topnav",
+      "navItem": "tn-l",
+      "cart": "tn-cart",
+      "bnr": "promo",
+      "bnrIn": "promo-in",
+      "bnrX": "promo-x",
+      "ck": "cookiebar",
+      "ckA": "cb-ok",
+      "ckD": "cb-no",
+      "nl": "subscribe",
+      "nlT": "sub-t",
+      "nlE": "sub-e",
+      "nlB": "sub-b",
+      "ft": "footer",
+      "srt": "sortsel"
+    },
+    "shop": "audioalley",
+    "products": [
+      {
+        "sku": "sp-01",
+        "name": "BoomBox Mini Bluetooth Speaker",
+        "price": 59.99
+      },
+      {
+        "sku": "hp-03",
+        "name": "BassKing Wired Headphones",
+        "price": 34.99
+      },
+      {
+        "sku": "cb-01",
+        "name": "Volt 100W USB-C Cable 2m",
+        "price": 12.99
+      },
+      {
+        "sku": "hp-04",
+        "name": "NimbusLite Wireless Headphones",
+        "price": 59
+      },
+      {
+        "sku": "ch-01",
+        "name": "Volt 65W GaN Wall Charger",
+        "price": 29.99
+      },
+      {
+        "sku": "hp-02",
+        "name": "AudioPhile X2 Wireless Headphones",
+        "price": 249
+      },
+      {
+        "sku": "sp-03",
+        "name": "PartyCube 360 Speaker",
+        "price": 79
+      },
+      {
+        "sku": "sp-02",
+        "name": "BassKing Tower Speaker",
+        "price": 189
+      },
+      {
+        "sku": "hp-01",
+        "name": "SoundMax Pro Wireless Headphones",
+        "price": 89.99
+      }
+    ],
+    "feats": {
+      "cookie": true,
+      "banner": false,
+      "newsletter": true,
+      "sort": false,
+      "wrapDepth": 1
+    }
+  },
+  "tasks": [
+    {
+      "id": "add-hp-01",
+      "type": "actionable",
+      "goal": "Add the SoundMax Pro Wireless Headphones to the cart",
+      "target_sku": "hp-01",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"hp-01\"] .atc"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('hp-01')"
+    },
+    {
+      "id": "add-hp-04",
+      "type": "actionable",
+      "goal": "Add the NimbusLite Wireless Headphones to the cart",
+      "target_sku": "hp-04",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"hp-04\"] .atc"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('hp-04')"
+    },
+    {
+      "id": "add-cheapest-wireless-hp",
+      "type": "actionable",
+      "goal": "Add the cheapest wireless headphones to the cart",
+      "target_sku": "hp-04",
+      "candidate_skus": [
+        "hp-04",
+        "hp-02",
+        "hp-01"
+      ],
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"hp-04\"] .atc"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('hp-04')"
+    },
+    {
+      "id": "dismiss-cookie",
+      "type": "actionable",
+      "goal": "Dismiss the cookie banner",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": ".cb-ok"
+        }
+      ],
+      "predicate": "!document.querySelector('.cookiebar')"
+    },
+    {
+      "id": "newsletter",
+      "type": "actionable",
+      "goal": "Sign up for the newsletter with the email user570@example.com",
+      "email": "user570@example.com",
+      "gold_actions": [
+        {
+          "kind": "type",
+          "selector": ".sub-e",
+          "value": "user570@example.com"
+        },
+        {
+          "kind": "click",
+          "selector": ".sub-b"
+        }
+      ],
+      "predicate": "document.querySelector('.sub-e').value==='user570@example.com' && window.__st.nl===true"
+    },
+    {
+      "id": "impossible",
+      "type": "impossible",
+      "goal": "Track the status of an existing order",
+      "gold_actions": [],
+      "predicate": "true"
+    }
+  ]
+}

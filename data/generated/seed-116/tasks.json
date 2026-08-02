@@ -1,0 +1,140 @@
+{
+  "meta": {
+    "seed": 116,
+    "scheme": 2,
+    "classes": {
+      "wr": "main-wrap",
+      "grid": "gr",
+      "item": "pi",
+      "media": "pic",
+      "title": "nm",
+      "meta": "ln",
+      "price": "prc",
+      "was": "old",
+      "stock": "stk",
+      "add": "buy",
+      "nav": "hdr-nav",
+      "navItem": "h-l",
+      "cart": "h-cart",
+      "bnr": "hero-strip",
+      "bnrIn": "hs-in",
+      "bnrX": "hs-close",
+      "ck": "gdpr",
+      "ckA": "g-acc",
+      "ckD": "g-dec",
+      "nl": "newsl",
+      "nlT": "n-t",
+      "nlE": "n-e",
+      "nlB": "n-go",
+      "ft": "btm",
+      "srt": "os"
+    },
+    "shop": "audioalley",
+    "products": [
+      {
+        "sku": "hp-03",
+        "name": "BassKing Wired Headphones",
+        "price": 34.99
+      },
+      {
+        "sku": "sp-02",
+        "name": "BassKing Tower Speaker",
+        "price": 189
+      },
+      {
+        "sku": "cb-02",
+        "name": "HDMI 2.1 Braided Cable 3m",
+        "price": 18.5
+      },
+      {
+        "sku": "cb-01",
+        "name": "Volt 100W USB-C Cable 2m",
+        "price": 12.99
+      },
+      {
+        "sku": "eb-03",
+        "name": "AquaBuds Sport Earbuds",
+        "price": 44
+      },
+      {
+        "sku": "hp-02",
+        "name": "AudioPhile X2 Wireless Headphones",
+        "price": 249
+      },
+      {
+        "sku": "hp-04",
+        "name": "NimbusLite Wireless Headphones",
+        "price": 59
+      },
+      {
+        "sku": "ch-02",
+        "name": "MagPad Wireless Charger",
+        "price": 24.5
+      },
+      {
+        "sku": "pb-01",
+        "name": "Volt PowerBank 20000mAh",
+        "price": 44.99
+      }
+    ],
+    "feats": {
+      "cookie": false,
+      "banner": true,
+      "newsletter": false,
+      "sort": false,
+      "wrapDepth": 1
+    }
+  },
+  "tasks": [
+    {
+      "id": "add-cb-02",
+      "type": "actionable",
+      "goal": "Add the HDMI 2.1 Braided Cable 3m to the cart",
+      "target_sku": "cb-02",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"cb-02\"] .buy"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('cb-02')"
+    },
+    {
+      "id": "add-cb-01",
+      "type": "actionable",
+      "goal": "Add the Volt 100W USB-C Cable 2m to the cart",
+      "target_sku": "cb-01",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"cb-01\"] .buy"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('cb-01')"
+    },
+    {
+      "id": "add-cheapest-wireless-hp",
+      "type": "actionable",
+      "goal": "Add the cheapest wireless headphones to the cart",
+      "target_sku": "hp-04",
+      "candidate_skus": [
+        "hp-02",
+        "hp-04"
+      ],
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"hp-04\"] .buy"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('hp-04')"
+    },
+    {
+      "id": "impossible",
+      "type": "impossible",
+      "goal": "Track the status of an existing order",
+      "gold_actions": [],
+      "predicate": "true"
+    }
+  ]
+}

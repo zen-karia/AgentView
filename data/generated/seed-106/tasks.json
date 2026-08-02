@@ -1,0 +1,154 @@
+{
+  "meta": {
+    "seed": 106,
+    "scheme": 0,
+    "classes": {
+      "wr": "wr",
+      "grid": "grid",
+      "item": "itm",
+      "media": "im",
+      "title": "t",
+      "meta": "mt",
+      "price": "pr",
+      "was": "was",
+      "stock": "st",
+      "add": "go",
+      "nav": "nv",
+      "navItem": "nv-i",
+      "cart": "nv-c",
+      "bnr": "bnr",
+      "bnrIn": "bnr-in",
+      "bnrX": "bnr-x",
+      "ck": "ckb",
+      "ckA": "ck-a",
+      "ckD": "ck-d",
+      "nl": "nl",
+      "nlT": "nl-t",
+      "nlE": "nl-e",
+      "nlB": "nl-b",
+      "ft": "ft",
+      "srt": "ssel"
+    },
+    "shop": "wirewarehouse",
+    "products": [
+      {
+        "sku": "cb-02",
+        "name": "HDMI 2.1 Braided Cable 3m",
+        "price": 18.5
+      },
+      {
+        "sku": "ch-01",
+        "name": "Volt 65W GaN Wall Charger",
+        "price": 29.99
+      },
+      {
+        "sku": "sp-03",
+        "name": "PartyCube 360 Speaker",
+        "price": 79
+      },
+      {
+        "sku": "eb-01",
+        "name": "SoundMax Buds Air Wireless Earbuds",
+        "price": 59.99
+      },
+      {
+        "sku": "hp-03",
+        "name": "BassKing Wired Headphones",
+        "price": 34.99
+      },
+      {
+        "sku": "ch-02",
+        "name": "MagPad Wireless Charger",
+        "price": 24.5
+      },
+      {
+        "sku": "eb-02",
+        "name": "Volt Pods Mini Wireless Earbuds",
+        "price": 34.5
+      },
+      {
+        "sku": "hp-05",
+        "name": "StudioOne Monitor Headphones",
+        "price": 129
+      },
+      {
+        "sku": "pb-01",
+        "name": "Volt PowerBank 20000mAh",
+        "price": 44.99
+      }
+    ],
+    "feats": {
+      "cookie": false,
+      "banner": false,
+      "newsletter": true,
+      "sort": true,
+      "wrapDepth": 1
+    }
+  },
+  "tasks": [
+    {
+      "id": "add-hp-03",
+      "type": "actionable",
+      "goal": "Add the BassKing Wired Headphones to the cart",
+      "target_sku": "hp-03",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"hp-03\"] .go"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('hp-03')"
+    },
+    {
+      "id": "add-ch-01",
+      "type": "actionable",
+      "goal": "Add the Volt 65W GaN Wall Charger to the cart",
+      "target_sku": "ch-01",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"ch-01\"] .go"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('ch-01')"
+    },
+    {
+      "id": "newsletter",
+      "type": "actionable",
+      "goal": "Sign up for the newsletter with the email user281@example.com",
+      "email": "user281@example.com",
+      "gold_actions": [
+        {
+          "kind": "type",
+          "selector": ".nl-e",
+          "value": "user281@example.com"
+        },
+        {
+          "kind": "click",
+          "selector": ".nl-b"
+        }
+      ],
+      "predicate": "document.querySelector('.nl-e').value==='user281@example.com' && window.__st.nl===true"
+    },
+    {
+      "id": "sort-price-asc",
+      "type": "actionable",
+      "goal": "Sort the products by price from low to high",
+      "gold_actions": [
+        {
+          "kind": "select",
+          "selector": "select.ssel",
+          "value": "Price: low to high"
+        }
+      ],
+      "predicate": "document.querySelector('select.ssel').value==='plh'"
+    },
+    {
+      "id": "impossible",
+      "type": "impossible",
+      "goal": "Track the status of an existing order",
+      "gold_actions": [],
+      "predicate": "true"
+    }
+  ]
+}

@@ -1,0 +1,143 @@
+{
+  "meta": {
+    "seed": 137,
+    "scheme": 2,
+    "classes": {
+      "wr": "main-wrap",
+      "grid": "gr",
+      "item": "pi",
+      "media": "pic",
+      "title": "nm",
+      "meta": "ln",
+      "price": "prc",
+      "was": "old",
+      "stock": "stk",
+      "add": "buy",
+      "nav": "hdr-nav",
+      "navItem": "h-l",
+      "cart": "h-cart",
+      "bnr": "hero-strip",
+      "bnrIn": "hs-in",
+      "bnrX": "hs-close",
+      "ck": "gdpr",
+      "ckA": "g-acc",
+      "ckD": "g-dec",
+      "nl": "newsl",
+      "nlT": "n-t",
+      "nlE": "n-e",
+      "nlB": "n-go",
+      "ft": "btm",
+      "srt": "os"
+    },
+    "shop": "techtrove",
+    "products": [
+      {
+        "sku": "cb-02",
+        "name": "HDMI 2.1 Braided Cable 3m",
+        "price": 18.5
+      },
+      {
+        "sku": "hp-01",
+        "name": "SoundMax Pro Wireless Headphones",
+        "price": 89.99
+      },
+      {
+        "sku": "eb-02",
+        "name": "Volt Pods Mini Wireless Earbuds",
+        "price": 34.5
+      },
+      {
+        "sku": "sp-02",
+        "name": "BassKing Tower Speaker",
+        "price": 189
+      },
+      {
+        "sku": "ch-01",
+        "name": "Volt 65W GaN Wall Charger",
+        "price": 29.99
+      },
+      {
+        "sku": "sp-03",
+        "name": "PartyCube 360 Speaker",
+        "price": 79
+      },
+      {
+        "sku": "ch-02",
+        "name": "MagPad Wireless Charger",
+        "price": 24.5
+      }
+    ],
+    "feats": {
+      "cookie": true,
+      "banner": false,
+      "newsletter": true,
+      "sort": false,
+      "wrapDepth": 2
+    }
+  },
+  "tasks": [
+    {
+      "id": "add-ch-01",
+      "type": "actionable",
+      "goal": "Add the Volt 65W GaN Wall Charger to the cart",
+      "target_sku": "ch-01",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"ch-01\"] .buy"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('ch-01')"
+    },
+    {
+      "id": "add-sp-03",
+      "type": "actionable",
+      "goal": "Add the PartyCube 360 Speaker to the cart",
+      "target_sku": "sp-03",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"sp-03\"] .buy"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('sp-03')"
+    },
+    {
+      "id": "dismiss-cookie",
+      "type": "actionable",
+      "goal": "Dismiss the cookie banner",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": ".g-acc"
+        }
+      ],
+      "predicate": "!document.querySelector('.gdpr')"
+    },
+    {
+      "id": "newsletter",
+      "type": "actionable",
+      "goal": "Sign up for the newsletter with the email user205@example.com",
+      "email": "user205@example.com",
+      "gold_actions": [
+        {
+          "kind": "type",
+          "selector": ".n-e",
+          "value": "user205@example.com"
+        },
+        {
+          "kind": "click",
+          "selector": ".n-go"
+        }
+      ],
+      "predicate": "document.querySelector('.n-e').value==='user205@example.com' && window.__st.nl===true"
+    },
+    {
+      "id": "impossible",
+      "type": "impossible",
+      "goal": "Track the status of an existing order",
+      "gold_actions": [],
+      "predicate": "true"
+    }
+  ]
+}

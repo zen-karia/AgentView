@@ -147,13 +147,11 @@ Reply with JSON only: {{"thought": string, "done": boolean, "name": string, "par
 - done=true and name="" when the goal is already satisfied by the actions taken.
 - otherwise set name to one action above and fill params per its schema."""
 
-    from gemini_retry import with_retry
-
-    resp = with_retry(lambda: client.models.generate_content(
+    resp = client.models.generate_content(
         model=_GEMINI_MODEL,
         contents=prompt,
         config=types.GenerateContentConfig(response_mime_type="application/json"),
-    ))
+    )
     from translator import loads_first_json
 
     data = loads_first_json(resp.text)

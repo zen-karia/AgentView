@@ -34,8 +34,11 @@ async function label(model, goal, trimmed) {
       { role: 'user', content: renderUser(goal, trimmed) },
     ],
     temperature: 0,
-    max_tokens: 2000,
+    max_tokens: 3000,
     response_format: { type: 'json_object' },
+    // gemini-3.5-flash is a thinking model; labeling needs breadth not depth,
+    // and thinking tokens bill as output.
+    reasoning_effort: 'low',
   };
   const resp = await fetch(`${GEMINI_BASE}/chat/completions`, {
     method: 'POST',
@@ -53,14 +56,18 @@ async function main() {
   const args = process.argv.slice(2);
   const from = parseInt(args[0], 10);
   const to = parseInt(args[1] ?? args[0], 10);
-  const model = args.includes('--model') ? args[args.indexOf('--model') + 1] : 'gemini-2.5-flash';
+  const model = args.includes('--model') ? args[args.indexOf('--model') + 1] : 'gemini-3.5-flash';
   const rpm = args.includes('--rpm') ? parseFloat(args[args.indexOf('--rpm') + 1]) : 8;
   if (!Number.isInteger(from) || !process.env.GEMINI_API_KEY) {
     console.error('usage: node --env-file=.env pipeline/teacher.js <seedFrom> <seedTo> [--model m] [--rpm n]');
     process.exit(2);
   }
 
-  const kept = [];
+  fs.mkdirSync(path.join(root, 'data', 'rows'), { recursive: true });
+  const outFile = path.join(root, 'data', 'rows', `teacher-${from}-${to}.jsonl`);
+  fs.writeFileSync(outFile, ''); // fresh file; rows appended incrementally so kills lose nothing
+
+  let kept = 0;
   let attempts = 0;
   let failures = 0;
   const failReasons = {};
@@ -88,21 +95,25 @@ async function main() {
         errors = [String(e.message).slice(0, 160)];
       }
       if (verdict) {
-        kept.push({
-          input: renderUser(task.goal, trimmed),
-          output: JSON.stringify(output),
-          metadata: {
-            tier: 'bulk',
-            source: 'parametric-teacher',
-            teacher: model,
-            seed,
-            task_id: task.id,
-            schema_sha: SCHEMA_SHA,
-            template_sha: TEMPLATE_SHA,
-            annotate_version: ANNOTATE_VERSION,
-            pretrim_version: PRETRIM_VERSION,
-          },
-        });
+        kept++;
+        fs.appendFileSync(
+          outFile,
+          JSON.stringify({
+            input: renderUser(task.goal, trimmed),
+            output: JSON.stringify(output),
+            metadata: {
+              tier: 'bulk',
+              source: 'parametric-teacher',
+              teacher: model,
+              seed,
+              task_id: task.id,
+              schema_sha: SCHEMA_SHA,
+              template_sha: TEMPLATE_SHA,
+              annotate_version: ANNOTATE_VERSION,
+              pretrim_version: PRETRIM_VERSION,
+            },
+          }) + '\n'
+        );
       } else {
         failures++;
         const key = (errors[0] || 'unknown').split(':')[0].slice(0, 60);
@@ -122,19 +133,16 @@ async function main() {
           template_sha: TEMPLATE_SHA,
         });
       }
-      process.stdout.write(verdict ? '.' : 'x');
       await sleep(Math.ceil(60000 / rpm));
     }
+    console.log(`seed ${seed}: ${kept}/${attempts} kept so far`);
   }
 
-  fs.mkdirSync(path.join(root, 'data', 'rows'), { recursive: true });
-  const outFile = path.join(root, 'data', 'rows', `teacher-${from}-${to}.jsonl`);
-  fs.writeFileSync(outFile, kept.map((r) => JSON.stringify(r)).join('\n') + (kept.length ? '\n' : ''));
   if (log.enabled()) await log.close();
 
-  const rate = attempts ? ((100 * kept.length) / attempts).toFixed(1) : '0';
-  console.log(`\nteacher=${model}: ${kept.length}/${attempts} passed the validator (${rate}%) -> ${path.relative(root, outFile)}`);
-  if (failures) console.log('fail reasons:', JSON.stringify(failReasons, null, 2));
+  const rate = attempts ? ((100 * kept) / attempts).toFixed(1) : '0';
+  console.log(`DONE teacher=${model}: ${kept}/${attempts} passed the validator (${rate}%) -> ${path.relative(root, outFile)}`);
+  if (failures) console.log('fail reasons: ' + JSON.stringify(failReasons));
 }
 
 main().catch((e) => {

@@ -1,0 +1,18 @@
+# SFT v0 (spine-only ablation row): 823 rows = 804 parametric-gold + 19 smoke.
+# Recipe per D10 / LoRA-Without-Regret. Quote first: flash train configs/sft-2b.toml --cost
+
+model = "Qwen/Qwen3.5-2B"
+algorithm = "sft"
+seed = 42
+
+[environment]
+id = "ht6-team/agentview"
+
+[train]
+epochs = 2
+max_examples = 823
+lora_rank = 32
+lora_alpha = 64
+learning_rate = 1e-4
+batch_size = 8
+max_context_tokens = 8192

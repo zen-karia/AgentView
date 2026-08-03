@@ -1,0 +1,131 @@
+{
+  "meta": {
+    "seed": 193,
+    "scheme": 2,
+    "classes": {
+      "wr": "main-wrap",
+      "grid": "gr",
+      "item": "pi",
+      "media": "pic",
+      "title": "nm",
+      "meta": "ln",
+      "price": "prc",
+      "was": "old",
+      "stock": "stk",
+      "add": "buy",
+      "nav": "hdr-nav",
+      "navItem": "h-l",
+      "cart": "h-cart",
+      "bnr": "hero-strip",
+      "bnrIn": "hs-in",
+      "bnrX": "hs-close",
+      "ck": "gdpr",
+      "ckA": "g-acc",
+      "ckD": "g-dec",
+      "nl": "newsl",
+      "nlT": "n-t",
+      "nlE": "n-e",
+      "nlB": "n-go",
+      "ft": "btm",
+      "srt": "os"
+    },
+    "shop": "gadgetbin",
+    "products": [
+      {
+        "sku": "ch-01",
+        "name": "Volt 65W GaN Wall Charger",
+        "price": 29.99
+      },
+      {
+        "sku": "sp-01",
+        "name": "BoomBox Mini Bluetooth Speaker",
+        "price": 59.99
+      },
+      {
+        "sku": "cb-02",
+        "name": "HDMI 2.1 Braided Cable 3m",
+        "price": 18.5
+      },
+      {
+        "sku": "eb-03",
+        "name": "AquaBuds Sport Earbuds",
+        "price": 44
+      },
+      {
+        "sku": "hp-03",
+        "name": "BassKing Wired Headphones",
+        "price": 34.99
+      },
+      {
+        "sku": "hp-05",
+        "name": "StudioOne Monitor Headphones",
+        "price": 129
+      },
+      {
+        "sku": "hp-02",
+        "name": "AudioPhile X2 Wireless Headphones",
+        "price": 249
+      }
+    ],
+    "feats": {
+      "cookie": false,
+      "banner": false,
+      "newsletter": true,
+      "sort": false,
+      "wrapDepth": 3
+    }
+  },
+  "tasks": [
+    {
+      "id": "add-eb-03",
+      "type": "actionable",
+      "goal": "Add the AquaBuds Sport Earbuds to the cart",
+      "target_sku": "eb-03",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"eb-03\"] .buy"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('eb-03')"
+    },
+    {
+      "id": "add-sp-01",
+      "type": "actionable",
+      "goal": "Add the BoomBox Mini Bluetooth Speaker to the cart",
+      "target_sku": "sp-01",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"sp-01\"] .buy"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('sp-01')"
+    },
+    {
+      "id": "newsletter",
+      "type": "actionable",
+      "goal": "Sign up for the newsletter with the email user575@example.com",
+      "email": "user575@example.com",
+      "gold_actions": [
+        {
+          "kind": "type",
+          "selector": ".n-e",
+          "value": "user575@example.com"
+        },
+        {
+          "kind": "click",
+          "selector": ".n-go"
+        }
+      ],
+      "predicate": "document.querySelector('.n-e').value==='user575@example.com' && window.__st.nl===true"
+    },
+    {
+      "id": "impossible",
+      "type": "impossible",
+      "goal": "Track the status of an existing order",
+      "gold_actions": [],
+      "predicate": "true"
+    }
+  ]
+}

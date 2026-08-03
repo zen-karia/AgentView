@@ -1,0 +1,108 @@
+{
+  "meta": {
+    "seed": 215,
+    "scheme": 0,
+    "classes": {
+      "wr": "wr",
+      "grid": "grid",
+      "item": "itm",
+      "media": "im",
+      "title": "t",
+      "meta": "mt",
+      "price": "pr",
+      "was": "was",
+      "stock": "st",
+      "add": "go",
+      "nav": "nv",
+      "navItem": "nv-i",
+      "cart": "nv-c",
+      "bnr": "bnr",
+      "bnrIn": "bnr-in",
+      "bnrX": "bnr-x",
+      "ck": "ckb",
+      "ckA": "ck-a",
+      "ckD": "ck-d",
+      "nl": "nl",
+      "nlT": "nl-t",
+      "nlE": "nl-e",
+      "nlB": "nl-b",
+      "ft": "ft",
+      "srt": "ssel"
+    },
+    "shop": "audioalley",
+    "products": [
+      {
+        "sku": "hp-05",
+        "name": "StudioOne Monitor Headphones",
+        "price": 129
+      },
+      {
+        "sku": "eb-01",
+        "name": "SoundMax Buds Air Wireless Earbuds",
+        "price": 59.99
+      },
+      {
+        "sku": "ch-01",
+        "name": "Volt 65W GaN Wall Charger",
+        "price": 29.99
+      },
+      {
+        "sku": "pb-01",
+        "name": "Volt PowerBank 20000mAh",
+        "price": 44.99
+      },
+      {
+        "sku": "eb-02",
+        "name": "Volt Pods Mini Wireless Earbuds",
+        "price": 34.5
+      },
+      {
+        "sku": "cb-02",
+        "name": "HDMI 2.1 Braided Cable 3m",
+        "price": 18.5
+      }
+    ],
+    "feats": {
+      "cookie": false,
+      "banner": true,
+      "newsletter": false,
+      "sort": false,
+      "wrapDepth": 1
+    }
+  },
+  "tasks": [
+    {
+      "id": "add-eb-02",
+      "type": "actionable",
+      "goal": "Add the Volt Pods Mini Wireless Earbuds to the cart",
+      "target_sku": "eb-02",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"eb-02\"] .go"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('eb-02')"
+    },
+    {
+      "id": "add-eb-01",
+      "type": "actionable",
+      "goal": "Add the SoundMax Buds Air Wireless Earbuds to the cart",
+      "target_sku": "eb-01",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"eb-01\"] .go"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('eb-01')"
+    },
+    {
+      "id": "impossible",
+      "type": "impossible",
+      "goal": "Track the status of an existing order",
+      "gold_actions": [],
+      "predicate": "true"
+    }
+  ]
+}

@@ -183,3 +183,14 @@ element. Differentiation probe confirmed distinct models (4B classified a USB-C 
 headphones; 9B picked the correct candidate set). These are the "before" rows of the headline
 table. Gemini arm + teacher batch BLOCKED on depleted Gemini project credits (user fixing).
 Identity-LoRA total cost: $0.016. Session spend to date ≈ $0.05 of the $149 cap.
+
+## Update: Gemini refreshed ($25) — teacher running; first real SFT submitted
+
+- `gemini-2.5-flash` is closed to new users (404) — teacher switched to **gemini-3.5-flash**
+  (thinking model; `reasoning_effort: "low"`, max_tokens 3000). teacher.js now appends kept rows
+  incrementally (kill-safe) and runs under a persistent Monitor.
+- Gold tier scaled: seeds 150–249 → +537 rows; **804 parametric-gold rows total**, all in Mongo.
+- **SFT-2B v0 submitted**: `flash-1784384488-054a73ab` — 823 rows (804 gold + 19 smoke),
+  rank 32/α64/LR 1e-4/2 epochs/8192 ctx, quoted **$0.92**, 206 steps ≈ 40 min on A100.
+  This is the spine-only ablation row. Bake-off configs for 4B/9B staged (identical data).
+- Next on completion: deploy → eval.js vs base-2b on held-out seeds 9010-9014 → first real delta.

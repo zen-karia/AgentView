@@ -1,0 +1,153 @@
+{
+  "meta": {
+    "seed": 192,
+    "scheme": 0,
+    "classes": {
+      "wr": "wr",
+      "grid": "grid",
+      "item": "itm",
+      "media": "im",
+      "title": "t",
+      "meta": "mt",
+      "price": "pr",
+      "was": "was",
+      "stock": "st",
+      "add": "go",
+      "nav": "nv",
+      "navItem": "nv-i",
+      "cart": "nv-c",
+      "bnr": "bnr",
+      "bnrIn": "bnr-in",
+      "bnrX": "bnr-x",
+      "ck": "ckb",
+      "ckA": "ck-a",
+      "ckD": "ck-d",
+      "nl": "nl",
+      "nlT": "nl-t",
+      "nlE": "nl-e",
+      "nlB": "nl-b",
+      "ft": "ft",
+      "srt": "ssel"
+    },
+    "shop": "techtrove",
+    "products": [
+      {
+        "sku": "hp-05",
+        "name": "StudioOne Monitor Headphones",
+        "price": 129
+      },
+      {
+        "sku": "cb-01",
+        "name": "Volt 100W USB-C Cable 2m",
+        "price": 12.99
+      },
+      {
+        "sku": "eb-01",
+        "name": "SoundMax Buds Air Wireless Earbuds",
+        "price": 59.99
+      },
+      {
+        "sku": "eb-02",
+        "name": "Volt Pods Mini Wireless Earbuds",
+        "price": 34.5
+      },
+      {
+        "sku": "sp-02",
+        "name": "BassKing Tower Speaker",
+        "price": 189
+      },
+      {
+        "sku": "pb-01",
+        "name": "Volt PowerBank 20000mAh",
+        "price": 44.99
+      },
+      {
+        "sku": "hp-03",
+        "name": "BassKing Wired Headphones",
+        "price": 34.99
+      },
+      {
+        "sku": "hp-02",
+        "name": "AudioPhile X2 Wireless Headphones",
+        "price": 249
+      },
+      {
+        "sku": "eb-03",
+        "name": "AquaBuds Sport Earbuds",
+        "price": 44
+      }
+    ],
+    "feats": {
+      "cookie": true,
+      "banner": true,
+      "newsletter": true,
+      "sort": false,
+      "wrapDepth": 3
+    }
+  },
+  "tasks": [
+    {
+      "id": "add-eb-01",
+      "type": "actionable",
+      "goal": "Add the SoundMax Buds Air Wireless Earbuds to the cart",
+      "target_sku": "eb-01",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"eb-01\"] .go"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('eb-01')"
+    },
+    {
+      "id": "add-hp-05",
+      "type": "actionable",
+      "goal": "Add the StudioOne Monitor Headphones to the cart",
+      "target_sku": "hp-05",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"hp-05\"] .go"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('hp-05')"
+    },
+    {
+      "id": "dismiss-cookie",
+      "type": "actionable",
+      "goal": "Dismiss the cookie banner",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": ".ck-a"
+        }
+      ],
+      "predicate": "!document.querySelector('.ckb')"
+    },
+    {
+      "id": "newsletter",
+      "type": "actionable",
+      "goal": "Sign up for the newsletter with the email user591@example.com",
+      "email": "user591@example.com",
+      "gold_actions": [
+        {
+          "kind": "type",
+          "selector": ".nl-e",
+          "value": "user591@example.com"
+        },
+        {
+          "kind": "click",
+          "selector": ".nl-b"
+        }
+      ],
+      "predicate": "document.querySelector('.nl-e').value==='user591@example.com' && window.__st.nl===true"
+    },
+    {
+      "id": "impossible",
+      "type": "impossible",
+      "goal": "Track the status of an existing order",
+      "gold_actions": [],
+      "predicate": "true"
+    }
+  ]
+}

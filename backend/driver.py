@@ -92,11 +92,9 @@ class FakeShopDriver:
         return any(selector == f"#add-{p['id']}" for p in _PRODUCTS)
 
     def execute(self, selector: str, action_name: str, params: dict[str, Any]) -> None:
-        if action_name == "add_to_cart":
-            # Selector-driven, like a real browser click: the resolved selector
-            # ("#add-p1") is the source of truth. Fall back to a product_id param.
-            # Robust whether the translator parameterized the action or baked the id
-            # into the selector (real Gemini does the latter).
+        # add_to_cart (translated) or a generic click (baseline) -- both resolve to
+        # a real browser click on the selector, which is the source of truth.
+        if action_name in ("add_to_cart", "click"):
             pid = None
             if selector.startswith("#add-"):
                 pid = selector[len("#add-"):]
@@ -143,11 +141,15 @@ class FakeFormDriver:
         return selector == "#submit" or any(selector == f"#field-{f}" for f in _FORM_FIELDS)
 
     def execute(self, selector: str, action_name: str, params: dict[str, Any]) -> None:
-        if action_name == "fill":
-            field, value = params.get("field"), params.get("value")
+        # fill (translated) or generic type (baseline) -> set a field, deriving the
+        # field name from the param or the #field-<name> selector.
+        if action_name in ("fill", "type"):
+            field = params.get("field")
+            if not field and selector.startswith("#field-"):
+                field = selector[len("#field-"):]
             if field in _FORM_FIELDS:
-                self.values[field] = value
-        elif action_name == "submit":
+                self.values[field] = params.get("value")
+        elif action_name == "submit" or (action_name == "click" and selector == "#submit"):
             self.submitted = True
 
     def state(self) -> dict[str, Any]:
@@ -202,8 +204,12 @@ class FakeDocsDriver:
         return any(selector == f"#open-{d['id']}" for d in _DOCS)
 
     def execute(self, selector: str, action_name: str, params: dict[str, Any]) -> None:
-        if action_name == "open_doc":
+        # open_doc (translated) or generic click (baseline) -> open the article,
+        # deriving the id from the param or the #open-<id> selector.
+        if action_name in ("open_doc", "click"):
             doc_id = params.get("doc_id")
+            if not doc_id and selector.startswith("#open-"):
+                doc_id = selector[len("#open-"):]
             if any(d["id"] == doc_id for d in _DOCS):
                 self.opened = doc_id
 

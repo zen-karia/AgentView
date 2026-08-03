@@ -156,16 +156,40 @@ def _stub_translate_shop(inp: TranslatorInput, driver) -> tuple[AgentView, int]:
     return view, len(inp.page.html) // 4
 
 
+# Generic browser actions given to the baseline conditions so the comparison is
+# FAIR: the agent can act on the raw page (find selectors itself), exactly like a
+# real browser-use agent -- not handed an empty action list. Distinct names from
+# the translated actions (add_to_cart/fill/open_doc) so the stub can tell them apart.
+_GENERIC_ACTIONS = [
+    ActionDef(
+        name="click",
+        description="Click an element identified by a CSS selector you find in the page",
+        params={"selector": {"type": "string", "required": True}},
+        target_selector="{selector}",
+    ),
+    ActionDef(
+        name="type",
+        description="Type text into an input identified by a CSS selector",
+        params={
+            "selector": {"type": "string", "required": True},
+            "value": {"type": "string", "required": True},
+        },
+        target_selector="{selector}",
+    ),
+]
+
+
 def _raw_view(inp: TranslatorInput) -> tuple[AgentView, int]:
-    """Baseline: dump raw HTML straight to the agent. No translator model runs, so
-    there's no translator cost -- the whole (big) page hits the agent instead."""
-    return AgentView(summary=inp.page.html, relevant_content=[], actions=[]), 0
+    """Baseline: raw HTML + generic click/type actions. No translator model runs, so
+    no translator cost -- the whole (big) page hits the agent, which must find its
+    own selectors. A fair 'browser-use on raw HTML' baseline."""
+    return AgentView(summary=inp.page.html, relevant_content=[], actions=list(_GENERIC_ACTIONS)), 0
 
 
 def _markdown_view(inp: TranslatorInput) -> tuple[AgentView, int]:
-    """Baseline: deterministic text extraction (like html2text) -- no LLM, so ~free.
-    Cheap, but drowns the agent in irrelevant content and surfaces no actions."""
-    return AgentView(summary=inp.page.text, relevant_content=[], actions=[]), 0
+    """Baseline: text extraction + the same generic actions. Cheap, but the text dump
+    usually loses the selectors, so the agent struggles to act -- honestly."""
+    return AgentView(summary=inp.page.text, relevant_content=[], actions=list(_GENERIC_ACTIONS)), 0
 
 
 def _gemini_translate(inp: TranslatorInput) -> tuple[AgentView, int]:

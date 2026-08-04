@@ -70,6 +70,10 @@ class RunLog:
     tokens: int  # total = translator_tokens + agent_tokens (keeps spec section 6)
     latency_ms: int
     timestamp: str
+    # Full config, so the UI can group/compare: which translator (model) vs which
+    # agent vs which driver. Without these you can't tell runs apart in Mongo.
+    agent_model: str = "stub"
+    driver: str = "fake"
     # Additive breakdown: a compact AgentView shrinks the AGENT's input, so the
     # cost win shows up here, split by seat. This is the Deloitte/Freesolo number.
     translator_tokens: int = 0

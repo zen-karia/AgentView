@@ -57,6 +57,13 @@ def _stub_decide(
     if not view.actions:
         return ActionChoice(name="", done=True, thought="no actions surfaced; giving up"), tokens
 
+    # Baseline (raw/markdown) surfaces only generic click/type. The rule-based stub
+    # can't read raw HTML to find selectors, so it gives up -- a real LLM agent can
+    # still try, which is the whole point of the fair comparison.
+    if not any(view.action_by_name(n) for n in ("add_to_cart", "fill", "open_doc")):
+        return ActionChoice(name="", done=True,
+                            thought="only generic actions; stub can't navigate raw HTML"), tokens
+
     # Form site: multi-turn fill each target field, then submit.
     if view.action_by_name("fill") is not None:
         return _stub_decide_form(goal, view, history), tokens

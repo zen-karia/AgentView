@@ -37,10 +37,10 @@ class PlaywrightDriver:
     def execute(self, selector: str, action_name: str, params: dict[str, Any]) -> None:
         if self._page.query_selector(selector) is None:
             return
-        if action_name == "fill":
+        if action_name in ("fill", "type"):
             self._page.fill(selector, str(params.get("value", "")))
         else:
-            # add_to_cart, submit, and other click-style actions
+            # add_to_cart, submit, open_doc, generic click -- all resolve to a click
             self._page.click(selector)
 
     def state(self) -> dict[str, Any]:

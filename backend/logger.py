@@ -29,7 +29,16 @@ def _collection():
         try:
             from pymongo import MongoClient
 
-            client = MongoClient(uri, serverSelectionTimeoutMS=3000)
+            # tlsCAFile=certifi: Atlas needs a real CA bundle, which python.org's
+            # macOS build lacks by default (else: CERTIFICATE_VERIFY_FAILED).
+            kwargs = {"serverSelectionTimeoutMS": 3000}
+            try:
+                import certifi
+
+                kwargs["tlsCAFile"] = certifi.where()
+            except ImportError:
+                pass
+            client = MongoClient(uri, **kwargs)
             db = client[os.getenv("MONGODB_DB", "agentview")]
             _mongo_collection = db["runs"]
         except Exception as exc:  # missing pymongo, bad URI, etc.

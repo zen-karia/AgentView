@@ -211,3 +211,12 @@ megashop fixture: cookie-dismiss = full validator PASS (real transfer); cheapest
 format+grounding right but picked the bundle distractor and hallucinated a data-sku wrapper
 (generator-convention overfit → fix = teacher diversity + more archetypes). Teacher batch 150-249
 running at 100% pass-rate with the parser fix. Next: merge teacher rows → SFT v1 bake-off (2B/4B/9B).
+
+## Bake-off v1 submitted (Stage C)
+
+- Teacher tier complete: **723 rows** (186 @ 69.7% pre-fix + 537 @ **100.0%** post-fix).
+- v1 dataset: **1,546 rows** (19 smoke + 804 gold + 723 teacher), pushed to ht6-team/agentview.
+- Runs (identical data, rank 32/a64/LR 1e-4/2 epochs): 2B flash-1784388428-de80fdef ($1.74, 75min),
+  4B flash-1784388430-882e2acc ($3.55, 153min), 9B flash-1784388432-7182d132 ($7.33, 316min).
+- On each completion: deploy -> eval.js seeds 9010-9014 -> table row vs zero-shot baseline.
+- Session spend incl. bake-off quotes: ~$15 of $149.

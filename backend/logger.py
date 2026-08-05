@@ -46,14 +46,28 @@ def _collection():
     return _mongo_collection
 
 
+# The config that uniquely identifies a run for comparison. The UI groups on these.
+def _key(run: RunLog) -> dict:
+    return {
+        "task_id": run.task_id,
+        "condition": run.condition,
+        "model": run.model,          # translator: stub | gemini | trained
+        "agent_model": run.agent_model,
+        "driver": run.driver,
+    }
+
+
 def save_run(run: RunLog) -> None:
     _LOG_DIR.mkdir(exist_ok=True)
-    path = _LOG_DIR / f"{run.task_id}__{run.condition}__{run.model}.json"
-    path.write_text(json.dumps(run.to_dict(), indent=2))
+    k = _key(run)
+    name = f"{k['task_id']}__{k['condition']}__t-{k['model']}__a-{k['agent_model']}__{k['driver']}"
+    (_LOG_DIR / f"{name}.json").write_text(json.dumps(run.to_dict(), indent=2))
 
     coll = _collection()
     if coll is not None:
         try:
-            coll.insert_one(run.to_dict())
+            # Upsert on the config key: one authoritative (latest) row per config, so
+            # re-runs update in place instead of piling up duplicates.
+            coll.replace_one(_key(run), run.to_dict(), upsert=True)
         except Exception as exc:
-            print(f"[logger] mongo insert skipped: {exc}")
+            print(f"[logger] mongo upsert skipped: {exc}")

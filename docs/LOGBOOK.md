@@ -220,3 +220,14 @@ running at 100% pass-rate with the parser fix. Next: merge teacher rows → SFT 
   4B flash-1784388430-882e2acc ($3.55, 153min), 9B flash-1784388432-7182d132 ($7.33, 316min).
 - On each completion: deploy -> eval.js seeds 9010-9014 -> table row vs zero-shot baseline.
 - Session spend incl. bake-off quotes: ~$15 of $149.
+
+## END-TO-END loop measured (primary metric, EVAL.md)
+
+pipeline/eval-e2e.js = the full product architecture: translator arm -> AgentView JSON ->
+driver agent (gemini-3.5-flash, sees ONLY goal+JSON, never the page) -> Playwright executes ->
+success predicate judges. Shared executor extracted to pipeline/executor.js (verify.js refactored).
+First result: **sft-2b-v0, held-out seeds 9001-9003, 18/18 task success (100%)** — 0 invalid,
+0 driver errors, 0 exec errors; includes candidate-comparison tasks (driver picked the cheapest
+from relevant_content). Rows in Mongo `eval` (kind: eval-e2e).
+In parallel: workflow building the Python validator port (GRPO reward) + Mind2Web scoring adapter.
+Bake-off (2B/4B/9B) still training.

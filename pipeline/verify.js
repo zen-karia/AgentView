@@ -12,45 +12,9 @@
 const fs = require('fs');
 const path = require('path');
 const { chromium } = require('playwright');
-const { INTERACTIVE_TAGS, INTERACTIVE_ROLES, ANNOTATE_VERSION } = require('../src/annotate');
+const { ANNOTATE_VERSION } = require('../src/annotate');
+const { annotateLive, executeAction } = require('./executor');
 const log = require('../src/log');
-
-async function annotateLive(page) {
-  // Mirror of src/annotate.js — same criteria, same document-order traversal.
-  await page.evaluate(
-    ({ tags, roles }) => {
-      let n = 0;
-      document.querySelectorAll('*').forEach((el) => {
-        const tag = el.tagName.toLowerCase();
-        const role = (el.getAttribute('role') || '').toLowerCase();
-        const interactive =
-          tags.includes(tag) ||
-          el.hasAttribute('onclick') ||
-          el.hasAttribute('tabindex') ||
-          el.hasAttribute('contenteditable') ||
-          roles.includes(role);
-        if (interactive) el.setAttribute('data-av-id', String(++n));
-      });
-    },
-    { tags: INTERACTIVE_TAGS, roles: INTERACTIVE_ROLES }
-  );
-}
-
-async function executeAction(page, a) {
-  if (a.kind === 'click') {
-    await page.click(a.selector, { timeout: 3000 });
-  } else if (a.kind === 'type') {
-    await page.fill(a.selector, a.value ?? '', { timeout: 3000 });
-  } else if (a.kind === 'select') {
-    try {
-      await page.selectOption(a.selector, { label: a.value }, { timeout: 3000 });
-    } catch {
-      await page.selectOption(a.selector, a.value, { timeout: 3000 });
-    }
-  } else {
-    throw new Error(`unknown action kind: ${a.kind}`);
-  }
-}
 
 async function main() {
   const args = process.argv.slice(2);

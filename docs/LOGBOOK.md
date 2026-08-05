@@ -194,3 +194,20 @@ Identity-LoRA total cost: $0.016. Session spend to date ≈ $0.05 of the $149 ca
   rank 32/α64/LR 1e-4/2 epochs/8192 ctx, quoted **$0.92**, 206 steps ≈ 40 min on A100.
   This is the spine-only ablation row. Bake-off configs for 4B/9B staged (identical data).
 - Next on completion: deploy → eval.js vs base-2b on held-out seeds 9010-9014 → first real delta.
+
+## MILESTONE: first real adapter — SFT-2B v0 (flash-1784384488-054a73ab, $0.92, 206 steps)
+
+Held-out eval, seeds 9010-9014, 26 tasks, identical harness:
+
+| Arm | valid | element recall | full-task | impossible OK | latency |
+|---|---|---|---|---|---|
+| base-2B (zero-shot) | 0% | 0% | 0% | 0% | 4.8 s |
+| **sft-2B v0 (spine-only, $0.92)** | **100%** | **100%** | **100%** | **100%** | **2.9 s** |
+
+Honest scoping: held-out seeds are unseen pages but the same generator distribution — this row
+proves the model mastered the distribution (unseen layouts/ids/product mixes, correct candidate
+sets, correct impossible-goal refusals), not open-web generality. OOD probes on the never-trained
+megashop fixture: cookie-dismiss = full validator PASS (real transfer); cheapest-earbuds =
+format+grounding right but picked the bundle distractor and hallucinated a data-sku wrapper
+(generator-convention overfit → fix = teacher diversity + more archetypes). Teacher batch 150-249
+running at 100% pass-rate with the parser fix. Next: merge teacher rows → SFT v1 bake-off (2B/4B/9B).

@@ -35,9 +35,11 @@ async function label(model, goal, trimmed) {
     ],
     temperature: 0,
     max_tokens: 3000,
-    response_format: { type: 'json_object' },
-    // gemini-3.5-flash is a thinking model; labeling needs breadth not depth,
-    // and thinking tokens bill as output.
+    // NOTE: no response_format — Gemini's OpenAI-compat json_object mode
+    // truncates mid-structure with finish_reason "stop" on this thinking model
+    // (measured: 81/267 parse failures with it, ~0 without). Plain prompting +
+    // fence-strip parses reliably. Labeling needs breadth not depth, and
+    // thinking tokens bill as output — keep reasoning effort low.
     reasoning_effort: 'low',
   };
   const resp = await fetch(`${GEMINI_BASE}/chat/completions`, {
@@ -84,15 +86,17 @@ async function main() {
       let verdict = false;
       let errors = [];
       let output = null;
-      try {
-        const text = await label(model, task.goal, trimmed);
-        const cleaned = text.replace(/^[\s\S]*?<\/think>/, '').replace(/```(?:json)?/g, '').trim();
-        output = JSON.parse(cleaned);
-        const res = validate(output, trimmed, raw);
-        verdict = res.valid;
-        errors = res.errors;
-      } catch (e) {
-        errors = [String(e.message).slice(0, 160)];
+      for (let attempt = 0; attempt < 2 && !verdict; attempt++) {
+        try {
+          const text = await label(model, task.goal, trimmed);
+          const cleaned = text.replace(/^[\s\S]*?<\/think>/, '').replace(/```(?:json)?/g, '').trim();
+          output = JSON.parse(cleaned);
+          const res = validate(output, trimmed, raw);
+          verdict = res.valid;
+          errors = res.errors;
+        } catch (e) {
+          errors = [String(e.message).slice(0, 160)];
+        }
       }
       if (verdict) {
         kept++;

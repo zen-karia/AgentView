@@ -79,6 +79,7 @@ def run_task(
         history.append({"name": choice.name, "params": choice.params})
 
     success = bool(task.check(driver))
+    driver_label = "playwright" if type(driver).__name__ == "PlaywrightDriver" else "fake"
     log = RunLog(
         task_id=task.id,
         condition=condition,
@@ -88,6 +89,8 @@ def run_task(
         tokens=translator_tokens + agent_tokens,
         latency_ms=int((time.time() - t0) * 1000),
         timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        agent_model=agent_model,
+        driver=driver_label,
         turns=turns,
         translator_tokens=translator_tokens,
         agent_tokens=agent_tokens,

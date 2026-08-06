@@ -78,6 +78,9 @@ class RunLog:
     # cost win shows up here, split by seat. This is the Deloitte/Freesolo number.
     translator_tokens: int = 0
     agent_tokens: int = 0
+    # Full first-page size (tokens). Goal-conditioning ratio = agent_tokens / page_tokens:
+    # ~1.0 for a generic snapshot, << 1.0 for a task-conditioned view.
+    page_tokens: int = 0
     # Additive beyond spec: the per-turn trace. This IS the training data for the
     # Model lane (keep success:true AgentViews) AND powers the dashboard's middle
     # "kept vs stripped" panel. Do not drop it.

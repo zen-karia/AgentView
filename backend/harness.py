@@ -37,10 +37,13 @@ def run_task(
     turns: list[dict] = []
     translator_tokens = 0
     agent_tokens = 0
+    page_tokens = 0  # full first-page size, for the goal-conditioning ratio
     t0 = time.time()
 
     for step in range(MAX_STEPS):
         page = driver.snapshot()
+        if step == 0:
+            page_tokens = len(page.html) // 4
         view, tok = translate(
             TranslatorInput(task.goal, page), condition, translator_model, driver
         )
@@ -94,6 +97,7 @@ def run_task(
         turns=turns,
         translator_tokens=translator_tokens,
         agent_tokens=agent_tokens,
+        page_tokens=page_tokens,
     )
     # Real drivers (Playwright) hold a browser open; release it.
     if hasattr(driver, "close"):

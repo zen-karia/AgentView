@@ -231,3 +231,17 @@ First result: **sft-2b-v0, held-out seeds 9001-9003, 18/18 task success (100%)**
 from relevant_content). Rows in Mongo `eval` (kind: eval-e2e).
 In parallel: workflow building the Python validator port (GRPO reward) + Mind2Web scoring adapter.
 Bake-off (2B/4B/9B) still training.
+
+## Parallel builds landed (during bake-off training)
+
+- **Python validator port (GRPO reward): 40/40 fixture parity** with src/validate.js — golden,
+  smoke, and all 21 adversarial negatives, incl. an lxml XPath extension for of-type pseudos that
+  cssselect can't translate (differential-tested vs jsdom, fail-closed on anything unparseable).
+  Trimmed-only mode (GRPO runtime, no raw DOM) documented: exactly one negative (the raw-dependent
+  truncated-attribute collision) becomes undetectable. pipeline/reward/{validator.py,test_parity.py,README.md}.
+  GRPO pass is now UNBLOCKED.
+- **Mind2Web adapter** (pipeline/eval-m2w.js): full pipeline runs on both real-web held-out tasks;
+  scoring proven by synthetic self-tests (gold-hit -> strict=true, miss -> false). v0 scores 0/2
+  (expected; outputs parsed, selectors resolved uniquely, wrong elements — honest OOD gap on
+  real-web pages). Trimmed M2W pages: 12,341 and 24,054 tokens — both fit the 28k budget, which
+  would have been impossible under the old 8k cap (32k raise directly enabled this).

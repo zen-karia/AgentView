@@ -62,12 +62,32 @@ _HIDDEN_SEO = (
     "shirts discount apparel free shipping trending fashion 2026</div>"
 )
 
+# For the page-size benchmark buckets. 6 colors so a "cheapest <color>" goal still
+# filters cleanly; near-duplicate names at large n create the disambiguation
+# pressure that separates a goal-conditioned view from a generic full snapshot.
+_KINDS = ["Shirt", "Hat", "Shoes", "Jacket", "Bag", "Watch"]
+_SIZE_COLORS = ["blue", "red", "green", "black", "white", "grey"]
+
+
+def build_products(n: int) -> list[dict[str, Any]]:
+    """Deterministic catalog of n products (same n -> same catalog)."""
+    products = []
+    for i in range(1, n + 1):
+        color = _SIZE_COLORS[i % len(_SIZE_COLORS)]
+        kind = _KINDS[(i // len(_SIZE_COLORS)) % len(_KINDS)]
+        price = 10 + (i * 13) % 90  # spread across $10-$99
+        products.append({"id": f"p{i}", "name": f"{color.title()} {kind}",
+                         "price": price, "color": color})
+    return products
+
 
 class FakeShopDriver:
-    """A minimal deterministic shop so the loop is fully runnable offline."""
+    """In-memory shop. Pass `products` to size the catalog (page-size benchmarks);
+    defaults to the standard 30-item catalog."""
 
-    def __init__(self) -> None:
+    def __init__(self, products: list[dict[str, Any]] | None = None) -> None:
         self.cart: list[str] = []
+        self._products = products if products is not None else _PRODUCTS
 
     def snapshot(self) -> Page:
         rows = "\n".join(
@@ -75,7 +95,7 @@ class FakeShopDriver:
             f'<span class="name">{p["name"]}</span> - '
             f'<span class="price">${p["price"]}</span> ({p["color"]}) '
             f'<button id="add-{p["id"]}">Add to cart</button></li>'
-            for p in _PRODUCTS
+            for p in self._products
         )
         html = (
             "<html><head><style>.product-card{margin:4px}</style></head><body>"
@@ -85,11 +105,11 @@ class FakeShopDriver:
             f"<div id='cart'>Cart: {self.cart}</div>{_FOOTER}"
             "<script>console.log('analytics loaded');</script></body></html>"
         )
-        text = " ".join(f'{p["name"]} ${p["price"]} {p["color"]}' for p in _PRODUCTS)
+        text = " ".join(f'{p["name"]} ${p["price"]} {p["color"]}' for p in self._products)
         return Page(url="fake://shop", html=html, text=text)
 
     def selector_exists(self, selector: str) -> bool:
-        return any(selector == f"#add-{p['id']}" for p in _PRODUCTS)
+        return any(selector == f"#add-{p['id']}" for p in self._products)
 
     def execute(self, selector: str, action_name: str, params: dict[str, Any]) -> None:
         # add_to_cart (translated) or a generic click (baseline) -- both resolve to
@@ -99,16 +119,16 @@ class FakeShopDriver:
             if selector.startswith("#add-"):
                 pid = selector[len("#add-"):]
             pid = pid or params.get("product_id")
-            if pid and any(p["id"] == pid for p in _PRODUCTS):
+            if pid and any(p["id"] == pid for p in self._products):
                 self.cart.append(pid)
 
     def state(self) -> dict[str, Any]:
-        return {"cart": list(self.cart), "products": _PRODUCTS}
+        return {"cart": list(self.cart), "products": self._products}
 
     @property
     def products(self) -> list[dict[str, Any]]:
         """Structured access for the stub translator (stands in for Gemini parsing)."""
-        return _PRODUCTS
+        return self._products
 
 
 # ---------------- FakeFormDriver: in-memory multi-field checkout form ----------------

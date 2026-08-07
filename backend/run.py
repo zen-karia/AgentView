@@ -28,7 +28,7 @@ def _playwright_factory():
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--task", default="t01_cheapest_blue")
+    ap.add_argument("--task", default="t01_small_cheapest_blue")
     ap.add_argument(
         "--condition",
         default="translated",

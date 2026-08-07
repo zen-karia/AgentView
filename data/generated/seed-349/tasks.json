@@ -1,0 +1,225 @@
+{
+  "meta": {
+    "seed": 349,
+    "gen_version": 2,
+    "scheme": 4,
+    "classes": {
+      "wr": "container-x",
+      "grid": "lst",
+      "item": "li-p",
+      "media": "i-w",
+      "title": "h-p",
+      "meta": "pr-w",
+      "price": "val",
+      "was": "val-x",
+      "stock": "inv",
+      "add": "cta-c",
+      "nav": "bar",
+      "navItem": "bar-a",
+      "cart": "bar-crt",
+      "bnr": "strip",
+      "bnrIn": "strip-c",
+      "bnrX": "strip-k",
+      "ck": "ck-wall",
+      "ckA": "ck-y",
+      "ckD": "ck-n",
+      "nl": "letter",
+      "nlT": "lt-h",
+      "nlE": "lt-f",
+      "nlB": "lt-s",
+      "ft": "base",
+      "srt": "srt-dd"
+    },
+    "shop": "wirewarehouse",
+    "products": [
+      {
+        "sku": "sp-03",
+        "name": "PartyCube 360 Speaker",
+        "price": 79
+      },
+      {
+        "sku": "eb-03",
+        "name": "AquaBuds Sport Earbuds",
+        "price": 44
+      },
+      {
+        "sku": "hp-05",
+        "name": "StudioOne Monitor Headphones",
+        "price": 129
+      },
+      {
+        "sku": "hp-03",
+        "name": "BassKing Wired Headphones",
+        "price": 34.99
+      },
+      {
+        "sku": "sp-02",
+        "name": "BassKing Tower Speaker",
+        "price": 189
+      },
+      {
+        "sku": "cb-01",
+        "name": "Volt 100W USB-C Cable 2m",
+        "price": 12.99
+      },
+      {
+        "sku": "hp-04",
+        "name": "NimbusLite Wireless Headphones",
+        "price": 59
+      },
+      {
+        "sku": "eb-02",
+        "name": "Volt Pods Mini Wireless Earbuds",
+        "price": 34.5
+      },
+      {
+        "sku": "pb-01",
+        "name": "Volt PowerBank 20000mAh",
+        "price": 44.99
+      },
+      {
+        "sku": "ch-02",
+        "name": "MagPad Wireless Charger",
+        "price": 24.5
+      },
+      {
+        "sku": "eb-01",
+        "name": "SoundMax Buds Air Wireless Earbuds",
+        "price": 59.99
+      },
+      {
+        "sku": "sp-01",
+        "name": "BoomBox Mini Bluetooth Speaker",
+        "price": 59.99
+      },
+      {
+        "sku": "ch-01",
+        "name": "Volt 65W GaN Wall Charger",
+        "price": 29.99
+      }
+    ],
+    "grid2": [
+      "eb-02",
+      "pb-01",
+      "ch-02",
+      "eb-01",
+      "sp-01",
+      "ch-01"
+    ],
+    "bundle": {
+      "id": "bd-1",
+      "title": "BassKing Tower Speaker + BassKing Wired Headphones bundle",
+      "price": 190.39
+    },
+    "feats": {
+      "cookie": true,
+      "banner": false,
+      "newsletter": true,
+      "sort": true,
+      "wrapDepth": 1
+    }
+  },
+  "tasks": [
+    {
+      "id": "add-hp-05",
+      "type": "actionable",
+      "goal": "Add the StudioOne Monitor Headphones to the cart",
+      "target_sku": "hp-05",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"hp-05\"] .cta-c"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('hp-05')"
+    },
+    {
+      "id": "add-cb-01",
+      "type": "actionable",
+      "goal": "Add the Volt 100W USB-C Cable 2m to the cart",
+      "target_sku": "cb-01",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"cb-01\"] .cta-c"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('cb-01')"
+    },
+    {
+      "id": "dismiss-cookie",
+      "type": "actionable",
+      "goal": "Dismiss the cookie banner",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": ".ck-y"
+        }
+      ],
+      "predicate": "!document.querySelector('.ck-wall')"
+    },
+    {
+      "id": "newsletter",
+      "type": "actionable",
+      "goal": "Sign up for the newsletter with the email user159@example.com",
+      "email": "user159@example.com",
+      "gold_actions": [
+        {
+          "kind": "type",
+          "selector": ".lt-f",
+          "value": "user159@example.com"
+        },
+        {
+          "kind": "click",
+          "selector": ".lt-s"
+        }
+      ],
+      "predicate": "document.querySelector('.lt-f').value==='user159@example.com' && window.__st.nl===true"
+    },
+    {
+      "id": "sort-price-asc",
+      "type": "actionable",
+      "goal": "Sort the products by price from low to high",
+      "gold_actions": [
+        {
+          "kind": "select",
+          "selector": "select.srt-dd",
+          "value": "Price: low to high"
+        }
+      ],
+      "predicate": "document.querySelector('select.srt-dd').value==='plh'"
+    },
+    {
+      "id": "add-ch-02",
+      "type": "actionable",
+      "goal": "Add the MagPad Wireless Charger to the cart",
+      "target_sku": "ch-02",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"ch-02\"] .cta-c"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('ch-02')"
+    },
+    {
+      "id": "add-bundle",
+      "type": "actionable",
+      "goal": "Add the deal-of-the-day bundle to the cart",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": ".dod-go"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('bd-1')"
+    },
+    {
+      "id": "impossible",
+      "type": "impossible",
+      "goal": "Track the status of an existing order",
+      "gold_actions": [],
+      "predicate": "true"
+    }
+  ]
+}

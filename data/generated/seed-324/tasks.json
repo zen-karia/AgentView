@@ -1,0 +1,175 @@
+{
+  "meta": {
+    "seed": 324,
+    "gen_version": 2,
+    "scheme": 1,
+    "classes": {
+      "wr": "page",
+      "grid": "plist",
+      "item": "card",
+      "media": "thumb",
+      "title": "ttl",
+      "meta": "row",
+      "price": "amt",
+      "was": "strk",
+      "stock": "avail",
+      "add": "atc",
+      "nav": "topnav",
+      "navItem": "tn-l",
+      "cart": "tn-cart",
+      "bnr": "promo",
+      "bnrIn": "promo-in",
+      "bnrX": "promo-x",
+      "ck": "cookiebar",
+      "ckA": "cb-ok",
+      "ckD": "cb-no",
+      "nl": "subscribe",
+      "nlT": "sub-t",
+      "nlE": "sub-e",
+      "nlB": "sub-b",
+      "ft": "footer",
+      "srt": "sortsel"
+    },
+    "shop": "gadgetbin",
+    "products": [
+      {
+        "sku": "ch-01",
+        "name": "Volt 65W GaN Wall Charger",
+        "price": 29.99
+      },
+      {
+        "sku": "cb-01",
+        "name": "Volt 100W USB-C Cable 2m",
+        "price": 12.99
+      },
+      {
+        "sku": "eb-03",
+        "name": "AquaBuds Sport Earbuds",
+        "price": 44
+      },
+      {
+        "sku": "eb-01",
+        "name": "SoundMax Buds Air Wireless Earbuds",
+        "price": 59.99
+      },
+      {
+        "sku": "eb-02",
+        "name": "Volt Pods Mini Wireless Earbuds",
+        "price": 34.5
+      },
+      {
+        "sku": "hp-01",
+        "name": "SoundMax Pro Wireless Headphones",
+        "price": 89.99
+      },
+      {
+        "sku": "sp-03",
+        "name": "PartyCube 360 Speaker",
+        "price": 79
+      },
+      {
+        "sku": "sp-01",
+        "name": "BoomBox Mini Bluetooth Speaker",
+        "price": 59.99
+      },
+      {
+        "sku": "sp-02",
+        "name": "BassKing Tower Speaker",
+        "price": 189
+      },
+      {
+        "sku": "cb-02",
+        "name": "HDMI 2.1 Braided Cable 3m",
+        "price": 18.5
+      },
+      {
+        "sku": "ch-02",
+        "name": "MagPad Wireless Charger",
+        "price": 24.5
+      },
+      {
+        "sku": "pb-01",
+        "name": "Volt PowerBank 20000mAh",
+        "price": 44.99
+      }
+    ],
+    "grid2": [
+      "ch-02",
+      "pb-01"
+    ],
+    "bundle": null,
+    "feats": {
+      "cookie": false,
+      "banner": true,
+      "newsletter": true,
+      "sort": false,
+      "wrapDepth": 1
+    }
+  },
+  "tasks": [
+    {
+      "id": "add-hp-01",
+      "type": "actionable",
+      "goal": "Add the SoundMax Pro Wireless Headphones to the cart",
+      "target_sku": "hp-01",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"hp-01\"] .atc"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('hp-01')"
+    },
+    {
+      "id": "add-eb-02",
+      "type": "actionable",
+      "goal": "Add the Volt Pods Mini Wireless Earbuds to the cart",
+      "target_sku": "eb-02",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"eb-02\"] .atc"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('eb-02')"
+    },
+    {
+      "id": "newsletter",
+      "type": "actionable",
+      "goal": "Sign up for the newsletter with the email user637@example.com",
+      "email": "user637@example.com",
+      "gold_actions": [
+        {
+          "kind": "type",
+          "selector": ".sub-e",
+          "value": "user637@example.com"
+        },
+        {
+          "kind": "click",
+          "selector": ".sub-b"
+        }
+      ],
+      "predicate": "document.querySelector('.sub-e').value==='user637@example.com' && window.__st.nl===true"
+    },
+    {
+      "id": "add-pb-01",
+      "type": "actionable",
+      "goal": "Add the Volt PowerBank 20000mAh to the cart",
+      "target_sku": "pb-01",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"pb-01\"] .atc"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('pb-01')"
+    },
+    {
+      "id": "impossible",
+      "type": "impossible",
+      "goal": "Track the status of an existing order",
+      "gold_actions": [],
+      "predicate": "true"
+    }
+  ]
+}

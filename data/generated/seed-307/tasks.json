@@ -1,7 +1,7 @@
 {
   "meta": {
-    "seed": 9010,
-    "gen_version": 1,
+    "seed": 307,
+    "gen_version": 2,
     "scheme": 0,
     "classes": {
       "wr": "wr",
@@ -30,7 +30,7 @@
       "ft": "ft",
       "srt": "ssel"
     },
-    "shop": "wirewarehouse",
+    "shop": "audioalley",
     "products": [
       {
         "sku": "cb-02",
@@ -38,9 +38,9 @@
         "price": 18.5
       },
       {
-        "sku": "hp-01",
-        "name": "SoundMax Pro Wireless Headphones",
-        "price": 89.99
+        "sku": "sp-03",
+        "name": "PartyCube 360 Speaker",
+        "price": 79
       },
       {
         "sku": "hp-03",
@@ -48,14 +48,14 @@
         "price": 34.99
       },
       {
-        "sku": "eb-02",
-        "name": "Volt Pods Mini Wireless Earbuds",
-        "price": 34.5
+        "sku": "hp-05",
+        "name": "StudioOne Monitor Headphones",
+        "price": 129
       },
       {
-        "sku": "sp-03",
-        "name": "PartyCube 360 Speaker",
-        "price": 79
+        "sku": "eb-01",
+        "name": "SoundMax Buds Air Wireless Earbuds",
+        "price": 59.99
       },
       {
         "sku": "pb-01",
@@ -63,47 +63,93 @@
         "price": 44.99
       },
       {
+        "sku": "hp-02",
+        "name": "AudioPhile X2 Wireless Headphones",
+        "price": 249
+      },
+      {
+        "sku": "eb-02",
+        "name": "Volt Pods Mini Wireless Earbuds",
+        "price": 34.5
+      },
+      {
+        "sku": "hp-01",
+        "name": "SoundMax Pro Wireless Headphones",
+        "price": 89.99
+      },
+      {
         "sku": "hp-04",
         "name": "NimbusLite Wireless Headphones",
         "price": 59
+      },
+      {
+        "sku": "sp-01",
+        "name": "BoomBox Mini Bluetooth Speaker",
+        "price": 59.99
+      },
+      {
+        "sku": "ch-02",
+        "name": "MagPad Wireless Charger",
+        "price": 24.5
+      },
+      {
+        "sku": "cb-01",
+        "name": "Volt 100W USB-C Cable 2m",
+        "price": 12.99
+      },
+      {
+        "sku": "ch-01",
+        "name": "Volt 65W GaN Wall Charger",
+        "price": 29.99
+      },
+      {
+        "sku": "sp-02",
+        "name": "BassKing Tower Speaker",
+        "price": 189
       }
     ],
-    "grid2": [],
+    "grid2": [
+      "sp-01",
+      "ch-02",
+      "cb-01",
+      "ch-01",
+      "sp-02"
+    ],
     "bundle": null,
     "feats": {
       "cookie": false,
       "banner": true,
-      "newsletter": true,
+      "newsletter": false,
       "sort": false,
-      "wrapDepth": 1
+      "wrapDepth": 3
     }
   },
   "tasks": [
     {
-      "id": "add-hp-01",
+      "id": "add-cb-02",
       "type": "actionable",
-      "goal": "Add the SoundMax Pro Wireless Headphones to the cart",
-      "target_sku": "hp-01",
+      "goal": "Add the HDMI 2.1 Braided Cable 3m to the cart",
+      "target_sku": "cb-02",
       "gold_actions": [
         {
           "kind": "click",
-          "selector": "[data-sku=\"hp-01\"] .go"
+          "selector": "[data-sku=\"cb-02\"] .go"
         }
       ],
-      "predicate": "window.__st.cart.includes('hp-01')"
+      "predicate": "window.__st.cart.includes('cb-02')"
     },
     {
-      "id": "add-sp-03",
+      "id": "add-eb-01",
       "type": "actionable",
-      "goal": "Add the PartyCube 360 Speaker to the cart",
-      "target_sku": "sp-03",
+      "goal": "Add the SoundMax Buds Air Wireless Earbuds to the cart",
+      "target_sku": "eb-01",
       "gold_actions": [
         {
           "kind": "click",
-          "selector": "[data-sku=\"sp-03\"] .go"
+          "selector": "[data-sku=\"eb-01\"] .go"
         }
       ],
-      "predicate": "window.__st.cart.includes('sp-03')"
+      "predicate": "window.__st.cart.includes('eb-01')"
     },
     {
       "id": "add-cheapest-wireless-hp",
@@ -111,6 +157,7 @@
       "goal": "Add the cheapest wireless headphones to the cart",
       "target_sku": "hp-04",
       "candidate_skus": [
+        "hp-02",
         "hp-01",
         "hp-04"
       ],
@@ -123,22 +170,17 @@
       "predicate": "window.__st.cart.includes('hp-04')"
     },
     {
-      "id": "newsletter",
+      "id": "add-ch-02",
       "type": "actionable",
-      "goal": "Sign up for the newsletter with the email user645@example.com",
-      "email": "user645@example.com",
+      "goal": "Add the MagPad Wireless Charger to the cart",
+      "target_sku": "ch-02",
       "gold_actions": [
         {
-          "kind": "type",
-          "selector": ".nl-e",
-          "value": "user645@example.com"
-        },
-        {
           "kind": "click",
-          "selector": ".nl-b"
+          "selector": "[data-sku=\"ch-02\"] .go"
         }
       ],
-      "predicate": "document.querySelector('.nl-e').value==='user645@example.com' && window.__st.nl===true"
+      "predicate": "window.__st.cart.includes('ch-02')"
     },
     {
       "id": "impossible",

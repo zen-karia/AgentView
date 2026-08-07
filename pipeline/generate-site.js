@@ -68,13 +68,29 @@ const SCHEMES = [
 
 const SVG = '<svg viewBox="0 0 64 64"><path d="M4 32c0-15.5 12.5-28 28-28s28 12.5 28 28v14a6 6 0 0 1-6 6h-4a4 4 0 0 1-4-4V36a4 4 0 0 1 4-4h6c0-13.3-10.7-24-24-24S8 18.7 8 32h6a4 4 0 0 1 4 4v12a4 4 0 0 1-4 4h-4a6 6 0 0 1-6-6z"/></svg>';
 
+// v2 archetypes (Stage D loop 1 â€” targets the observed OOD failures: bundle
+// distractors and scheme overfit). VERSION GATE: pages for already-committed
+// seed ranges must regenerate byte-identically forever, so v2 features apply
+// only to fresh ranges. v1: seeds 1-299 (training) and 9000-9099 (committed
+// held-out). v2: 300-8999 and 9100-9999. v2 draws happen strictly AFTER all
+// v1 draws so v1 outputs are untouched.
+function isV2(seed) {
+  return (seed >= 300 && seed <= 8999) || (seed >= 9100 && seed <= 9999);
+}
+const SCHEMES_V2_EXTRA = [
+  { wr: 'shell', grid: 'products', item: 'prod-card', media: 'prod-img', title: 'prod-name', meta: 'prow', price: 'p-now', was: 'p-old', stock: 'p-stock', add: 'add-btn', nav: 'menu', navItem: 'menu-it', cart: 'menu-cart', bnr: 'ticker', bnrIn: 'ticker-in', bnrX: 'ticker-x', ck: 'consent', ckA: 'c-yes', ckD: 'c-no', nl: 'mailing', nlT: 'ml-t', nlE: 'ml-in', nlB: 'ml-go', ft: 'foot', srt: 'orderby' },
+  { wr: 'container-x', grid: 'lst', item: 'li-p', media: 'i-w', title: 'h-p', meta: 'pr-w', price: 'val', was: 'val-x', stock: 'inv', add: 'cta-c', nav: 'bar', navItem: 'bar-a', cart: 'bar-crt', bnr: 'strip', bnrIn: 'strip-c', bnrX: 'strip-k', ck: 'ck-wall', ckA: 'ck-y', ckD: 'ck-n', nl: 'letter', nlT: 'lt-h', nlE: 'lt-f', nlB: 'lt-s', ft: 'base', srt: 'srt-dd' },
+];
+
 function money(n) {
   return `$${n.toFixed(2)}`;
 }
 
 function generate(seed) {
   const rng = mulberry32(seed);
-  const C = pick(rng, SCHEMES);
+  const v2 = isV2(seed);
+  // Same single rng draw for both versions; only the candidate list differs.
+  const C = pick(rng, v2 ? SCHEMES.concat(SCHEMES_V2_EXTRA) : SCHEMES);
   const shop = pick(rng, SHOP_NAMES);
   const products = shuffle(rng, POOL).slice(0, int(rng, 6, 10));
   const feats = {
@@ -103,7 +119,7 @@ function generate(seed) {
   let grid = `<div class="${C.grid}">\n${cards}\n</div>`;
   for (let i = 0; i < feats.wrapDepth; i++) grid = `<div class="jw${i}">${grid}</div>`;
 
-  const html = `<!DOCTYPE html>
+  let html = `<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
@@ -217,15 +233,75 @@ ${feats.banner ? `<div class="${C.bnr}"><div class="${C.bnrIn}">SEASONAL SALE â€
     predicate: 'true',
   });
 
+  // ---- v2 sections: all rng draws strictly AFTER the v1 sequence -----------
+  const metaProducts = products.map((p) => ({ sku: p.sku, name: p.name, price: p.price }));
+  let bundleMeta = null;
+  let grid2Skus = [];
+  if (v2) {
+    let inserts = '';
+    // Second grid ("more products", long-page tier). Non-headphones only, so
+    // the v1 cheapest-wireless-headphones task's ground truth stays correct.
+    if (chance(rng, 0.7)) {
+      const used = new Set(products.map((p) => p.sku));
+      const rest = POOL.filter((p) => !used.has(p.sku) && p.cat !== 'headphones');
+      const grid2 = shuffle(rng, rest).slice(0, int(rng, 4, 6));
+      grid2Skus = grid2.map((p) => p.sku);
+      const cards2 = grid2
+        .map((p) => {
+          const was = chance(rng, 0.4) ? `<span class="${C.was}">${money(p.price * (1.2 + rng() * 0.5))}</span>` : '';
+          return `<div class="${C.item}" data-sku="${p.sku}">
+  <div class="${C.media}">${SVG}</div>
+  <div class="${C.title}">${p.name}</div>
+  <div class="${C.meta}"><span class="${C.price}">${money(p.price)}</span>${was}</div>
+  <div class="${C.stock}">In stock</div>
+  <div class="${C.add}" onclick="av_add('${p.sku}')">Add to cart</div>
+</div>`;
+        })
+        .join('\n');
+      inserts += `<div class="more-h">You may also like</div>\n<div class="${C.grid}">\n${cards2}\n</div>\n`;
+      metaProducts.push(...grid2.map((p) => ({ sku: p.sku, name: p.name, price: p.price })));
+      const g2pick = pick(rng, grid2);
+      tasks.splice(tasks.length - 1, 0, {
+        id: `add-${g2pick.sku}`,
+        type: 'actionable',
+        goal: `Add the ${g2pick.name} to the cart`,
+        target_sku: g2pick.sku,
+        gold_actions: [{ kind: 'click', selector: `[data-sku="${g2pick.sku}"] .${C.add}` }],
+        predicate: `window.__st.cart.includes('${g2pick.sku}')`,
+      });
+    }
+    // Deal-of-the-day bundle: the distractor class the megashop probe exposed.
+    if (chance(rng, 0.8) && products.length >= 2) {
+      const a = pick(rng, products);
+      let b = pick(rng, products);
+      if (b.sku === a.sku) b = products[(products.indexOf(a) + 1) % products.length];
+      const bp = Math.round((a.price + b.price) * 0.85 * 100) / 100;
+      const title = `${a.name} + ${b.name} bundle`;
+      bundleMeta = { id: 'bd-1', title, price: bp };
+      inserts += `<div class="dod" data-bundle="bd-1"><div class="dod-h">Deal of the day</div><div class="dod-t">${title}</div><div class="dod-p">${money(bp)}</div><div class="dod-go" onclick="av_add('bd-1')">Add bundle to cart</div></div>\n`;
+      tasks.splice(tasks.length - 1, 0, {
+        id: 'add-bundle',
+        type: 'actionable',
+        goal: `Add the deal-of-the-day bundle to the cart`,
+        gold_actions: [{ kind: 'click', selector: '.dod-go' }],
+        predicate: `window.__st.cart.includes('bd-1')`,
+      });
+    }
+    if (inserts) html = html.replace(`<div class="${C.ft}">`, `${inserts}<div class="${C.ft}">`);
+  }
+
   return {
     html,
     tasks,
     meta: {
       seed,
-      scheme: SCHEMES.indexOf(C),
+      gen_version: v2 ? 2 : 1,
+      scheme: (v2 ? SCHEMES.concat(SCHEMES_V2_EXTRA) : SCHEMES).indexOf(C),
       classes: C,
       shop,
-      products: products.map((p) => ({ sku: p.sku, name: p.name, price: p.price })),
+      products: metaProducts,
+      grid2: grid2Skus,
+      bundle: bundleMeta,
       feats,
     },
   };

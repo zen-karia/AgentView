@@ -1,0 +1,145 @@
+{
+  "meta": {
+    "seed": 335,
+    "gen_version": 2,
+    "scheme": 2,
+    "classes": {
+      "wr": "main-wrap",
+      "grid": "gr",
+      "item": "pi",
+      "media": "pic",
+      "title": "nm",
+      "meta": "ln",
+      "price": "prc",
+      "was": "old",
+      "stock": "stk",
+      "add": "buy",
+      "nav": "hdr-nav",
+      "navItem": "h-l",
+      "cart": "h-cart",
+      "bnr": "hero-strip",
+      "bnrIn": "hs-in",
+      "bnrX": "hs-close",
+      "ck": "gdpr",
+      "ckA": "g-acc",
+      "ckD": "g-dec",
+      "nl": "newsl",
+      "nlT": "n-t",
+      "nlE": "n-e",
+      "nlB": "n-go",
+      "ft": "btm",
+      "srt": "os"
+    },
+    "shop": "wirewarehouse",
+    "products": [
+      {
+        "sku": "sp-01",
+        "name": "BoomBox Mini Bluetooth Speaker",
+        "price": 59.99
+      },
+      {
+        "sku": "eb-02",
+        "name": "Volt Pods Mini Wireless Earbuds",
+        "price": 34.5
+      },
+      {
+        "sku": "hp-03",
+        "name": "BassKing Wired Headphones",
+        "price": 34.99
+      },
+      {
+        "sku": "sp-02",
+        "name": "BassKing Tower Speaker",
+        "price": 189
+      },
+      {
+        "sku": "hp-02",
+        "name": "AudioPhile X2 Wireless Headphones",
+        "price": 249
+      },
+      {
+        "sku": "hp-05",
+        "name": "StudioOne Monitor Headphones",
+        "price": 129
+      }
+    ],
+    "grid2": [],
+    "bundle": {
+      "id": "bd-1",
+      "title": "StudioOne Monitor Headphones + AudioPhile X2 Wireless Headphones bundle",
+      "price": 321.3
+    },
+    "feats": {
+      "cookie": false,
+      "banner": false,
+      "newsletter": true,
+      "sort": false,
+      "wrapDepth": 1
+    }
+  },
+  "tasks": [
+    {
+      "id": "add-sp-02",
+      "type": "actionable",
+      "goal": "Add the BassKing Tower Speaker to the cart",
+      "target_sku": "sp-02",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"sp-02\"] .buy"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('sp-02')"
+    },
+    {
+      "id": "add-hp-03",
+      "type": "actionable",
+      "goal": "Add the BassKing Wired Headphones to the cart",
+      "target_sku": "hp-03",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"hp-03\"] .buy"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('hp-03')"
+    },
+    {
+      "id": "newsletter",
+      "type": "actionable",
+      "goal": "Sign up for the newsletter with the email user295@example.com",
+      "email": "user295@example.com",
+      "gold_actions": [
+        {
+          "kind": "type",
+          "selector": ".n-e",
+          "value": "user295@example.com"
+        },
+        {
+          "kind": "click",
+          "selector": ".n-go"
+        }
+      ],
+      "predicate": "document.querySelector('.n-e').value==='user295@example.com' && window.__st.nl===true"
+    },
+    {
+      "id": "add-bundle",
+      "type": "actionable",
+      "goal": "Add the deal-of-the-day bundle to the cart",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": ".dod-go"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('bd-1')"
+    },
+    {
+      "id": "impossible",
+      "type": "impossible",
+      "goal": "Track the status of an existing order",
+      "gold_actions": [],
+      "predicate": "true"
+    }
+  ]
+}

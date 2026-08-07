@@ -1,0 +1,146 @@
+{
+  "meta": {
+    "seed": 329,
+    "gen_version": 2,
+    "scheme": 4,
+    "classes": {
+      "wr": "container-x",
+      "grid": "lst",
+      "item": "li-p",
+      "media": "i-w",
+      "title": "h-p",
+      "meta": "pr-w",
+      "price": "val",
+      "was": "val-x",
+      "stock": "inv",
+      "add": "cta-c",
+      "nav": "bar",
+      "navItem": "bar-a",
+      "cart": "bar-crt",
+      "bnr": "strip",
+      "bnrIn": "strip-c",
+      "bnrX": "strip-k",
+      "ck": "ck-wall",
+      "ckA": "ck-y",
+      "ckD": "ck-n",
+      "nl": "letter",
+      "nlT": "lt-h",
+      "nlE": "lt-f",
+      "nlB": "lt-s",
+      "ft": "base",
+      "srt": "srt-dd"
+    },
+    "shop": "techtrove",
+    "products": [
+      {
+        "sku": "hp-03",
+        "name": "BassKing Wired Headphones",
+        "price": 34.99
+      },
+      {
+        "sku": "hp-04",
+        "name": "NimbusLite Wireless Headphones",
+        "price": 59
+      },
+      {
+        "sku": "sp-02",
+        "name": "BassKing Tower Speaker",
+        "price": 189
+      },
+      {
+        "sku": "eb-03",
+        "name": "AquaBuds Sport Earbuds",
+        "price": 44
+      },
+      {
+        "sku": "pb-01",
+        "name": "Volt PowerBank 20000mAh",
+        "price": 44.99
+      },
+      {
+        "sku": "eb-02",
+        "name": "Volt Pods Mini Wireless Earbuds",
+        "price": 34.5
+      },
+      {
+        "sku": "sp-03",
+        "name": "PartyCube 360 Speaker",
+        "price": 79
+      }
+    ],
+    "grid2": [],
+    "bundle": null,
+    "feats": {
+      "cookie": true,
+      "banner": true,
+      "newsletter": true,
+      "sort": false,
+      "wrapDepth": 2
+    }
+  },
+  "tasks": [
+    {
+      "id": "add-hp-04",
+      "type": "actionable",
+      "goal": "Add the NimbusLite Wireless Headphones to the cart",
+      "target_sku": "hp-04",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"hp-04\"] .cta-c"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('hp-04')"
+    },
+    {
+      "id": "add-sp-02",
+      "type": "actionable",
+      "goal": "Add the BassKing Tower Speaker to the cart",
+      "target_sku": "sp-02",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"sp-02\"] .cta-c"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('sp-02')"
+    },
+    {
+      "id": "dismiss-cookie",
+      "type": "actionable",
+      "goal": "Dismiss the cookie banner",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": ".ck-y"
+        }
+      ],
+      "predicate": "!document.querySelector('.ck-wall')"
+    },
+    {
+      "id": "newsletter",
+      "type": "actionable",
+      "goal": "Sign up for the newsletter with the email user921@example.com",
+      "email": "user921@example.com",
+      "gold_actions": [
+        {
+          "kind": "type",
+          "selector": ".lt-f",
+          "value": "user921@example.com"
+        },
+        {
+          "kind": "click",
+          "selector": ".lt-s"
+        }
+      ],
+      "predicate": "document.querySelector('.lt-f').value==='user921@example.com' && window.__st.nl===true"
+    },
+    {
+      "id": "impossible",
+      "type": "impossible",
+      "goal": "Track the status of an existing order",
+      "gold_actions": [],
+      "predicate": "true"
+    }
+  ]
+}

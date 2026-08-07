@@ -1,7 +1,7 @@
 {
   "meta": {
-    "seed": 9010,
-    "gen_version": 1,
+    "seed": 318,
+    "gen_version": 2,
     "scheme": 0,
     "classes": {
       "wr": "wr",
@@ -30,12 +30,42 @@
       "ft": "ft",
       "srt": "ssel"
     },
-    "shop": "wirewarehouse",
+    "shop": "gadgetbin",
     "products": [
       {
-        "sku": "cb-02",
-        "name": "HDMI 2.1 Braided Cable 3m",
-        "price": 18.5
+        "sku": "pb-01",
+        "name": "Volt PowerBank 20000mAh",
+        "price": 44.99
+      },
+      {
+        "sku": "eb-02",
+        "name": "Volt Pods Mini Wireless Earbuds",
+        "price": 34.5
+      },
+      {
+        "sku": "hp-02",
+        "name": "AudioPhile X2 Wireless Headphones",
+        "price": 249
+      },
+      {
+        "sku": "eb-03",
+        "name": "AquaBuds Sport Earbuds",
+        "price": 44
+      },
+      {
+        "sku": "sp-03",
+        "name": "PartyCube 360 Speaker",
+        "price": 79
+      },
+      {
+        "sku": "sp-01",
+        "name": "BoomBox Mini Bluetooth Speaker",
+        "price": 59.99
+      },
+      {
+        "sku": "hp-05",
+        "name": "StudioOne Monitor Headphones",
+        "price": 129
       },
       {
         "sku": "hp-01",
@@ -48,21 +78,6 @@
         "price": 34.99
       },
       {
-        "sku": "eb-02",
-        "name": "Volt Pods Mini Wireless Earbuds",
-        "price": 34.5
-      },
-      {
-        "sku": "sp-03",
-        "name": "PartyCube 360 Speaker",
-        "price": 79
-      },
-      {
-        "sku": "pb-01",
-        "name": "Volt PowerBank 20000mAh",
-        "price": 44.99
-      },
-      {
         "sku": "hp-04",
         "name": "NimbusLite Wireless Headphones",
         "price": 59
@@ -71,39 +86,39 @@
     "grid2": [],
     "bundle": null,
     "feats": {
-      "cookie": false,
+      "cookie": true,
       "banner": true,
-      "newsletter": true,
+      "newsletter": false,
       "sort": false,
-      "wrapDepth": 1
+      "wrapDepth": 3
     }
   },
   "tasks": [
     {
-      "id": "add-hp-01",
+      "id": "add-eb-02",
       "type": "actionable",
-      "goal": "Add the SoundMax Pro Wireless Headphones to the cart",
-      "target_sku": "hp-01",
+      "goal": "Add the Volt Pods Mini Wireless Earbuds to the cart",
+      "target_sku": "eb-02",
       "gold_actions": [
         {
           "kind": "click",
-          "selector": "[data-sku=\"hp-01\"] .go"
+          "selector": "[data-sku=\"eb-02\"] .go"
         }
       ],
-      "predicate": "window.__st.cart.includes('hp-01')"
+      "predicate": "window.__st.cart.includes('eb-02')"
     },
     {
-      "id": "add-sp-03",
+      "id": "add-pb-01",
       "type": "actionable",
-      "goal": "Add the PartyCube 360 Speaker to the cart",
-      "target_sku": "sp-03",
+      "goal": "Add the Volt PowerBank 20000mAh to the cart",
+      "target_sku": "pb-01",
       "gold_actions": [
         {
           "kind": "click",
-          "selector": "[data-sku=\"sp-03\"] .go"
+          "selector": "[data-sku=\"pb-01\"] .go"
         }
       ],
-      "predicate": "window.__st.cart.includes('sp-03')"
+      "predicate": "window.__st.cart.includes('pb-01')"
     },
     {
       "id": "add-cheapest-wireless-hp",
@@ -111,6 +126,7 @@
       "goal": "Add the cheapest wireless headphones to the cart",
       "target_sku": "hp-04",
       "candidate_skus": [
+        "hp-02",
         "hp-01",
         "hp-04"
       ],
@@ -123,22 +139,16 @@
       "predicate": "window.__st.cart.includes('hp-04')"
     },
     {
-      "id": "newsletter",
+      "id": "dismiss-cookie",
       "type": "actionable",
-      "goal": "Sign up for the newsletter with the email user645@example.com",
-      "email": "user645@example.com",
+      "goal": "Dismiss the cookie banner",
       "gold_actions": [
         {
-          "kind": "type",
-          "selector": ".nl-e",
-          "value": "user645@example.com"
-        },
-        {
           "kind": "click",
-          "selector": ".nl-b"
+          "selector": ".ck-a"
         }
       ],
-      "predicate": "document.querySelector('.nl-e').value==='user645@example.com' && window.__st.nl===true"
+      "predicate": "!document.querySelector('.ckb')"
     },
     {
       "id": "impossible",

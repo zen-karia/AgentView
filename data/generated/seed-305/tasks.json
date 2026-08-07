@@ -1,0 +1,158 @@
+{
+  "meta": {
+    "seed": 305,
+    "gen_version": 2,
+    "scheme": 3,
+    "classes": {
+      "wr": "shell",
+      "grid": "products",
+      "item": "prod-card",
+      "media": "prod-img",
+      "title": "prod-name",
+      "meta": "prow",
+      "price": "p-now",
+      "was": "p-old",
+      "stock": "p-stock",
+      "add": "add-btn",
+      "nav": "menu",
+      "navItem": "menu-it",
+      "cart": "menu-cart",
+      "bnr": "ticker",
+      "bnrIn": "ticker-in",
+      "bnrX": "ticker-x",
+      "ck": "consent",
+      "ckA": "c-yes",
+      "ckD": "c-no",
+      "nl": "mailing",
+      "nlT": "ml-t",
+      "nlE": "ml-in",
+      "nlB": "ml-go",
+      "ft": "foot",
+      "srt": "orderby"
+    },
+    "shop": "techtrove",
+    "products": [
+      {
+        "sku": "ch-02",
+        "name": "MagPad Wireless Charger",
+        "price": 24.5
+      },
+      {
+        "sku": "sp-01",
+        "name": "BoomBox Mini Bluetooth Speaker",
+        "price": 59.99
+      },
+      {
+        "sku": "hp-03",
+        "name": "BassKing Wired Headphones",
+        "price": 34.99
+      },
+      {
+        "sku": "sp-03",
+        "name": "PartyCube 360 Speaker",
+        "price": 79
+      },
+      {
+        "sku": "cb-02",
+        "name": "HDMI 2.1 Braided Cable 3m",
+        "price": 18.5
+      },
+      {
+        "sku": "hp-04",
+        "name": "NimbusLite Wireless Headphones",
+        "price": 59
+      }
+    ],
+    "grid2": [],
+    "bundle": {
+      "id": "bd-1",
+      "title": "BassKing Wired Headphones + MagPad Wireless Charger bundle",
+      "price": 50.57
+    },
+    "feats": {
+      "cookie": false,
+      "banner": true,
+      "newsletter": true,
+      "sort": true,
+      "wrapDepth": 3
+    }
+  },
+  "tasks": [
+    {
+      "id": "add-ch-02",
+      "type": "actionable",
+      "goal": "Add the MagPad Wireless Charger to the cart",
+      "target_sku": "ch-02",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"ch-02\"] .add-btn"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('ch-02')"
+    },
+    {
+      "id": "add-sp-03",
+      "type": "actionable",
+      "goal": "Add the PartyCube 360 Speaker to the cart",
+      "target_sku": "sp-03",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"sp-03\"] .add-btn"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('sp-03')"
+    },
+    {
+      "id": "newsletter",
+      "type": "actionable",
+      "goal": "Sign up for the newsletter with the email user148@example.com",
+      "email": "user148@example.com",
+      "gold_actions": [
+        {
+          "kind": "type",
+          "selector": ".ml-in",
+          "value": "user148@example.com"
+        },
+        {
+          "kind": "click",
+          "selector": ".ml-go"
+        }
+      ],
+      "predicate": "document.querySelector('.ml-in').value==='user148@example.com' && window.__st.nl===true"
+    },
+    {
+      "id": "sort-price-asc",
+      "type": "actionable",
+      "goal": "Sort the products by price from low to high",
+      "gold_actions": [
+        {
+          "kind": "select",
+          "selector": "select.orderby",
+          "value": "Price: low to high"
+        }
+      ],
+      "predicate": "document.querySelector('select.orderby').value==='plh'"
+    },
+    {
+      "id": "add-bundle",
+      "type": "actionable",
+      "goal": "Add the deal-of-the-day bundle to the cart",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": ".dod-go"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('bd-1')"
+    },
+    {
+      "id": "impossible",
+      "type": "impossible",
+      "goal": "Track the status of an existing order",
+      "gold_actions": [],
+      "predicate": "true"
+    }
+  ]
+}

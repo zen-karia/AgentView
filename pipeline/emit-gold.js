@@ -57,7 +57,17 @@ function buildOutput(task, meta, doc) {
     }
   };
 
-  if (task.id.startsWith('add-') && task.id !== 'add-cheapest-wireless-hp') {
+  if (task.id === 'add-bundle') {
+    content.push({ id: `c${++c}`, text: meta.bundle.title, selector: '.dod-t' });
+    content.push({ id: `c${++c}`, text: money(meta.bundle.price), selector: '.dod-p' });
+    actions.push({
+      id: `a${++a}`,
+      kind: 'click',
+      description: `Add the ${meta.bundle.title} (${money(meta.bundle.price)}) to the cart`,
+      target_selector: avIdOf(doc, '.dod-go'),
+      content_refs: ['c1', 'c2'],
+    });
+  } else if (task.id.startsWith('add-') && task.id !== 'add-cheapest-wireless-hp') {
     addProduct(task.target_sku, true);
   } else if (task.id === 'add-cheapest-wireless-hp') {
     // D1: candidate set — every wireless option plus the data to compare them.

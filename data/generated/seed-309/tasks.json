@@ -1,7 +1,7 @@
 {
   "meta": {
-    "seed": 9010,
-    "gen_version": 1,
+    "seed": 309,
+    "gen_version": 2,
     "scheme": 0,
     "classes": {
       "wr": "wr",
@@ -30,22 +30,17 @@
       "ft": "ft",
       "srt": "ssel"
     },
-    "shop": "wirewarehouse",
+    "shop": "audioalley",
     "products": [
       {
-        "sku": "cb-02",
-        "name": "HDMI 2.1 Braided Cable 3m",
-        "price": 18.5
+        "sku": "ch-01",
+        "name": "Volt 65W GaN Wall Charger",
+        "price": 29.99
       },
       {
-        "sku": "hp-01",
-        "name": "SoundMax Pro Wireless Headphones",
-        "price": 89.99
-      },
-      {
-        "sku": "hp-03",
-        "name": "BassKing Wired Headphones",
-        "price": 34.99
+        "sku": "ch-02",
+        "name": "MagPad Wireless Charger",
+        "price": 24.5
       },
       {
         "sku": "eb-02",
@@ -53,45 +48,46 @@
         "price": 34.5
       },
       {
+        "sku": "hp-01",
+        "name": "SoundMax Pro Wireless Headphones",
+        "price": 89.99
+      },
+      {
         "sku": "sp-03",
         "name": "PartyCube 360 Speaker",
         "price": 79
       },
       {
-        "sku": "pb-01",
-        "name": "Volt PowerBank 20000mAh",
-        "price": 44.99
-      },
-      {
         "sku": "hp-04",
         "name": "NimbusLite Wireless Headphones",
         "price": 59
+      },
+      {
+        "sku": "eb-01",
+        "name": "SoundMax Buds Air Wireless Earbuds",
+        "price": 59.99
+      },
+      {
+        "sku": "hp-05",
+        "name": "StudioOne Monitor Headphones",
+        "price": 129
       }
     ],
     "grid2": [],
-    "bundle": null,
+    "bundle": {
+      "id": "bd-1",
+      "title": "MagPad Wireless Charger + SoundMax Buds Air Wireless Earbuds bundle",
+      "price": 71.82
+    },
     "feats": {
       "cookie": false,
-      "banner": true,
+      "banner": false,
       "newsletter": true,
-      "sort": false,
-      "wrapDepth": 1
+      "sort": true,
+      "wrapDepth": 3
     }
   },
   "tasks": [
-    {
-      "id": "add-hp-01",
-      "type": "actionable",
-      "goal": "Add the SoundMax Pro Wireless Headphones to the cart",
-      "target_sku": "hp-01",
-      "gold_actions": [
-        {
-          "kind": "click",
-          "selector": "[data-sku=\"hp-01\"] .go"
-        }
-      ],
-      "predicate": "window.__st.cart.includes('hp-01')"
-    },
     {
       "id": "add-sp-03",
       "type": "actionable",
@@ -104,6 +100,19 @@
         }
       ],
       "predicate": "window.__st.cart.includes('sp-03')"
+    },
+    {
+      "id": "add-ch-01",
+      "type": "actionable",
+      "goal": "Add the Volt 65W GaN Wall Charger to the cart",
+      "target_sku": "ch-01",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"ch-01\"] .go"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('ch-01')"
     },
     {
       "id": "add-cheapest-wireless-hp",
@@ -125,20 +134,45 @@
     {
       "id": "newsletter",
       "type": "actionable",
-      "goal": "Sign up for the newsletter with the email user645@example.com",
-      "email": "user645@example.com",
+      "goal": "Sign up for the newsletter with the email user474@example.com",
+      "email": "user474@example.com",
       "gold_actions": [
         {
           "kind": "type",
           "selector": ".nl-e",
-          "value": "user645@example.com"
+          "value": "user474@example.com"
         },
         {
           "kind": "click",
           "selector": ".nl-b"
         }
       ],
-      "predicate": "document.querySelector('.nl-e').value==='user645@example.com' && window.__st.nl===true"
+      "predicate": "document.querySelector('.nl-e').value==='user474@example.com' && window.__st.nl===true"
+    },
+    {
+      "id": "sort-price-asc",
+      "type": "actionable",
+      "goal": "Sort the products by price from low to high",
+      "gold_actions": [
+        {
+          "kind": "select",
+          "selector": "select.ssel",
+          "value": "Price: low to high"
+        }
+      ],
+      "predicate": "document.querySelector('select.ssel').value==='plh'"
+    },
+    {
+      "id": "add-bundle",
+      "type": "actionable",
+      "goal": "Add the deal-of-the-day bundle to the cart",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": ".dod-go"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('bd-1')"
     },
     {
       "id": "impossible",

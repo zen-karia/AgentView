@@ -1,7 +1,7 @@
 {
   "meta": {
-    "seed": 1,
-    "gen_version": 1,
+    "seed": 314,
+    "gen_version": 2,
     "scheme": 1,
     "classes": {
       "wr": "page",
@@ -30,27 +30,12 @@
       "ft": "footer",
       "srt": "sortsel"
     },
-    "shop": "gadgetbin",
+    "shop": "wirewarehouse",
     "products": [
       {
-        "sku": "hp-02",
-        "name": "AudioPhile X2 Wireless Headphones",
-        "price": 249
-      },
-      {
-        "sku": "sp-02",
-        "name": "BassKing Tower Speaker",
-        "price": 189
-      },
-      {
-        "sku": "eb-02",
-        "name": "Volt Pods Mini Wireless Earbuds",
-        "price": 34.5
-      },
-      {
-        "sku": "eb-01",
-        "name": "SoundMax Buds Air Wireless Earbuds",
-        "price": 59.99
+        "sku": "pb-01",
+        "name": "Volt PowerBank 20000mAh",
+        "price": 44.99
       },
       {
         "sku": "hp-03",
@@ -58,94 +43,111 @@
         "price": 34.99
       },
       {
+        "sku": "eb-03",
+        "name": "AquaBuds Sport Earbuds",
+        "price": 44
+      },
+      {
+        "sku": "hp-04",
+        "name": "NimbusLite Wireless Headphones",
+        "price": 59
+      },
+      {
+        "sku": "cb-01",
+        "name": "Volt 100W USB-C Cable 2m",
+        "price": 12.99
+      },
+      {
         "sku": "hp-01",
         "name": "SoundMax Pro Wireless Headphones",
         "price": 89.99
+      },
+      {
+        "sku": "eb-01",
+        "name": "SoundMax Buds Air Wireless Earbuds",
+        "price": 59.99
+      },
+      {
+        "sku": "eb-02",
+        "name": "Volt Pods Mini Wireless Earbuds",
+        "price": 34.5
       }
     ],
     "grid2": [],
-    "bundle": null,
+    "bundle": {
+      "id": "bd-1",
+      "title": "Volt 100W USB-C Cable 2m + SoundMax Pro Wireless Headphones bundle",
+      "price": 87.53
+    },
     "feats": {
-      "cookie": true,
-      "banner": false,
+      "cookie": false,
+      "banner": true,
       "newsletter": true,
       "sort": true,
-      "wrapDepth": 1
+      "wrapDepth": 2
     }
   },
   "tasks": [
     {
-      "id": "add-hp-02",
+      "id": "add-pb-01",
       "type": "actionable",
-      "goal": "Add the AudioPhile X2 Wireless Headphones to the cart",
-      "target_sku": "hp-02",
+      "goal": "Add the Volt PowerBank 20000mAh to the cart",
+      "target_sku": "pb-01",
       "gold_actions": [
         {
           "kind": "click",
-          "selector": "[data-sku=\"hp-02\"] .atc"
+          "selector": "[data-sku=\"pb-01\"] .atc"
         }
       ],
-      "predicate": "window.__st.cart.includes('hp-02')"
+      "predicate": "window.__st.cart.includes('pb-01')"
     },
     {
-      "id": "add-hp-03",
+      "id": "add-hp-04",
       "type": "actionable",
-      "goal": "Add the BassKing Wired Headphones to the cart",
-      "target_sku": "hp-03",
+      "goal": "Add the NimbusLite Wireless Headphones to the cart",
+      "target_sku": "hp-04",
       "gold_actions": [
         {
           "kind": "click",
-          "selector": "[data-sku=\"hp-03\"] .atc"
+          "selector": "[data-sku=\"hp-04\"] .atc"
         }
       ],
-      "predicate": "window.__st.cart.includes('hp-03')"
+      "predicate": "window.__st.cart.includes('hp-04')"
     },
     {
       "id": "add-cheapest-wireless-hp",
       "type": "actionable",
       "goal": "Add the cheapest wireless headphones to the cart",
-      "target_sku": "hp-01",
+      "target_sku": "hp-04",
       "candidate_skus": [
-        "hp-02",
+        "hp-04",
         "hp-01"
       ],
       "gold_actions": [
         {
           "kind": "click",
-          "selector": "[data-sku=\"hp-01\"] .atc"
+          "selector": "[data-sku=\"hp-04\"] .atc"
         }
       ],
-      "predicate": "window.__st.cart.includes('hp-01')"
-    },
-    {
-      "id": "dismiss-cookie",
-      "type": "actionable",
-      "goal": "Dismiss the cookie banner",
-      "gold_actions": [
-        {
-          "kind": "click",
-          "selector": ".cb-ok"
-        }
-      ],
-      "predicate": "!document.querySelector('.cookiebar')"
+      "predicate": "window.__st.cart.includes('hp-04')"
     },
     {
       "id": "newsletter",
       "type": "actionable",
-      "goal": "Sign up for the newsletter with the email user484@example.com",
-      "email": "user484@example.com",
+      "goal": "Sign up for the newsletter with the email user273@example.com",
+      "email": "user273@example.com",
       "gold_actions": [
         {
           "kind": "type",
           "selector": ".sub-e",
-          "value": "user484@example.com"
+          "value": "user273@example.com"
         },
         {
           "kind": "click",
           "selector": ".sub-b"
         }
       ],
-      "predicate": "document.querySelector('.sub-e').value==='user484@example.com' && window.__st.nl===true"
+      "predicate": "document.querySelector('.sub-e').value==='user273@example.com' && window.__st.nl===true"
     },
     {
       "id": "sort-price-asc",
@@ -159,6 +161,18 @@
         }
       ],
       "predicate": "document.querySelector('select.sortsel').value==='plh'"
+    },
+    {
+      "id": "add-bundle",
+      "type": "actionable",
+      "goal": "Add the deal-of-the-day bundle to the cart",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": ".dod-go"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('bd-1')"
     },
     {
       "id": "impossible",

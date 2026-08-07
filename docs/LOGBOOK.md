@@ -245,3 +245,16 @@ Bake-off (2B/4B/9B) still training.
   (expected; outputs parsed, selectors resolved uniquely, wrong elements — honest OOD gap on
   real-web pages). Trimmed M2W pages: 12,341 and 24,054 tokens — both fit the 28k budget, which
   would have been impossible under the old 8k cap (32k raise directly enabled this).
+
+## Stage D loop 1: generator v2 (seed-gated, determinism-preserving)
+
+- Version gate: v1 semantics FROZEN for seeds 1-299 + 9000-9099 (regeneration verified
+  byte-identical post-change); v2 = seeds 300-8999 + 9100-9999, all new rng draws strictly after
+  the v1 sequence.
+- v2 features, each targeting an observed OOD failure: **deal-of-the-day bundle** (the megashop
+  distractor class — bundle is also a task target itself), **second product grid** (long pages,
+  13-14 products; non-headphones only so cheapest-wireless ground truth stays correct), **two new
+  class-name schemes** (anti-vocabulary-overfit).
+- v2 seeds 300-349 generated + Playwright-verified (add-bundle PASS, no-act sanity clean);
+  **+337 gold rows** (data/rows/gold-300-349.jsonl); teacher batch on 300-349 running (monitored).
+- v2 held-out reserved range: 9100+ (unused, for a v2-distribution eval slice later).

@@ -1,0 +1,190 @@
+{
+  "meta": {
+    "seed": 312,
+    "gen_version": 2,
+    "scheme": 0,
+    "classes": {
+      "wr": "wr",
+      "grid": "grid",
+      "item": "itm",
+      "media": "im",
+      "title": "t",
+      "meta": "mt",
+      "price": "pr",
+      "was": "was",
+      "stock": "st",
+      "add": "go",
+      "nav": "nv",
+      "navItem": "nv-i",
+      "cart": "nv-c",
+      "bnr": "bnr",
+      "bnrIn": "bnr-in",
+      "bnrX": "bnr-x",
+      "ck": "ckb",
+      "ckA": "ck-a",
+      "ckD": "ck-d",
+      "nl": "nl",
+      "nlT": "nl-t",
+      "nlE": "nl-e",
+      "nlB": "nl-b",
+      "ft": "ft",
+      "srt": "ssel"
+    },
+    "shop": "gadgetbin",
+    "products": [
+      {
+        "sku": "pb-01",
+        "name": "Volt PowerBank 20000mAh",
+        "price": 44.99
+      },
+      {
+        "sku": "hp-01",
+        "name": "SoundMax Pro Wireless Headphones",
+        "price": 89.99
+      },
+      {
+        "sku": "ch-02",
+        "name": "MagPad Wireless Charger",
+        "price": 24.5
+      },
+      {
+        "sku": "hp-02",
+        "name": "AudioPhile X2 Wireless Headphones",
+        "price": 249
+      },
+      {
+        "sku": "eb-02",
+        "name": "Volt Pods Mini Wireless Earbuds",
+        "price": 34.5
+      },
+      {
+        "sku": "sp-01",
+        "name": "BoomBox Mini Bluetooth Speaker",
+        "price": 59.99
+      },
+      {
+        "sku": "sp-03",
+        "name": "PartyCube 360 Speaker",
+        "price": 79
+      },
+      {
+        "sku": "hp-03",
+        "name": "BassKing Wired Headphones",
+        "price": 34.99
+      },
+      {
+        "sku": "eb-03",
+        "name": "AquaBuds Sport Earbuds",
+        "price": 44
+      }
+    ],
+    "grid2": [],
+    "bundle": {
+      "id": "bd-1",
+      "title": "AquaBuds Sport Earbuds + AudioPhile X2 Wireless Headphones bundle",
+      "price": 249.05
+    },
+    "feats": {
+      "cookie": false,
+      "banner": true,
+      "newsletter": true,
+      "sort": true,
+      "wrapDepth": 1
+    }
+  },
+  "tasks": [
+    {
+      "id": "add-sp-03",
+      "type": "actionable",
+      "goal": "Add the PartyCube 360 Speaker to the cart",
+      "target_sku": "sp-03",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"sp-03\"] .go"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('sp-03')"
+    },
+    {
+      "id": "add-hp-02",
+      "type": "actionable",
+      "goal": "Add the AudioPhile X2 Wireless Headphones to the cart",
+      "target_sku": "hp-02",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"hp-02\"] .go"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('hp-02')"
+    },
+    {
+      "id": "add-cheapest-wireless-hp",
+      "type": "actionable",
+      "goal": "Add the cheapest wireless headphones to the cart",
+      "target_sku": "hp-01",
+      "candidate_skus": [
+        "hp-01",
+        "hp-02"
+      ],
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"hp-01\"] .go"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('hp-01')"
+    },
+    {
+      "id": "newsletter",
+      "type": "actionable",
+      "goal": "Sign up for the newsletter with the email user572@example.com",
+      "email": "user572@example.com",
+      "gold_actions": [
+        {
+          "kind": "type",
+          "selector": ".nl-e",
+          "value": "user572@example.com"
+        },
+        {
+          "kind": "click",
+          "selector": ".nl-b"
+        }
+      ],
+      "predicate": "document.querySelector('.nl-e').value==='user572@example.com' && window.__st.nl===true"
+    },
+    {
+      "id": "sort-price-asc",
+      "type": "actionable",
+      "goal": "Sort the products by price from low to high",
+      "gold_actions": [
+        {
+          "kind": "select",
+          "selector": "select.ssel",
+          "value": "Price: low to high"
+        }
+      ],
+      "predicate": "document.querySelector('select.ssel').value==='plh'"
+    },
+    {
+      "id": "add-bundle",
+      "type": "actionable",
+      "goal": "Add the deal-of-the-day bundle to the cart",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": ".dod-go"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('bd-1')"
+    },
+    {
+      "id": "impossible",
+      "type": "impossible",
+      "goal": "Track the status of an existing order",
+      "gold_actions": [],
+      "predicate": "true"
+    }
+  ]
+}

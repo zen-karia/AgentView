@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>DemoShop (15 items)</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; }
+    nav a { margin-right: 12px; }
+    .grid { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; }
+    .product-card { border: 1px solid #ddd; padding: 8px; width: 200px; }
+    .price { font-weight: 600; }
+    footer div { display: inline-block; margin-right: 12px; color: #666; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/">Home</a><a href="/deals">Deals</a><a href="/new">New</a>
+    <a href="/account">Account</a><a href="/cart">Cart</a>
+  </nav>
+  <div style="display:none">
+    best shirts online cheap shirts blue shirts red shirts discount apparel
+    free shipping trending fashion 2026 buy now limited stock
+  </div>
+  <h1>Shop</h1>
+  <aside class="filters">Filter by: color, price, size, brand</aside>
+  <ul id="grid" class="grid"></ul>
+  <div id="cart">Cart: <span id="cart-items"></span></div>
+  <footer>
+    <div>About</div><div>Careers</div><div>Privacy Policy</div><div>Terms</div>
+    <div>Returns</div><div>Contact</div>
+    <p>&copy; 2026 DemoShop Inc. Free shipping over $50.</p>
+  </footer>
+  <script>
+    window.__PRODUCTS__ = [{"id": "p1", "name": "Red Shirt", "price": 23, "color": "red"}, {"id": "p2", "name": "Green Shirt", "price": 36, "color": "green"}, {"id": "p3", "name": "Black Shirt", "price": 49, "color": "black"}, {"id": "p4", "name": "White Shirt", "price": 62, "color": "white"}, {"id": "p5", "name": "Grey Shirt", "price": 75, "color": "grey"}, {"id": "p6", "name": "Blue Hat", "price": 88, "color": "blue"}, {"id": "p7", "name": "Red Hat", "price": 11, "color": "red"}, {"id": "p8", "name": "Green Hat", "price": 24, "color": "green"}, {"id": "p9", "name": "Black Hat", "price": 37, "color": "black"}, {"id": "p10", "name": "White Hat", "price": 50, "color": "white"}, {"id": "p11", "name": "Grey Hat", "price": 63, "color": "grey"}, {"id": "p12", "name": "Blue Shoes", "price": 76, "color": "blue"}, {"id": "p13", "name": "Red Shoes", "price": 89, "color": "red"}, {"id": "p14", "name": "Green Shoes", "price": 12, "color": "green"}, {"id": "p15", "name": "Black Shoes", "price": 25, "color": "black"}];
+    window.__CART__ = [];
+    window.__STATE__ = { cart: window.__CART__, products: window.__PRODUCTS__ };
+    function add(id) {
+      window.__CART__.push(id);
+      document.getElementById('cart-items').textContent = window.__CART__.join(', ');
+    }
+    const grid = document.getElementById('grid');
+    window.__PRODUCTS__.forEach(function (p) {
+      const li = document.createElement('li');
+      li.className = 'product-card';
+      li.dataset.color = p.color;
+      li.innerHTML =
+        '<span class="name">' + p.name + '</span> - ' +
+        '<span class="price">$' + p.price + '</span> (' + p.color + ') ' +
+        '<button id="add-' + p.id + '" onclick="add(\'' + p.id + '\')">Add to cart</button>';
+      grid.appendChild(li);
+    });
+  </script>
+</body>
+</html>

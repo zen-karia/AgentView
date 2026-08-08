@@ -282,3 +282,10 @@ Also this session: GRPO reward wired end-to-end and locally verified (gold->1.0,
 garbage->0.0, impossible->exact); grpo.toml staged awaiting the bake-off winner run-id;
 eval-e2e translate-stage error accounting fixed (Gemini arm initially showed 0/18 due to
 uncounted repetition_penalty 400s — retry-without logic added, honest rerun = 100%).
+
+## Full held-out sweep (n=256): sft-2b-v0 perfect across the board
+
+All 256 goals on the committed 50-page held-out set (seeds 9010-9059): valid 100%, element recall
+100%, full-task match 100%, impossible handling 100%. The n=26 sample result generalizes to the
+full frozen page set — the in-distribution claim is now statistically solid. Rows in Mongo `eval`
+(arm sft-2b-v0-full).

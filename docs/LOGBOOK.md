@@ -304,3 +304,18 @@ strict through our exact pipeline sits in the published frontier-prompting ballp
 only 32.5% on wild HTML — the strict contract is genuinely hard, which is what the fine-tune buys.
 The benchmark curve now has its anchor row; the planned lever is Mind2Web TRAIN-split ingestion
 (amended D6) with the measurable target of closing toward Gemini's 35%.
+
+## Bake-off first result: 2B v1 (flash-1784388428-de80fdef, $1.74) — the teacher-tier ablation
+
+v2-distribution slice (seeds 9100-9109, 70 tasks, unseen by BOTH models):
+
+| Arm (2B) | valid | element recall | full match |
+|---|---|---|---|
+| v0 (823 gold-only) | 70.0% | 64.7% | 65.0% |
+| v1 (1,546 = gold+teacher) | **84.3%** | **83.8%** | **81.7%** |
+
+**Teacher tier bought +14-19 points on an unseen distribution** — the first measured
+which-tier-bought-what result. Megashop probe: v1 PASSES the fixture (real selectors, no
+hallucinated wrappers — v0's failure mode gone); residual: over-broad candidate set, missed the
+true cheapest earbuds — the staged v2 corpus (bundles/distractors, 2,220 rows) targets exactly
+this. 4B/9B still training.

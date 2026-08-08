@@ -1,0 +1,174 @@
+{
+  "meta": {
+    "seed": 9109,
+    "gen_version": 2,
+    "scheme": 4,
+    "classes": {
+      "wr": "container-x",
+      "grid": "lst",
+      "item": "li-p",
+      "media": "i-w",
+      "title": "h-p",
+      "meta": "pr-w",
+      "price": "val",
+      "was": "val-x",
+      "stock": "inv",
+      "add": "cta-c",
+      "nav": "bar",
+      "navItem": "bar-a",
+      "cart": "bar-crt",
+      "bnr": "strip",
+      "bnrIn": "strip-c",
+      "bnrX": "strip-k",
+      "ck": "ck-wall",
+      "ckA": "ck-y",
+      "ckD": "ck-n",
+      "nl": "letter",
+      "nlT": "lt-h",
+      "nlE": "lt-f",
+      "nlB": "lt-s",
+      "ft": "base",
+      "srt": "srt-dd"
+    },
+    "shop": "gadgetbin",
+    "products": [
+      {
+        "sku": "hp-04",
+        "name": "NimbusLite Wireless Headphones",
+        "price": 59
+      },
+      {
+        "sku": "hp-01",
+        "name": "SoundMax Pro Wireless Headphones",
+        "price": 89.99
+      },
+      {
+        "sku": "sp-03",
+        "name": "PartyCube 360 Speaker",
+        "price": 79
+      },
+      {
+        "sku": "sp-02",
+        "name": "BassKing Tower Speaker",
+        "price": 189
+      },
+      {
+        "sku": "eb-02",
+        "name": "Volt Pods Mini Wireless Earbuds",
+        "price": 34.5
+      },
+      {
+        "sku": "cb-01",
+        "name": "Volt 100W USB-C Cable 2m",
+        "price": 12.99
+      }
+    ],
+    "grid2": [],
+    "bundle": {
+      "id": "bd-1",
+      "title": "PartyCube 360 Speaker + Volt 100W USB-C Cable 2m bundle",
+      "price": 78.19
+    },
+    "feats": {
+      "cookie": true,
+      "banner": true,
+      "newsletter": true,
+      "sort": false,
+      "wrapDepth": 1
+    }
+  },
+  "tasks": [
+    {
+      "id": "add-eb-02",
+      "type": "actionable",
+      "goal": "Add the Volt Pods Mini Wireless Earbuds to the cart",
+      "target_sku": "eb-02",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"eb-02\"] .cta-c"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('eb-02')"
+    },
+    {
+      "id": "add-hp-01",
+      "type": "actionable",
+      "goal": "Add the SoundMax Pro Wireless Headphones to the cart",
+      "target_sku": "hp-01",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"hp-01\"] .cta-c"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('hp-01')"
+    },
+    {
+      "id": "add-cheapest-wireless-hp",
+      "type": "actionable",
+      "goal": "Add the cheapest wireless headphones to the cart",
+      "target_sku": "hp-04",
+      "candidate_skus": [
+        "hp-04",
+        "hp-01"
+      ],
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": "[data-sku=\"hp-04\"] .cta-c"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('hp-04')"
+    },
+    {
+      "id": "dismiss-cookie",
+      "type": "actionable",
+      "goal": "Dismiss the cookie banner",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": ".ck-y"
+        }
+      ],
+      "predicate": "!document.querySelector('.ck-wall')"
+    },
+    {
+      "id": "newsletter",
+      "type": "actionable",
+      "goal": "Sign up for the newsletter with the email user102@example.com",
+      "email": "user102@example.com",
+      "gold_actions": [
+        {
+          "kind": "type",
+          "selector": ".lt-f",
+          "value": "user102@example.com"
+        },
+        {
+          "kind": "click",
+          "selector": ".lt-s"
+        }
+      ],
+      "predicate": "document.querySelector('.lt-f').value==='user102@example.com' && window.__st.nl===true"
+    },
+    {
+      "id": "add-bundle",
+      "type": "actionable",
+      "goal": "Add the deal-of-the-day bundle to the cart",
+      "gold_actions": [
+        {
+          "kind": "click",
+          "selector": ".dod-go"
+        }
+      ],
+      "predicate": "window.__st.cart.includes('bd-1')"
+    },
+    {
+      "id": "impossible",
+      "type": "impossible",
+      "goal": "Track the status of an existing order",
+      "gold_actions": [],
+      "predicate": "true"
+    }
+  ]
+}

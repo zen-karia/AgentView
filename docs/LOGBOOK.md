@@ -265,3 +265,20 @@ Teacher v2 batch: **337/337 (100.0%)** on the new archetypes. Corpus totals:
 19 smoke + 1,141 gold (v1+v2) + 1,060 teacher = **2,220 validator-passed rows**
 (data/rows/train-v2.jsonl, staged — NOT pushed to the env until the v2 training round, so the
 running bake-off's resolved env sha stays unambiguous). Gemini spend so far ≈ $6 of $25.
+
+## FOUR-ARM END-TO-END TABLE COMPLETE (18 held-out tasks, seeds 9001-9003, same driver everywhere)
+
+| Arm | e2e task success | notes |
+|---|---|---|
+| base-2B zero-shot | 0% | action-level valid rate 0% |
+| a11y-snapshot + driver (NO AgentView) | **61.1%** | 0 technical errors — failures are semantic, on ARIA-poor elements; snapshot is cheaper on small pages (314 vs 1,153 tok) |
+| **AgentView sft-2b-v0 + driver** | **100%** | $0.92 adapter, 2.9s/call |
+| Gemini-3.5-flash as translator + driver | 100% | the teacher ceiling — **our 2B matches it** |
+
+Honest caveats on record: in-distribution tasks (v1 generator), n=18, ceiling saturated — harder
+eval slices exist for differentiation (megashop, Mind2Web real-web, NEW v2-distribution held-out
+seeds 9100-9109 generated this session). "Why not Playwright MCP" is now a measured 39-point gap.
+Also this session: GRPO reward wired end-to-end and locally verified (gold->1.0, empty->0.2,
+garbage->0.0, impossible->exact); grpo.toml staged awaiting the bake-off winner run-id;
+eval-e2e translate-stage error accounting fixed (Gemini arm initially showed 0/18 due to
+uncounted repetition_penalty 400s — retry-without logic added, honest rerun = 100%).

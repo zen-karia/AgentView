@@ -1,0 +1,27 @@
+# GRPO pass (D10/D11): warm-start from the bake-off winner, reward =
+# validator gate + gold-action element matching (environment.py grpo_reward).
+# Fill init_from_adapter with the winning SFT run-id, then:
+#   flash train configs/grpo.toml --cost && flash train configs/grpo.toml --background
+
+model = "Qwen/Qwen3.5-2B"
+algorithm = "grpo"
+seed = 42
+
+[environment]
+id = "ht6-team/agentview"
+pip = ["freesolo>=0.2.54", "lxml", "cssselect", "jsonschema"]
+
+[train]
+init_from_adapter = "FILL_WITH_BAKEOFF_WINNER"
+epochs = 1
+max_examples = 600
+group_size = 6
+temperature = 0.7
+max_completion_tokens = 2000
+learning_rate = 5e-5
+batch_size = 4
+max_context_tokens = 8192
+kl_penalty_coef = 0.05
+
+[train.structured_outputs]
+json = "agentview.schema.json"

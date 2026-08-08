@@ -39,14 +39,18 @@ async function callTranslator(cfg, goal, trimmed) {
     ],
     temperature: 0,
     max_tokens: 2000,
-    repetition_penalty: 1.08,
   };
+  if (cfg.repPenalty !== false) body.repetition_penalty = 1.08;
   const resp = await fetch(`${cfg.baseUrl.replace(/\/$/, '')}/chat/completions`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${cfg.key}` },
     body: JSON.stringify(body),
   });
-  if (!resp.ok) throw new Error(`translator HTTP ${resp.status}`);
+  if (resp.status === 400 && cfg.repPenalty !== false) {
+    cfg.repPenalty = false; // endpoint rejects the extension param — retry clean
+    return callTranslator(cfg, goal, trimmed);
+  }
+  if (!resp.ok) throw new Error(`translator HTTP ${resp.status}: ${(await resp.text()).slice(0, 120)}`);
   const data = await resp.json();
   return data.choices?.[0]?.message?.content ?? '';
 }
@@ -153,7 +157,8 @@ async function main() {
         if (row.success) stats.success++;
       } catch (e) {
         if (!e.soft) {
-          if (stage === 'drive') stats.driver_err++;
+          if (stage === 'translate') stats.translate_err = (stats.translate_err || 0) + 1;
+          else if (stage === 'drive') stats.driver_err++;
           else if (stage === 'execute') stats.exec_err++;
           row.error = `${stage}: ${String(e.message).slice(0, 120)}`;
           row.success = false;
@@ -173,6 +178,7 @@ async function main() {
     n: stats.n,
     task_success_rate: stats.n ? +(stats.success / stats.n).toFixed(3) : 0,
     invalid_outputs: stats.invalid,
+    translate_errors: stats.translate_err || 0,
     driver_errors: stats.driver_err,
     exec_errors: stats.exec_err,
   };

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "agentview.schema.v1.json",
+  "title": "AgentView output — schema v1 (FROZEN)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "relevant_content", "actions"],
+  "properties": {
+    "schema_version": { "const": "1" },
+    "relevant_content": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "text", "selector"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^c[1-9][0-9]*$" },
+          "text": { "type": "string", "minLength": 1, "maxLength": 500 },
+          "selector": { "type": "string", "minLength": 1, "maxLength": 300 }
+        }
+      }
+    },
+    "actions": {
+      "type": "array",
+      "maxItems": 30,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "kind", "description", "target_selector"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^a[1-9][0-9]*$" },
+          "kind": { "enum": ["click", "type", "select"] },
+          "description": { "type": "string", "minLength": 1, "maxLength": 200 },
+          "target_selector": { "type": "string", "minLength": 1, "maxLength": 300 },
+          "content_refs": {
+            "type": "array",
+            "maxItems": 10,
+            "items": { "type": "string", "pattern": "^c[1-9][0-9]*$" }
+          },
+          "value_hint": { "type": "string", "maxLength": 200 }
+        }
+      }
+    }
+  }
+}

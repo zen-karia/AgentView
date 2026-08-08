@@ -258,3 +258,10 @@ Bake-off (2B/4B/9B) still training.
 - v2 seeds 300-349 generated + Playwright-verified (add-bundle PASS, no-act sanity clean);
   **+337 gold rows** (data/rows/gold-300-349.jsonl); teacher batch on 300-349 running (monitored).
 - v2 held-out reserved range: 9100+ (unused, for a v2-distribution eval slice later).
+
+## v2 corpus staged
+
+Teacher v2 batch: **337/337 (100.0%)** on the new archetypes. Corpus totals:
+19 smoke + 1,141 gold (v1+v2) + 1,060 teacher = **2,220 validator-passed rows**
+(data/rows/train-v2.jsonl, staged — NOT pushed to the env until the v2 training round, so the
+running bake-off's resolved env sha stays unambiguous). Gemini spend so far ≈ $6 of $25.

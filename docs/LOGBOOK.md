@@ -289,3 +289,18 @@ All 256 goals on the committed 50-page held-out set (seeds 9010-9059): valid 100
 100%, full-task match 100%, impossible handling 100%. The n=26 sample result generalizes to the
 full frozen page set — the in-distribution claim is now statistically solid. Rows in Mongo `eval`
 (arm sft-2b-v0-full).
+
+## Mind2Web sample benchmark (40 CLICK steps, 9 real websites, identical harness both arms)
+
+| Arm | contract-valid | element acc (strict) | (lenient) | call errors |
+|---|---|---|---|---|
+| sft-2b-v0 | 0% | 2.5% | 5% | 15 (degeneration on wild pages) |
+| gemini-3.5-flash | 32.5% | **35%** | 37.5% | 2 |
+
+**pretrim_gold_survival: 95%** (model-independent — the input pipeline keeps the labeled element
+alive on real-web pages; the harness is NOT the bottleneck). Interpretation locked: Gemini at 35%
+strict through our exact pipeline sits in the published frontier-prompting ballpark (GPT-4-class
+~30-36% step-level), so v0's ~0 is pure training-distribution gap. Even Gemini is contract-valid
+only 32.5% on wild HTML — the strict contract is genuinely hard, which is what the fine-tune buys.
+The benchmark curve now has its anchor row; the planned lever is Mind2Web TRAIN-split ingestion
+(amended D6) with the measurable target of closing toward Gemini's 35%.

@@ -8,13 +8,17 @@ perception layer:
   time ms    -- avg latency (run with --reps to smooth this noisy axis)
   goal-cond  -- agent_tokens / page_tokens (~1.0 generic snapshot, <<1.0 conditioned)
 
+Conditions: raw, markdown_baseline, translated (via the harness), and -- with
+--with-mcp -- the real Playwright-MCP competitor (its own browser + Gemini brain).
+
   python3 benchmark.py                                  # stub, in-memory
   python3 benchmark.py --reps 3                         # 3x each, average
-  python3 benchmark.py --model gemini --agent-model gemini --driver playwright   # real (needs key)
+  python3 benchmark.py --model gemini --agent-model gemini --driver playwright --with-mcp   # real (needs key)
 """
 from __future__ import annotations
 
 import argparse
+import asyncio
 import os
 
 from costs import frontier_tokens, token_cost_usd
@@ -24,7 +28,7 @@ from tasks import TASKS
 
 load_env()
 
-CONDITIONS = ["raw", "markdown_baseline", "translated"]
+BASE_CONDITIONS = ["raw", "markdown_baseline", "translated"]
 
 
 def main() -> None:
@@ -33,6 +37,8 @@ def main() -> None:
     ap.add_argument("--agent-model", default="stub", choices=["stub", "gemini"])
     ap.add_argument("--driver", default="fake", choices=["fake", "playwright"])
     ap.add_argument("--reps", type=int, default=1, help="runs per task (averages latency/success noise)")
+    ap.add_argument("--with-mcp", action="store_true",
+                    help="also run the real Playwright-MCP condition (needs Gemini key)")
     ap.add_argument("--freesolo-model", default=None,
                     help="override the trained-translator model (<run-id>)")
     args = ap.parse_args()
@@ -42,29 +48,37 @@ def main() -> None:
 
     from logger import save_run
 
+    conditions = list(BASE_CONDITIONS) + (["mcp"] if args.with_mcp else [])
+
     make_driver = None
     if args.driver == "playwright":
         from run import _playwright_factory
 
         make_driver = _playwright_factory()
 
+    def _do_run(task, cond):
+        # mcp is its own stack (own browser + Gemini brain); everything else is the harness.
+        if cond == "mcp":
+            from mcp_runner import run_mcp_task
+
+            return asyncio.run(run_mcp_task(task))
+        return run_task(task, cond, args.model, agent_model=args.agent_model, make_driver=make_driver)
+
     def _blank():
         return {"pass": 0, "n": 0, "frontier": 0, "cost": 0.0,
                 "latency": 0, "agent_tok": 0, "page_tok": 0}
 
-    # overall per condition, and per (size bucket, condition)
-    agg = {c: _blank() for c in CONDITIONS}
+    agg = {c: _blank() for c in conditions}
     by_size: dict[int, dict[str, dict]] = {}
 
     for _ in range(args.reps):
         for task in TASKS.values():
-            for cond in CONDITIONS:
-                run = run_task(task, cond, args.model,
-                               agent_model=args.agent_model, make_driver=make_driver)
+            for cond in conditions:
+                run = _do_run(task, cond)
                 save_run(run)
                 buckets = [agg[cond]]
                 if task.size:
-                    buckets.append(by_size.setdefault(task.size, {c: _blank() for c in CONDITIONS})[cond])
+                    buckets.append(by_size.setdefault(task.size, {c: _blank() for c in conditions})[cond])
                 for a in buckets:
                     a["n"] += 1
                     a["pass"] += int(run.success)
@@ -80,16 +94,16 @@ def main() -> None:
                 f"{a['cost'] / a['n']:<12.6f}{a['latency'] // a['n']:<9}{gc:.2f}")
 
     header = f"{'condition':<18}{'success':<10}{'frontier':<12}{'cost USD':<12}{'time ms':<9}{'goal-cond'}"
-    print(f"\n{len(TASKS)} tasks x {len(CONDITIONS)} conditions x {args.reps} reps "
+    print(f"\n{len(TASKS)} tasks x {len(conditions)} conditions x {args.reps} reps "
           f"(translator={args.model}, agent={args.agent_model}, driver={args.driver})\n")
     print(header)
-    for cond in CONDITIONS:
+    for cond in conditions:
         print(_row(cond, agg[cond]))
 
     for size in sorted(by_size):
         print(f"\n-- page size {size} items --")
         print(header)
-        for cond in CONDITIONS:
+        for cond in conditions:
             print(_row(cond, by_size[size][cond]))
 
 

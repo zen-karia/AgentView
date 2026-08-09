@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import datetime
 import os
 
 from costs import frontier_tokens, token_cost_usd
@@ -46,7 +47,7 @@ def main() -> None:
     if args.freesolo_model:  # CLI flag wins over .env / default
         os.environ["FREESOLO_MODEL"] = args.freesolo_model
 
-    from logger import save_run
+    from logger import save_results, save_run
 
     conditions = list(BASE_CONDITIONS) + (["mcp"] if args.with_mcp else [])
 
@@ -105,6 +106,33 @@ def main() -> None:
         print(header)
         for cond in conditions:
             print(_row(cond, by_size[size][cond]))
+
+    # Dashboard-ready aggregates -> agentview.results (success_rate + goal_cond explicit)
+    run_id = datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+    def _result(cond: str, a: dict, size) -> dict:
+        n = a["n"] or 1
+        return {
+            "run_id": run_id,
+            "condition": cond,
+            "model": "mcp" if cond == "mcp" else args.model,
+            "agent_model": "gemini" if cond == "mcp" else args.agent_model,
+            "driver": "playwright" if cond == "mcp" else args.driver,
+            "size": size,
+            "n": a["n"],
+            "success_rate": round(a["pass"] / n, 3),
+            "goal_conditioning": round(a["agent_tok"] / (a["page_tok"] or 1), 3),
+            "avg_frontier_tokens": a["frontier"] // n,
+            "avg_cost_usd": round(a["cost"] / n, 8),
+            "avg_latency_ms": a["latency"] // n,
+            "timestamp": run_id,
+        }
+
+    rows = [_result(c, agg[c], None) for c in conditions]
+    for size in sorted(by_size):
+        rows += [_result(c, by_size[size][c], size) for c in conditions]
+    save_results(rows)
+    print(f"\nwrote {len(rows)} aggregate rows -> agentview.results (+ runs/results.json)")
 
 
 if __name__ == "__main__":

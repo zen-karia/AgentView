@@ -1,8 +1,13 @@
-"""Run logging. Always writes a JSON file; also inserts into MongoDB when
-MONGODB_URI is set (the MLH Mongo/Atlas track).
+"""Run logging. Always writes JSON files; also writes to MongoDB when MONGODB_URI
+is set (the MLH Mongo/Atlas track). Two collections in the `agentview` database:
 
-Logging must NEVER break a run or benchmark, so Mongo errors are swallowed and the
-JSON file is the source of truth. The dashboard and datagen read these runs.
+  runs     -- one doc per (task, condition, model, agent, driver) run. Raw detail
+              + per-turn trace. Source of truth and the Model lane's training data.
+  results  -- one aggregate doc per (run_id, condition, model, size): the
+              dashboard-ready summary with success_rate + goal_conditioning explicit.
+
+Logging must NEVER break a run/benchmark, so Mongo errors are swallowed and the
+JSON files are the fallback.
 """
 from __future__ import annotations
 
@@ -14,44 +19,40 @@ from schemas import RunLog
 
 _LOG_DIR = pathlib.Path(__file__).parent / "runs"
 
-# Cached collection handle: resolved once, reused across the ~51 runs of a benchmark.
-_mongo_collection = None
+_mongo_db = None
 _mongo_resolved = False
 
 
-def _collection():
-    global _mongo_collection, _mongo_resolved
+def _db():
+    """Resolve the Mongo database once, reused across writes. None if unavailable."""
+    global _mongo_db, _mongo_resolved
     if _mongo_resolved:
-        return _mongo_collection
+        return _mongo_db
     _mongo_resolved = True
     uri = os.getenv("MONGODB_URI")
     if uri:
         try:
             from pymongo import MongoClient
 
-            # tlsCAFile=certifi: Atlas needs a real CA bundle, which python.org's
-            # macOS build lacks by default (else: CERTIFICATE_VERIFY_FAILED).
             kwargs = {"serverSelectionTimeoutMS": 3000}
             try:
-                import certifi
+                import certifi  # Atlas TLS on macOS python.org builds
 
                 kwargs["tlsCAFile"] = certifi.where()
             except ImportError:
                 pass
-            client = MongoClient(uri, **kwargs)
-            db = client[os.getenv("MONGODB_DB", "agentview")]
-            _mongo_collection = db["runs"]
-        except Exception as exc:  # missing pymongo, bad URI, etc.
+            _mongo_db = MongoClient(uri, **kwargs)[os.getenv("MONGODB_DB", "agentview")]
+        except Exception as exc:
             print(f"[logger] mongo unavailable, JSON only: {exc}")
-    return _mongo_collection
+    return _mongo_db
 
 
-# The config that uniquely identifies a run for comparison. The UI groups on these.
+# Config that uniquely identifies a run for comparison. The UI groups on these.
 def _key(run: RunLog) -> dict:
     return {
         "task_id": run.task_id,
         "condition": run.condition,
-        "model": run.model,          # translator: stub | gemini | trained
+        "model": run.model,
         "agent_model": run.agent_model,
         "driver": run.driver,
     }
@@ -63,11 +64,28 @@ def save_run(run: RunLog) -> None:
     name = f"{k['task_id']}__{k['condition']}__t-{k['model']}__a-{k['agent_model']}__{k['driver']}"
     (_LOG_DIR / f"{name}.json").write_text(json.dumps(run.to_dict(), indent=2))
 
-    coll = _collection()
-    if coll is not None:
+    db = _db()
+    if db is not None:
         try:
-            # Upsert on the config key: one authoritative (latest) row per config, so
-            # re-runs update in place instead of piling up duplicates.
-            coll.replace_one(_key(run), run.to_dict(), upsert=True)
+            # one authoritative (latest) row per config -- re-runs update in place
+            db["runs"].replace_one(_key(run), run.to_dict(), upsert=True)
         except Exception as exc:
-            print(f"[logger] mongo upsert skipped: {exc}")
+            print(f"[logger] mongo runs upsert skipped: {exc}")
+
+
+def save_results(rows: list[dict]) -> None:
+    """Write dashboard-ready aggregate rows to agentview.results (one per config)."""
+    _LOG_DIR.mkdir(exist_ok=True)
+    (_LOG_DIR / "results.json").write_text(json.dumps(rows, indent=2))
+
+    db = _db()
+    if db is not None:
+        try:
+            for r in rows:
+                db["results"].replace_one(
+                    {"run_id": r["run_id"], "condition": r["condition"],
+                     "model": r["model"], "size": r["size"]},
+                    r, upsert=True,
+                )
+        except Exception as exc:
+            print(f"[logger] mongo results write skipped: {exc}")

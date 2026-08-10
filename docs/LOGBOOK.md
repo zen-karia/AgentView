@@ -357,3 +357,11 @@ flash-1784401748-3270721c — warm-start from 9B-v1, same gold-matching reward +
 $6.58, ~3h. Round-2 fleet is now four runs: SFT-4B-v2, GRPO-4B, SFT-9B-v2, GRPO-9B — the full
 2x2 of {corpus upgrade, RL} x {cost model, capability model}. Consolidated monitor covers all
 four. Committed spend ~$47 of $149.
+
+## Auto-chained: GRPO-9B-v2 (stacked SFT-v2 -> GRPO)
+
+A persistent watcher waits for SFT-9B-v2 (flash-1784400092-e7645618) to complete, then submits
+GRPO-9B warm-started FROM IT (the stacked best-of-everything checkpoint), then follows the new
+run to terminal — fully unattended. Expected cost ~$6-7. Full training matrix when done:
+{v1, v2 corpus} x {2B, 4B, 9B} SFT + {v1-init, v2-init} x {4B, 9B} GRPO — every cell evaluated
+under the frozen battery, every ablation judges could ask for.

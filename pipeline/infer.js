@@ -21,7 +21,7 @@ async function main() {
     console.error('usage: node pipeline/infer.js <base_url> <model> <page.html> "<goal>"');
     process.exit(2);
   }
-  const apiKey = process.env.FLASH_API_KEY || process.env.OPENAI_API_KEY;
+  const apiKey = process.env.FLASH_API_KEY || process.env.FREESOLO_API_KEY || process.env.OPENAI_API_KEY;
   if (!apiKey) {
     console.error('set FLASH_API_KEY (or OPENAI_API_KEY)');
     process.exit(2);

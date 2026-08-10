@@ -78,7 +78,7 @@ async function callArm(cfg, goal, trimmed) {
       { role: 'user', content: renderUser(goal, trimmed) },
     ],
     temperature: 0,
-    max_tokens: 2000,
+    max_tokens: cfg.maxTokens,
   };
   if (cfg.repPenalty !== false) body.repetition_penalty = 1.08;
   const resp = await fetch(`${cfg.baseUrl.replace(/\/$/, '')}/chat/completions`, {
@@ -123,6 +123,7 @@ async function main() {
     model: arg('model'),
     key: process.env[arg('key-env', 'FLASH_API_KEY')],
     repPenalty: true,
+    maxTokens: parseInt(arg('max-tokens', '2000'), 10),
   };
   const want = parseInt(arg('n', '40'), 10);
   const rpm = parseFloat(arg('rpm', '0'));

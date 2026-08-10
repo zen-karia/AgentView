@@ -319,3 +319,16 @@ which-tier-bought-what result. Megashop probe: v1 PASSES the fixture (real selec
 hallucinated wrappers — v0's failure mode gone); residual: over-broad candidate set, missed the
 true cheapest earbuds — the staged v2 corpus (bundles/distractors, 2,220 rows) targets exactly
 this. 4B/9B still training.
+
+## Bake-off COMPLETE + Round 2 submitted
+
+Size table, unseen v2 slice (70 tasks, identical v1 data): 2B 81.7% / **4B 100%** / 9B 100%
+full-task match; latency 3.0/4.6/8.3s; cost $1.74/$3.55/$7.33. **Winner: 4B** (9B adds nothing
+measurable at 2x latency, 3.3x serving price). Megashop probe (4B): valid+grounded but
+candidate-set still imperfect (missed the true cheapest earbuds) -> motivates round 2.
+GLM-5.2 independent frontier arm on Mind2Web: 30% strict (Gemini 35%) — frontier band
+two-model-corroborated; GLM contract-validity only 5% (strict format is hard even for frontiers).
+ROUND 2 SUBMITTED on the winner: SFT-4B-v2 flash-1784398052-5eda8ac9 (2,220-row v2 corpus, $5.09,
+~3.7h) + GRPO-4B flash-1784398053-9cfaf775 (warm-start from 4B-v1, gold-matching reward,
+structured-outputs grammar, $1.77, ~76min). 4B Mind2Web sample running.
+Spend: ~$24 Flash of $149; ~$9 Gemini of $25; Fireworks pennies.

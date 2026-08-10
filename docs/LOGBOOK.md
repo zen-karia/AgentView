@@ -337,3 +337,16 @@ Spend: ~$24 Flash of $149; ~$9 Gemini of $25; Fireworks pennies.
 
 Teacher-tier diversity moved real-web grounding 3x but the distribution gap dominates; the
 planned lever (Mind2Web TRAIN-split ingestion per amended D6) is the next data move after round 2.
+
+## VERDICT REVISED (user challenge: "4b is better than 9b?") — size curve does NOT flatten on OOD
+
+The "4B wins" call was an artifact of eval saturation. On hard OOD the 9B is clearly stronger:
+- Mind2Web: 9B contract-valid 27.5% (vs 4B 7.5% — and near Gemini's 32.5%); strict acc 10% vs 7.5%.
+- Megashop distractor probe: 9B produced the exactly-correct candidate set (both earbuds incl. the
+  true cheapest $34.50 that 4B missed) — a driver buys the RIGHT product from 9B's JSON, the wrong
+  one from 4B's.
+Corrected reading: **4B = cost/latency track, 9B = capability/demo track.** SFT-9B-v2 submitted
+(flash-1784400092-e7645618, $10.50, ~7.5h). GRPO-9B decision after round-2 results.
+Round-2 fleet: SFT-4B-v2 + GRPO-4B + SFT-9B-v2. Spend: ~$40 of $149.
+Lesson recorded: never conclude a size comparison from a saturated eval — the OOD rows are the
+decision-grade ones.

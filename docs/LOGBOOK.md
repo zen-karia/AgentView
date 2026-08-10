@@ -332,3 +332,8 @@ ROUND 2 SUBMITTED on the winner: SFT-4B-v2 flash-1784398052-5eda8ac9 (2,220-row 
 ~3.7h) + GRPO-4B flash-1784398053-9cfaf775 (warm-start from 4B-v1, gold-matching reward,
 structured-outputs grammar, $1.77, ~76min). 4B Mind2Web sample running.
 Spend: ~$24 Flash of $149; ~$9 Gemini of $25; Fireworks pennies.
+
+## Mind2Web curve update: 4B-v1 = 7.5% strict (v0: 2.5%, Gemini: 35%, GLM-5.2: 30%)
+
+Teacher-tier diversity moved real-web grounding 3x but the distribution gap dominates; the
+planned lever (Mind2Web TRAIN-split ingestion per amended D6) is the next data move after round 2.

@@ -350,3 +350,10 @@ Corrected reading: **4B = cost/latency track, 9B = capability/demo track.** SFT-
 Round-2 fleet: SFT-4B-v2 + GRPO-4B + SFT-9B-v2. Spend: ~$40 of $149.
 Lesson recorded: never conclude a size comparison from a saturated eval — the OOD rows are the
 decision-grade ones.
+
+## GRPO-9B submitted (user call: "do grpo 9b why not")
+
+flash-1784401748-3270721c — warm-start from 9B-v1, same gold-matching reward + schema grammar,
+$6.58, ~3h. Round-2 fleet is now four runs: SFT-4B-v2, GRPO-4B, SFT-9B-v2, GRPO-9B — the full
+2x2 of {corpus upgrade, RL} x {cost model, capability model}. Consolidated monitor covers all
+four. Committed spend ~$47 of $149.

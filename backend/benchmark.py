@@ -34,8 +34,8 @@ BASE_CONDITIONS = ["raw", "markdown_baseline", "translated"]
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--model", default="stub", choices=["stub", "gemini", "trained"])
-    ap.add_argument("--agent-model", default="stub", choices=["stub", "gemini"])
+    ap.add_argument("--model", default="stub", choices=["stub", "gemini", "claude", "trained"])
+    ap.add_argument("--agent-model", default="stub", choices=["stub", "gemini", "claude"])
     ap.add_argument("--driver", default="fake", choices=["fake", "playwright"])
     ap.add_argument("--reps", type=int, default=1, help="runs per task (averages latency/success noise)")
     ap.add_argument("--with-mcp", action="store_true",
@@ -116,7 +116,7 @@ def main() -> None:
             "run_id": run_id,
             "condition": cond,
             "model": "mcp" if cond == "mcp" else args.model,
-            "agent_model": "gemini" if cond == "mcp" else args.agent_model,
+            "agent_model": "claude" if cond == "mcp" else args.agent_model,  # MCP brain
             "driver": "playwright" if cond == "mcp" else args.driver,
             "size": size,
             "n": a["n"],

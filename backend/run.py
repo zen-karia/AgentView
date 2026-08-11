@@ -34,9 +34,9 @@ def main() -> None:
         default="translated",
         choices=["translated", "raw", "markdown_baseline"],
     )
-    ap.add_argument("--model", default="stub", choices=["stub", "gemini", "trained"],
+    ap.add_argument("--model", default="stub", choices=["stub", "gemini", "claude", "trained"],
                     help="translator model (produces the AgentView)")
-    ap.add_argument("--agent-model", default="stub", choices=["stub", "gemini"],
+    ap.add_argument("--agent-model", default="stub", choices=["stub", "gemini", "claude"],
                     help="reasoner model (consumes the AgentView, picks actions)")
     ap.add_argument("--driver", default="fake", choices=["fake", "playwright"],
                     help="fake = in-memory; playwright = real browser on the demo site")

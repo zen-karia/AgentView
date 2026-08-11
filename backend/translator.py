@@ -42,7 +42,9 @@ def translate(
         if model == "stub":
             return _stub_translate(inp, driver)
         if model == "gemini":
-            return _gemini_translate(inp)   # TODO(model-lane)
+            return _gemini_translate(inp)
+        if model == "claude":
+            return _claude_translate(inp)
         if model == "trained":
             return _trained_translate(inp)  # TODO(layer-1)
         raise ValueError(f"unknown model: {model}")
@@ -241,6 +243,16 @@ def _agentview_from_dict(data: dict) -> AgentView:
             for a in data.get("actions", [])
         ],
     )
+
+
+def _claude_translate(inp: TranslatorInput) -> tuple[AgentView, int]:
+    """Prompting baseline: a frontier Claude model reads the raw HTML and produces
+    the AgentView. Same shared prompt as the Gemini/trained translators. Needs an
+    Anthropic credential (ANTHROPIC_API_KEY or `ant auth login`)."""
+    from claude_llm import claude_json
+
+    text, tokens = claude_json(translate_prompt(inp.goal, inp.page.url, inp.page.html))
+    return _agentview_from_dict(loads_first_json(text)), tokens
 
 
 def _trained_translate(inp: TranslatorInput) -> tuple[AgentView, int]:

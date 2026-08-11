@@ -31,6 +31,8 @@ def decide(
         return _stub_decide(goal, view, history)
     if model == "gemini":
         return _gemini_decide(goal, view, history)
+    if model == "claude":
+        return _claude_decide(goal, view, history)
     raise ValueError(f"unknown agent model: {model}")
 
 
@@ -115,27 +117,12 @@ def _stub_decide_form(goal: str, view: AgentView, history: list[dict]) -> Action
     return ActionChoice(name="submit", thought="all fields filled; submitting")
 
 
-def _gemini_decide(
-    goal: str, view: AgentView, history: list[dict]
-) -> tuple[ActionChoice, int]:
-    """Real LLM reasoner. Reads the AgentView, returns (action, real input tokens).
-
-    Needs GEMINI_API_KEY (or GOOGLE_API_KEY) in the env and `pip install google-genai`.
-    """
-    from google import genai
-    from google.genai import types
-
-    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
-    if not api_key:
-        raise RuntimeError("set GEMINI_API_KEY (or GOOGLE_API_KEY) to use --agent-model gemini")
-
-    client = genai.Client(api_key=api_key)
-
+def _decide_prompt(goal: str, view: AgentView, history: list[dict]) -> str:
+    """Shared reasoner prompt for every real agent (Gemini, Claude)."""
     content = [{"id": c.id, "text": c.text, "meta": c.meta} for c in view.relevant_content]
     actions = [{"name": a.name, "description": a.description, "params": a.params}
                for a in view.actions]
-
-    prompt = f"""You are a web agent. Pick the single next action to progress on the goal.
+    return f"""You are a web agent. Pick the single next action to progress on the goal.
 
 GOAL: {goal}
 
@@ -154,31 +141,48 @@ Reply with JSON only: {{"thought": string, "done": boolean, "name": string, "par
 - done=true and name="" when the goal is already satisfied by the actions taken.
 - otherwise set name to one action above and fill params per its schema."""
 
+
+def _parse_choice(data: dict, view: AgentView) -> ActionChoice:
+    """JSON -> ActionChoice, enforcing the anti-hallucination guarantee in code."""
+    name = (data.get("name") or "").strip()
+    if name and view.action_by_name(name) is None:
+        return ActionChoice(name="", done=True,
+                            thought=f"model chose unsurfaced action '{name}'; refusing")
+    return ActionChoice(name=name, params=data.get("params") or {},
+                        done=bool(data.get("done", False)), thought=data.get("thought", ""))
+
+
+def _gemini_decide(
+    goal: str, view: AgentView, history: list[dict]
+) -> tuple[ActionChoice, int]:
+    """Gemini reasoner. Reads the AgentView, returns (action, real input tokens)."""
+    from google import genai
+    from google.genai import types
+
+    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+    if not api_key:
+        raise RuntimeError("set GEMINI_API_KEY (or GOOGLE_API_KEY) to use --agent-model gemini")
+
+    client = genai.Client(api_key=api_key)
     resp = client.models.generate_content(
         model=_GEMINI_MODEL,
-        contents=prompt,
+        contents=_decide_prompt(goal, view, history),
         config=types.GenerateContentConfig(response_mime_type="application/json"),
     )
     from translator import loads_first_json
 
-    data = loads_first_json(resp.text)
-
-    # Real input-token usage; fall back to the estimate if the field is absent.
     usage = getattr(resp, "usage_metadata", None)
-    tokens = getattr(usage, "prompt_token_count", None) or _estimate_input_tokens(
-        goal, view, history
-    )
+    tokens = getattr(usage, "prompt_token_count", None) or _estimate_input_tokens(goal, view, history)
+    return _parse_choice(loads_first_json(resp.text), view), tokens
 
-    name = (data.get("name") or "").strip()
-    # Enforce the action-hallucination guarantee in code, not just in the prompt.
-    if name and view.action_by_name(name) is None:
-        return ActionChoice(
-            name="", done=True,
-            thought=f"model chose unsurfaced action '{name}'; refusing",
-        ), tokens
-    return ActionChoice(
-        name=name,
-        params=data.get("params") or {},
-        done=bool(data.get("done", False)),
-        thought=data.get("thought", ""),
-    ), tokens
+
+def _claude_decide(
+    goal: str, view: AgentView, history: list[dict]
+) -> tuple[ActionChoice, int]:
+    """Claude reasoner (the held-constant agent when running the Claude stack)."""
+    from claude_llm import claude_json
+
+    from translator import loads_first_json
+
+    text, tokens = claude_json(_decide_prompt(goal, view, history), max_tokens=1024)
+    return _parse_choice(loads_first_json(text), view), tokens

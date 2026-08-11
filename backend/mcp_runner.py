@@ -101,19 +101,10 @@ class _StateAdapter:
         return self._state
 
 
-# ---------------- Gemini brain (needs a key; NOT run until step 3) ----------------
-def _decide_gemini(goal: str, snapshot: str, history: list[dict]) -> tuple[dict, int]:
-    """Read MCP's generic a11y snapshot, pick the next browser tool. Returns
-    (choice, input_tokens). choice = {done} or {tool, args}."""
-    from google import genai
-    from google.genai import types
-
-    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
-    if not api_key:
-        raise RuntimeError("set GEMINI_API_KEY to run the MCP Gemini brain")
-    client = genai.Client(api_key=api_key)
-
-    prompt = f"""You control a web browser via these tools:
+# ---------------- Brain: read MCP's generic snapshot, pick a browser tool ---------
+# (needs an LLM key; NOT run until step 3). choice = {done} or {tool, args}.
+def _mcp_prompt(goal: str, snapshot: str, history: list[dict]) -> str:
+    return f"""You control a web browser via these tools:
 - browser_click(element, ref): click the element with that ref
 - browser_type(element, ref, text): type text into an input
 
@@ -132,20 +123,41 @@ ACTIONS TAKEN: {json.dumps(history)}
 SNAPSHOT:
 {snapshot}"""
 
-    resp = client.models.generate_content(
-        model=_GEMINI_MODEL,
-        contents=prompt,
-        config=types.GenerateContentConfig(response_mime_type="application/json"),
-    )
+
+def _decide_claude(goal: str, snapshot: str, history: list[dict]) -> tuple[dict, int]:
+    from claude_llm import claude_json
     from translator import loads_first_json
 
-    data = loads_first_json(resp.text)
+    text, tokens = claude_json(_mcp_prompt(goal, snapshot, history), max_tokens=1024)
+    return loads_first_json(text), tokens
+
+
+def _decide_gemini(goal: str, snapshot: str, history: list[dict]) -> tuple[dict, int]:
+    from google import genai
+    from google.genai import types
+
+    from translator import loads_first_json
+
+    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+    if not api_key:
+        raise RuntimeError("set GEMINI_API_KEY to run the MCP Gemini brain")
+    client = genai.Client(api_key=api_key)
+    resp = client.models.generate_content(
+        model=_GEMINI_MODEL,
+        contents=_mcp_prompt(goal, snapshot, history),
+        config=types.GenerateContentConfig(response_mime_type="application/json"),
+    )
     usage = getattr(resp, "usage_metadata", None)
     tokens = getattr(usage, "prompt_token_count", None) or len(snapshot) // 4
-    return data, tokens
+    return loads_first_json(resp.text), tokens
 
 
-async def run_mcp_task(task, brain: str = "gemini"):
+def _decide(brain: str, goal: str, snapshot: str, history: list[dict]) -> tuple[dict, int]:
+    return _decide_claude(goal, snapshot, history) if brain == "claude" \
+        else _decide_gemini(goal, snapshot, history)
+
+
+async def run_mcp_task(task, brain: str = "claude"):
     """Run one task through the real Playwright-MCP loop -> RunLog(condition='mcp')."""
     from schemas import RunLog
 
@@ -166,7 +178,7 @@ async def run_mcp_task(task, brain: str = "gemini"):
                     snap = _text(await session.call_tool("browser_snapshot", {}))
                     if step == 0:
                         page_tokens = len(snap) // 4
-                    choice, tok = _decide_gemini(task.goal, snap, history)
+                    choice, tok = _decide(brain, task.goal, snap, history)
                     agent_tokens += tok
                     if choice.get("done") or not choice.get("tool"):
                         break

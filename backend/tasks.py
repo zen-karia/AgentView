@@ -17,7 +17,7 @@ import pathlib
 from dataclasses import dataclass
 from typing import Any, Callable
 
-from driver import FakeShopDriver, build_products
+from driver import FakeShopDriver, FakeTrapShopDriver, build_products
 
 # file:// URLs for the PlaywrightDriver, one per demo site.
 _SITES_DIR = pathlib.Path(__file__).parent / "sites"
@@ -29,6 +29,9 @@ SITES: dict[str, str] = {
     "shop_15": (_SITES_DIR / "shop_15" / "index.html").as_uri(),
     "shop_60": (_SITES_DIR / "shop_60" / "index.html").as_uri(),
     "shop_200": (_SITES_DIR / "shop_200" / "index.html").as_uri(),
+    # hard bucket: trap shops (wishlist decoy button before every cart button)
+    "shop_trap_60": (_SITES_DIR / "shop_trap_60" / "index.html").as_uri(),
+    "shop_trap_200": (_SITES_DIR / "shop_trap_200" / "index.html").as_uri(),
 }
 
 
@@ -40,6 +43,7 @@ class Task:
     check: Callable[[Any], bool]  # given the final driver, did we succeed?
     site: str = "shop"
     size: int = 0  # catalog size (page-size bucket); 0 = n/a
+    bucket: str = ""  # scoreboard grouping label; defaults to str(size)
 
 
 def _cheapest_of_color(color: str) -> Callable[[Any], bool]:
@@ -53,6 +57,11 @@ def _cheapest_of_color(color: str) -> Callable[[Any], bool]:
 def _shop_of_size(n: int):
     """A fresh shop driver with an n-item catalog (deterministic)."""
     return lambda: FakeShopDriver(build_products(n))
+
+
+def _trap_shop_of_size(n: int):
+    """Same catalog, but every product has a wishlist decoy before its cart button."""
+    return lambda: FakeTrapShopDriver(build_products(n))
 
 
 # (bucket label, catalog size, colors to target on that page)
@@ -74,5 +83,30 @@ for _label, _n, _colors in _BUCKETS:
             check=_cheapest_of_color(_c),
             site=f"shop_{_n}",  # real page for --driver playwright / MCP
             size=_n,
+            bucket=f"{_label}-{_n}",
+        )
+        _i += 1
+
+# --- Hard bucket: trap shops. Same "cheapest {color}" goal, but each product now
+# has an "Add to wishlist" decoy button BEFORE its "Add to cart" button. Success
+# still requires the item in the CART (wishlist doesn't count). A raw/MCP agent
+# scanning look-alike buttons can mis-click the trap; a task-conditioned view only
+# ever surfaces add_to_cart, so it can't be trapped. This is where a SUCCESS gap
+# (not just an efficiency gap) should appear.
+_TRAP_BUCKETS = [
+    (60, ["blue", "red"]),
+    (200, ["blue", "red"]),
+]
+for _n, _colors in _TRAP_BUCKETS:
+    for _c in _colors:
+        _id = f"t{_i:02d}_trap{_n}_cheapest_{_c}"
+        TASKS[_id] = Task(
+            id=_id,
+            goal=f"Add the cheapest {_c} item to the cart",
+            make_driver=_trap_shop_of_size(_n),
+            check=_cheapest_of_color(_c),
+            site=f"shop_trap_{_n}",
+            size=_n,
+            bucket=f"trap-{_n}",
         )
         _i += 1

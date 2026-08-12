@@ -131,6 +131,57 @@ class FakeShopDriver:
         return self._products
 
 
+class FakeTrapShopDriver:
+    """Hard bucket: every product has a WISHLIST decoy button *before* its cart
+    button. Goal is to add to CART -> a raw/MCP agent scanning look-alike buttons
+    can mis-click the wishlist trap (fail). A task-conditioned view only surfaces
+    add_to_cart (#add-{id}), so it can't be trapped."""
+
+    def __init__(self, products: list[dict[str, Any]] | None = None) -> None:
+        self.cart: list[str] = []
+        self.wishlist: list[str] = []
+        self._products = products if products is not None else _PRODUCTS
+
+    def snapshot(self) -> Page:
+        rows = "\n".join(
+            f'<li class="product-card" data-color="{p["color"]}">'
+            f'<span class="name">{p["name"]}</span> - '
+            f'<span class="price">${p["price"]}</span> ({p["color"]}) '
+            f'<button id="wish-{p["id"]}">Add to wishlist</button> '   # decoy comes first
+            f'<button id="add-{p["id"]}">Add to cart</button></li>'
+            for p in self._products
+        )
+        html = (
+            "<html><head><style>.product-card{margin:4px}</style></head><body>"
+            f"{_NAV}{_HIDDEN_SEO}<h1>Shop</h1>"
+            f"<ul class='grid'>{rows}</ul>"
+            f"<div id='cart'>Cart: {self.cart}</div>"
+            f"<div id='wishlist'>Wishlist: {self.wishlist}</div>{_FOOTER}</body></html>"
+        )
+        text = " ".join(f'{p["name"]} ${p["price"]} {p["color"]}' for p in self._products)
+        return Page(url="fake://trapshop", html=html, text=text)
+
+    def selector_exists(self, selector: str) -> bool:
+        return any(selector in (f"#add-{p['id']}", f"#wish-{p['id']}") for p in self._products)
+
+    def execute(self, selector: str, action_name: str, params: dict[str, Any]) -> None:
+        if selector.startswith("#wish-"):
+            wid = selector[len("#wish-"):]
+            if any(p["id"] == wid for p in self._products):
+                self.wishlist.append(wid)  # trap: didn't reach the cart
+        elif action_name in ("add_to_cart", "click") and selector.startswith("#add-"):
+            pid = selector[len("#add-"):] or params.get("product_id")
+            if pid and any(p["id"] == pid for p in self._products):
+                self.cart.append(pid)
+
+    def state(self) -> dict[str, Any]:
+        return {"cart": list(self.cart), "wishlist": list(self.wishlist), "products": self._products}
+
+    @property
+    def products(self) -> list[dict[str, Any]]:
+        return self._products
+
+
 # ---------------- FakeFormDriver: in-memory multi-field checkout form ----------------
 _FORM_FIELDS = ["name", "email", "city", "zip"]
 

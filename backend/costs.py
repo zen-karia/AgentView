@@ -30,5 +30,7 @@ def frontier_tokens(run) -> int:
     """Energy proxy: tokens that hit an expensive model. The Deloitte green number.
     Minimizing this is the whole game -- a cheap translator moves the big read off
     the expensive model."""
-    translator_on_frontier = run.translator_tokens if run.model == "gemini" else 0
+    # Any prompted frontier translator (gemini, claude, ...) burns frontier tokens
+    # producing the view. Only the trained/stub small model is cheap perception.
+    translator_on_frontier = 0 if run.model in ("stub", "trained") else run.translator_tokens
     return translator_on_frontier + run.agent_tokens

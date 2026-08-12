@@ -75,7 +75,11 @@ def main() -> None:
     for _ in range(args.reps):
         for task in TASKS.values():
             for cond in conditions:
-                run = _do_run(task, cond)
+                try:
+                    run = _do_run(task, cond)
+                except Exception as exc:  # one flaky run must not sink the whole benchmark
+                    print(f"[benchmark] skipped {task.id}/{cond}: {exc}")
+                    continue
                 save_run(run)
                 buckets = [agg[cond]]
                 if task.size:

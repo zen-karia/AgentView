@@ -3,7 +3,7 @@ is set (the MLH Mongo/Atlas track). Two collections in the `agentview` database:
 
   runs     -- one doc per (task, condition, model, agent, driver) run. Raw detail
               + per-turn trace. Source of truth and the Model lane's training data.
-  results  -- one aggregate doc per (run_id, condition, model, size): the
+  results  -- one aggregate doc per (run_id, condition, model, bucket): the
               dashboard-ready summary with success_rate + goal_conditioning explicit.
 
 Logging must NEVER break a run/benchmark, so Mongo errors are swallowed and the
@@ -84,7 +84,7 @@ def save_results(rows: list[dict]) -> None:
             for r in rows:
                 db["results"].replace_one(
                     {"run_id": r["run_id"], "condition": r["condition"],
-                     "model": r["model"], "size": r["size"]},
+                     "model": r["model"], "bucket": r["bucket"]},
                     r, upsert=True,
                 )
         except Exception as exc:

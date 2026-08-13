@@ -81,6 +81,25 @@ def build_products(n: int) -> list[dict[str, Any]]:
     return products
 
 
+def build_ranked_products(n: int) -> list[dict[str, Any]]:
+    """Like build_products but with STRICTLY INCREASING, distinct prices *within
+    each color* -- so computation goals like "the 3rd-cheapest blue item" or "the
+    cheapest blue item above $50" have exactly one correct answer (agent and
+    verifier can never disagree on a tie)."""
+    products = []
+    c = len(_SIZE_COLORS)
+    within: dict[str, int] = {}
+    for i in range(1, n + 1):
+        color = _SIZE_COLORS[i % c]
+        kind = _KINDS[(i // c) % len(_KINDS)]
+        k = within.get(color, 0)
+        within[color] = k + 1
+        price = 12 + k * 7 + (i % c)  # +7 per same-color item => distinct & sorted
+        products.append({"id": f"p{i}", "name": f"{color.title()} {kind}",
+                         "price": price, "color": color})
+    return products
+
+
 class FakeShopDriver:
     """In-memory shop. Pass `products` to size the catalog (page-size benchmarks);
     defaults to the standard 30-item catalog."""

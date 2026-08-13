@@ -88,15 +88,47 @@ def _stub_decide(
         c for c in view.relevant_content
         if color is None or c.meta.get("color") == color
     ]
-    if not items:
+    pick = _select_shop_item(goal, items)
+    if pick is None:
         return ActionChoice(name="", done=True, thought="no matching item found"), tokens
-
-    pick = min(items, key=lambda c: c.meta.get("price", float("inf")))
     return ActionChoice(
         name="add_to_cart",
         params={"product_id": pick.id},
-        thought=f"cheapest {color or 'item'} is {pick.id} at ${pick.meta.get('price')}",
+        thought=f"picked {pick.id} at ${pick.meta.get('price')} for goal",
     ), tokens
+
+
+_ORDINALS = {"first": 1, "second": 2, "third": 3, "fourth": 4, "fifth": 5}
+
+
+def _goal_rank(goal: str) -> int:
+    """Which rank the goal asks for: '3rd'/'third' -> 3, else 1 (the cheapest/most)."""
+    m = re.search(r"(\d+)(?:st|nd|rd|th)\b", goal)
+    if m:
+        return int(m.group(1))
+    for word, n in _ORDINALS.items():
+        if word in goal:
+            return n
+    return 1
+
+
+def _select_shop_item(goal: str, items: list):
+    """Deterministic pick for shop goals -- mirrors the tasks.py verifier exactly so
+    the stub stays green. Handles 'cheapest', 'most expensive', 'Nth cheapest', and
+    a price filter ('above/over/below/under $X')."""
+    g = goal.lower()
+    above = re.search(r"(?:above|over|more than)\s*\$?(\d+)", g)
+    if above:
+        items = [c for c in items if c.meta.get("price", 0) > int(above.group(1))]
+    below = re.search(r"(?:below|under|less than)\s*\$?(\d+)", g)
+    if below:
+        items = [c for c in items if c.meta.get("price", 0) < int(below.group(1))]
+    if not items:
+        return None
+    reverse = any(w in g for w in ("most expensive", "priciest", "highest", "dearest"))
+    ordered = sorted(items, key=lambda c: c.meta.get("price", float("inf")), reverse=reverse)
+    idx = min(_goal_rank(g) - 1, len(ordered) - 1)
+    return ordered[idx]
 
 
 def _stub_decide_form(goal: str, view: AgentView, history: list[dict]) -> ActionChoice:

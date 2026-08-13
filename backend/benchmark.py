@@ -70,7 +70,7 @@ def main() -> None:
                 "latency": 0, "agent_tok": 0, "page_tok": 0}
 
     agg = {c: _blank() for c in conditions}
-    by_size: dict[int, dict[str, dict]] = {}
+    by_bucket: dict[str, dict[str, dict]] = {}
 
     for _ in range(args.reps):
         for task in TASKS.values():
@@ -82,8 +82,9 @@ def main() -> None:
                     continue
                 save_run(run)
                 buckets = [agg[cond]]
-                if task.size:
-                    buckets.append(by_size.setdefault(task.size, {c: _blank() for c in conditions})[cond])
+                label = task.bucket or (str(task.size) if task.size else "")
+                if label:
+                    buckets.append(by_bucket.setdefault(label, {c: _blank() for c in conditions})[cond])
                 for a in buckets:
                     a["n"] += 1
                     a["pass"] += int(run.success)
@@ -105,16 +106,16 @@ def main() -> None:
     for cond in conditions:
         print(_row(cond, agg[cond]))
 
-    for size in sorted(by_size):
-        print(f"\n-- page size {size} items --")
+    for label in sorted(by_bucket):
+        print(f"\n-- bucket {label} --")
         print(header)
         for cond in conditions:
-            print(_row(cond, by_size[size][cond]))
+            print(_row(cond, by_bucket[label][cond]))
 
     # Dashboard-ready aggregates -> agentview.results (success_rate + goal_cond explicit)
     run_id = datetime.datetime.now(datetime.timezone.utc).isoformat()
 
-    def _result(cond: str, a: dict, size) -> dict:
+    def _result(cond: str, a: dict, bucket) -> dict:
         n = a["n"] or 1
         return {
             "run_id": run_id,
@@ -122,7 +123,7 @@ def main() -> None:
             "model": "mcp" if cond == "mcp" else args.model,
             "agent_model": "claude" if cond == "mcp" else args.agent_model,  # MCP brain
             "driver": "playwright" if cond == "mcp" else args.driver,
-            "size": size,
+            "bucket": bucket,  # "all" or a size/trap bucket label
             "n": a["n"],
             "success_rate": round(a["pass"] / n, 3),
             "goal_conditioning": round(a["agent_tok"] / (a["page_tok"] or 1), 3),
@@ -132,9 +133,9 @@ def main() -> None:
             "timestamp": run_id,
         }
 
-    rows = [_result(c, agg[c], None) for c in conditions]
-    for size in sorted(by_size):
-        rows += [_result(c, by_size[size][c], size) for c in conditions]
+    rows = [_result(c, agg[c], "all") for c in conditions]
+    for label in sorted(by_bucket):
+        rows += [_result(c, by_bucket[label][c], label) for c in conditions]
     save_results(rows)
     print(f"\nwrote {len(rows)} aggregate rows -> agentview.results (+ runs/results.json)")
 

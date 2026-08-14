@@ -1,17 +1,17 @@
 """Playwright-MCP benchmark condition -- the real competitor.
 
-Drives the REAL `@playwright/mcp` server with Gemini as the brain, on the SAME
-generated pages as the other conditions (served over local HTTP -- MCP blocks
-file://, and http vs file is the same HTML, so the comparison stays fair):
+Drives the REAL `@playwright/mcp` server with Claude as the brain (Gemini optional),
+on the SAME generated pages as the other conditions (served over local HTTP -- MCP
+blocks file://, and http vs file is the same HTML, so the comparison stays fair):
 
   browser_navigate(url)
-  loop: browser_snapshot()  -> Gemini picks a tool -> browser_click/browser_type
+  loop: browser_snapshot()  -> Claude picks a tool -> browser_click/browser_type
   browser_evaluate(state)   -> read window.__STATE__ for the verifier
 
 MCP's snapshot is GENERIC (the whole a11y tree, every turn, no task-conditioning)
 -- exactly the baseline we're measuring against.
 
-Needs: node/npx (spawns @playwright/mcp), `pip install mcp`, and a Gemini key
+Needs: node/npx (spawns @playwright/mcp), `pip install mcp`, and an Anthropic key
 for the brain. The plumbing (connect/snapshot/state) runs without a key:
 
   python3 mcp_runner.py --selftest shop_15
@@ -105,16 +105,16 @@ class _StateAdapter:
 # (needs an LLM key; NOT run until step 3). choice = {done} or {tool, args}.
 def _mcp_prompt(goal: str, snapshot: str, history: list[dict]) -> str:
     return f"""You control a web browser via these tools:
-- browser_click(element, ref): click the element with that ref
-- browser_type(element, ref, text): type text into an input
+- browser_click  args: {{"element": <short description>, "target": <exact ref>}}
+- browser_type   args: {{"element": <short description>, "target": <exact ref>, "text": <text>}}
 
-You are given the page accessibility snapshot. Elements carry ids like [ref=e5].
-Pick the SINGLE next tool call to make progress on the goal. When the goal is
-already satisfied, return done.
+The accessibility snapshot lists elements with refs like [ref=e34]. Put that exact
+ref (e.g. "e34") in "target" -- it is REQUIRED. Pick the SINGLE next tool call to
+make progress on the goal. When the goal is already satisfied, return done.
 
 Reply with JSON only:
 {{"thought": str, "done": bool, "tool": "browser_click"|"browser_type",
-  "args": {{"element": str, "ref": str, "text": str (only for type)}}}}
+  "args": {{"element": str, "target": str, "text": str (browser_type only)}}}}
 
 GOAL: {goal}
 
@@ -236,7 +236,7 @@ def main() -> None:
         asyncio.run(_selftest(args.selftest))
         return
 
-    print("Plumbing + Gemini brain wired. Benchmark integration (step 3) is intentionally not run yet.")
+    print("Plumbing + Claude brain wired and verified. Run via benchmark.py --with-mcp.")
 
 
 if __name__ == "__main__":

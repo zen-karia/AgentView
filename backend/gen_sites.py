@@ -12,10 +12,11 @@ from __future__ import annotations
 import json
 import pathlib
 
-from driver import build_products
+from driver import build_products, build_ranked_products
 
 SIZES = [15, 60, 200]
 TRAP_SIZES = [60, 200]
+RANK_SIZES = [60, 200]
 _SITES_DIR = pathlib.Path(__file__).parent / "sites"
 
 _TEMPLATE = """<!doctype html>
@@ -158,6 +159,13 @@ def main() -> None:
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(html)
         print(f"wrote {out}  ({n} items + wishlist traps, {len(html)} bytes)")
+    for n in RANK_SIZES:  # compute bucket: distinct per-color prices, plain shop layout
+        products = build_ranked_products(n)
+        html = _TEMPLATE.format(n=n, products_json=json.dumps(products))
+        out = _SITES_DIR / f"shop_rank_{n}" / "index.html"
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(html)
+        print(f"wrote {out}  ({n} items, distinct prices, {len(html)} bytes)")
 
 
 if __name__ == "__main__":

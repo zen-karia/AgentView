@@ -365,3 +365,17 @@ GRPO-9B warm-started FROM IT (the stacked best-of-everything checkpoint), then f
 run to terminal — fully unattended. Expected cost ~$6-7. Full training matrix when done:
 {v1, v2 corpus} x {2B, 4B, 9B} SFT + {v1-init, v2-init} x {4B, 9B} GRPO — every cell evaluated
 under the frozen battery, every ablation judges could ask for.
+
+## While round-2 trains: OPD + Mind2Web ingester + results dashboard
+
+- **OPD-4B submitted** (flash-1784405799-33ba51e2, $1.33 GPU + $6.88 platform-managed glm-5.2
+  teacher tokens): data-free distillation FROM BASE — the "could we have skipped labels?" ablation.
+- **Mind2Web train-split ingester**: agent building pipeline/ingest-m2w-train.js (train split ONLY,
+  test refused in code; gold actions constructed deterministically from labeled elements;
+  validator-gated; target 150+ real-web training rows).
+- **Results dashboard SHIPPED**: scripts/build-dashboard.js queries Mongo (corpus by source/tier,
+  verify/inference/eval counts) and renders the judge-facing console — four-arm chart, size/corpus
+  matrix, Mind2Web curve, live corpus table, training ledger. Palette CVD-validated both themes
+  (accent #E8590C from our own generated shops). Published as a private artifact:
+  https://claude.ai/code/artifact/262d5ef2-9e4a-4f3d-80b4-dc1ceb1d932a — regenerate + republish
+  anytime with one command.

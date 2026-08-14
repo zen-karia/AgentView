@@ -1,0 +1,19 @@
+# OPD ablation: data-free on-policy distillation from glm-5.2, FROM BASE
+# (no SFT init) — answers "could we have skipped offline labels entirely?"
+model = "Qwen/Qwen3.5-4B"
+algorithm = "opd"
+seed = 42
+
+[environment]
+id = "ht6-team/agentview"
+
+[train]
+teacher_model = "glm-5.2"
+epochs = 1
+max_examples = 600
+lora_rank = 32
+lora_alpha = 64
+learning_rate = 5e-5
+batch_size = 4
+max_context_tokens = 8192
+max_completion_tokens = 2000

@@ -8,12 +8,15 @@ perception layer:
   time ms    -- avg latency (run with --reps to smooth this noisy axis)
   goal-cond  -- agent_tokens / page_tokens (~1.0 generic snapshot, <<1.0 conditioned)
 
-Conditions: raw, markdown_baseline, translated (via the harness), and -- with
---with-mcp -- the real Playwright-MCP competitor (its own browser + Gemini brain).
+The headline comparison is translator-vs-translator: WHO produces the AgentView --
+a prompted frontier model (claude) vs our distilled small model (trained) -- holding
+the agent + view schema constant. Each translator gets its own translated[<m>] row
+(same five metrics). raw / markdown_baseline / mcp (--with-mcp, the real Playwright-MCP
+competitor + Claude brain) stay as context baselines.
 
   python3 benchmark.py                                  # stub, in-memory
-  python3 benchmark.py --reps 3                         # 3x each, average
-  python3 benchmark.py --model gemini --agent-model gemini --driver playwright --with-mcp   # real (needs key)
+  python3 benchmark.py --translators claude,trained --agent-model claude --driver playwright --reps 3
+  python3 benchmark.py --translators claude,trained --agent-model claude --driver playwright --with-mcp
 """
 from __future__ import annotations
 
@@ -29,12 +32,14 @@ from tasks import TASKS
 
 load_env()
 
-BASE_CONDITIONS = ["raw", "markdown_baseline", "translated"]
-
 
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", default="stub", choices=["stub", "gemini", "claude", "trained"])
+    ap.add_argument("--translators", default=None,
+                    help="comma-separated translators to compare head-to-head on the "
+                         "translated condition, e.g. 'claude,trained' (default: --model). "
+                         "Each gets its own translated[<m>] row -- same agent, same metrics.")
     ap.add_argument("--agent-model", default="stub", choices=["stub", "gemini", "claude"])
     ap.add_argument("--driver", default="fake", choices=["fake", "playwright"])
     ap.add_argument("--reps", type=int, default=1, help="runs per task (averages latency/success noise)")
@@ -49,7 +54,21 @@ def main() -> None:
 
     from logger import save_results, save_run
 
-    conditions = list(BASE_CONDITIONS) + (["mcp"] if args.with_mcp else [])
+    # The comparison is translator-vs-translator: one translated[<m>] row per model,
+    # holding the agent + view schema constant. raw/markdown/mcp stay as context.
+    translators = ([m.strip() for m in args.translators.split(",")]
+                   if args.translators else [args.model])
+    conditions = (["raw", "markdown_baseline"]
+                  + [f"translated[{m}]" for m in translators]
+                  + (["mcp"] if args.with_mcp else []))
+
+    def _split(cond: str) -> tuple[str, str]:
+        """Display condition -> (condition, translator model) for the results rows."""
+        if cond.startswith("translated["):
+            return "translated", cond[len("translated["):-1]
+        if cond == "mcp":
+            return "mcp", "mcp"
+        return cond, translators[0]  # raw/markdown: translator is irrelevant (0 tokens)
 
     make_driver = None
     if args.driver == "playwright":
@@ -58,12 +77,13 @@ def main() -> None:
         make_driver = _playwright_factory()
 
     def _do_run(task, cond):
-        # mcp is its own stack (own browser + Gemini brain); everything else is the harness.
+        # mcp is its own stack (own browser + Claude brain); everything else is the harness.
         if cond == "mcp":
             from mcp_runner import run_mcp_task
 
             return asyncio.run(run_mcp_task(task))
-        return run_task(task, cond, args.model, agent_model=args.agent_model, make_driver=make_driver)
+        base_cond, model = _split(cond)
+        return run_task(task, base_cond, model, agent_model=args.agent_model, make_driver=make_driver)
 
     def _blank():
         return {"pass": 0, "n": 0, "frontier": 0, "cost": 0.0,
@@ -96,12 +116,12 @@ def main() -> None:
 
     def _row(cond: str, a: dict) -> str:
         gc = a["agent_tok"] / (a["page_tok"] or 1)
-        return (f"{cond:<18}{a['pass']}/{a['n']:<8}{a['frontier'] // a['n']:<12}"
+        return (f"{cond:<22}{a['pass']}/{a['n']:<8}{a['frontier'] // a['n']:<12}"
                 f"{a['cost'] / a['n']:<12.6f}{a['latency'] // a['n']:<9}{gc:.2f}")
 
-    header = f"{'condition':<18}{'success':<10}{'frontier':<12}{'cost USD':<12}{'time ms':<9}{'goal-cond'}"
+    header = f"{'condition':<22}{'success':<10}{'frontier':<12}{'cost USD':<12}{'time ms':<9}{'goal-cond'}"
     print(f"\n{len(TASKS)} tasks x {len(conditions)} conditions x {args.reps} reps "
-          f"(translator={args.model}, agent={args.agent_model}, driver={args.driver})\n")
+          f"(translators={','.join(translators)}, agent={args.agent_model}, driver={args.driver})\n")
     print(header)
     for cond in conditions:
         print(_row(cond, agg[cond]))
@@ -117,10 +137,11 @@ def main() -> None:
 
     def _result(cond: str, a: dict, bucket) -> dict:
         n = a["n"] or 1
+        base_cond, model = _split(cond)
         return {
             "run_id": run_id,
-            "condition": cond,
-            "model": "mcp" if cond == "mcp" else args.model,
+            "condition": base_cond,       # raw | markdown_baseline | translated | mcp
+            "model": model,               # the translator (claude/trained/...) or "mcp"
             "agent_model": "claude" if cond == "mcp" else args.agent_model,  # MCP brain
             "driver": "playwright" if cond == "mcp" else args.driver,
             "bucket": bucket,  # "all" or a size/trap bucket label

@@ -17,7 +17,12 @@ import pathlib
 from dataclasses import dataclass
 from typing import Any, Callable
 
-from driver import FakeShopDriver, FakeTrapShopDriver, build_products
+from driver import (
+    FakeShopDriver,
+    FakeTrapShopDriver,
+    build_products,
+    build_ranked_products,
+)
 
 # file:// URLs for the PlaywrightDriver, one per demo site.
 _SITES_DIR = pathlib.Path(__file__).parent / "sites"
@@ -32,6 +37,9 @@ SITES: dict[str, str] = {
     # hard bucket: trap shops (wishlist decoy button before every cart button)
     "shop_trap_60": (_SITES_DIR / "shop_trap_60" / "index.html").as_uri(),
     "shop_trap_200": (_SITES_DIR / "shop_trap_200" / "index.html").as_uri(),
+    # compute bucket: distinct per-color prices so ranking goals are unambiguous
+    "shop_rank_60": (_SITES_DIR / "shop_rank_60" / "index.html").as_uri(),
+    "shop_rank_200": (_SITES_DIR / "shop_rank_200" / "index.html").as_uri(),
 }
 
 
@@ -51,6 +59,27 @@ def _cheapest_of_color(color: str) -> Callable[[Any], bool]:
         st = driver.state()
         matching = [p for p in st["products"] if p["color"] == color]
         return bool(matching) and min(matching, key=lambda p: p["price"])["id"] in st["cart"]
+    return check
+
+
+def _nth_cheapest_of_color(color: str, n: int) -> Callable[[Any], bool]:
+    """The item at rank n when the color's items are sorted cheapest-first."""
+    def check(driver) -> bool:
+        st = driver.state()
+        matching = sorted((p for p in st["products"] if p["color"] == color),
+                          key=lambda p: p["price"])
+        return len(matching) >= n and matching[n - 1]["id"] in st["cart"]
+    return check
+
+
+def _cheapest_of_color_above(color: str, threshold: int) -> Callable[[Any], bool]:
+    """The cheapest item of the color whose price is strictly above the threshold."""
+    def check(driver) -> bool:
+        st = driver.state()
+        matching = sorted((p for p in st["products"]
+                           if p["color"] == color and p["price"] > threshold),
+                          key=lambda p: p["price"])
+        return bool(matching) and matching[0]["id"] in st["cart"]
     return check
 
 
@@ -110,3 +139,37 @@ for _n, _colors in _TRAP_BUCKETS:
             bucket=f"trap-{_n}",
         )
         _i += 1
+
+
+def _ranked_shop_of_size(n: int):
+    """Shop with distinct per-color prices (for unambiguous ranking goals)."""
+    return lambda: FakeShopDriver(build_ranked_products(n))
+
+
+# --- Compute bucket: goals that need RANKING / FILTERING over the candidate set,
+# not just a keyword match. On raw, the agent must find every blue item among N,
+# sort by price, and pick correctly -- error-prone as N grows. A goal-conditioned
+# view hands it the pre-filtered blue items, so it ranks over a tiny set. This is
+# the least-contrived place a real success gap can open (reasoning over noise).
+_COMPUTE_BUCKETS = [60, 200]
+for _n in _COMPUTE_BUCKETS:
+    TASKS[f"t{_i:02d}_compute{_n}_3rd_cheapest_blue"] = Task(
+        id=f"t{_i:02d}_compute{_n}_3rd_cheapest_blue",
+        goal="Add the 3rd cheapest blue item to the cart",
+        make_driver=_ranked_shop_of_size(_n),
+        check=_nth_cheapest_of_color("blue", 3),
+        site=f"shop_rank_{_n}",
+        size=_n,
+        bucket=f"compute-{_n}",
+    )
+    _i += 1
+    TASKS[f"t{_i:02d}_compute{_n}_cheapest_blue_above_50"] = Task(
+        id=f"t{_i:02d}_compute{_n}_cheapest_blue_above_50",
+        goal="Add the cheapest blue item priced above $50 to the cart",
+        make_driver=_ranked_shop_of_size(_n),
+        check=_cheapest_of_color_above("blue", 50),
+        site=f"shop_rank_{_n}",
+        size=_n,
+        bucket=f"compute-{_n}",
+    )
+    _i += 1

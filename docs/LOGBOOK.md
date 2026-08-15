@@ -379,3 +379,14 @@ under the frozen battery, every ablation judges could ask for.
   (accent #E8590C from our own generated shops). Published as a private artifact:
   https://claude.ai/code/artifact/262d5ef2-9e4a-4f3d-80b4-dc1ceb1d932a — regenerate + republish
   anytime with one command.
+
+## Mind2Web train-split ingestion: 156 real-web rows (the real-web lever, loaded)
+
+pipeline/ingest-m2w-train.js (train split hard-guarded in code): 300 steps attempted, 156
+validator-passed (52%) across 21 real websites; gold actions constructed deterministically from
+labeled elements ([data-av-id] or [backend_node_id] selector, dual-DOM uniqueness); avg input
+~14.6k tokens (the long-page slice, as designed); all attempts in Mongo (kind m2w-ingest).
+Dominant discard: pages over the 28k budget (135/144) — page size, not constructor error.
+Headroom: only offsets 0-1500 of 7,775 consumed; append-safe reruns scale to ~600+.
+**v3 corpus plan**: winner of round 2 + (v2 corpus 2,220 + m2w-train 156) = the run that attacks
+the 10% -> 35% real-web gap directly.

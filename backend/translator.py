@@ -45,6 +45,8 @@ def translate(
             return _gemini_translate(inp)
         if model == "claude":
             return _claude_translate(inp)
+        if model == "openrouter":
+            return _openrouter_translate(inp)
         if model == "trained":
             return _trained_translate(inp)  # TODO(layer-1)
         raise ValueError(f"unknown model: {model}")
@@ -252,6 +254,16 @@ def _claude_translate(inp: TranslatorInput) -> tuple[AgentView, int]:
     from claude_llm import claude_json
 
     text, tokens = claude_json(translate_prompt(inp.goal, inp.page.url, inp.page.html))
+    return _agentview_from_dict(loads_first_json(text)), tokens
+
+
+def _openrouter_translate(inp: TranslatorInput) -> tuple[AgentView, int]:
+    """Prompting baseline via OpenRouter (e.g. gemini-3.5-flash). Same shared prompt
+    as the Claude/Gemini/trained translators; the agent seat stays Claude. Needs
+    OPENROUTER_API_KEY (+ optional OPENROUTER_MODEL)."""
+    from openrouter_llm import openrouter_json
+
+    text, tokens = openrouter_json(translate_prompt(inp.goal, inp.page.url, inp.page.html))
     return _agentview_from_dict(loads_first_json(text)), tokens
 
 

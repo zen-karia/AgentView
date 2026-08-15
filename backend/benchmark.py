@@ -35,7 +35,7 @@ load_env()
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--model", default="stub", choices=["stub", "gemini", "claude", "trained"])
+    ap.add_argument("--model", default="stub", choices=["stub", "gemini", "claude", "openrouter", "trained"])
     ap.add_argument("--translators", default=None,
                     help="comma-separated translators to compare head-to-head on the "
                          "translated condition, e.g. 'claude,trained' (default: --model). "

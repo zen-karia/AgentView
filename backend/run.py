@@ -36,8 +36,8 @@ def main() -> None:
     )
     ap.add_argument("--model", default="stub", choices=["stub", "gemini", "claude", "openrouter", "trained"],
                     help="translator model (produces the AgentView; openrouter=OPENROUTER_MODEL)")
-    ap.add_argument("--agent-model", default="stub", choices=["stub", "gemini", "claude"],
-                    help="reasoner model (consumes the AgentView, picks actions)")
+    ap.add_argument("--agent-model", default="stub", choices=["stub", "gemini", "claude", "openrouter"],
+                    help="reasoner model (consumes the view; openrouter=OPENROUTER_AGENT_MODEL)")
     ap.add_argument("--driver", default="fake", choices=["fake", "playwright"],
                     help="fake = in-memory; playwright = real browser on the demo site")
     ap.add_argument("--freesolo-model", default=None,

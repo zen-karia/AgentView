@@ -40,7 +40,7 @@ def main() -> None:
                     help="comma-separated translators to compare head-to-head on the "
                          "translated condition, e.g. 'claude,trained' (default: --model). "
                          "Each gets its own translated[<m>] row -- same agent, same metrics.")
-    ap.add_argument("--agent-model", default="stub", choices=["stub", "gemini", "claude"])
+    ap.add_argument("--agent-model", default="stub", choices=["stub", "gemini", "claude", "openrouter"])
     ap.add_argument("--driver", default="fake", choices=["fake", "playwright"])
     ap.add_argument("--reps", type=int, default=1, help="runs per task (averages latency/success noise)")
     ap.add_argument("--with-mcp", action="store_true",
@@ -62,6 +62,10 @@ def main() -> None:
                   + [f"translated[{m}]" for m in translators]
                   + (["mcp"] if args.with_mcp else []))
 
+    # MCP has no translator -- its brain IS the agent. Track the agent seat so the
+    # whole run stays on one model family (falls back to claude for stub agents).
+    mcp_brain = args.agent_model if args.agent_model in ("claude", "gemini", "openrouter") else "claude"
+
     def _split(cond: str) -> tuple[str, str]:
         """Display condition -> (condition, translator model) for the results rows."""
         if cond.startswith("translated["):
@@ -81,7 +85,7 @@ def main() -> None:
         if cond == "mcp":
             from mcp_runner import run_mcp_task
 
-            return asyncio.run(run_mcp_task(task))
+            return asyncio.run(run_mcp_task(task, brain=mcp_brain))
         base_cond, model = _split(cond)
         return run_task(task, base_cond, model, agent_model=args.agent_model, make_driver=make_driver)
 
@@ -142,7 +146,7 @@ def main() -> None:
             "run_id": run_id,
             "condition": base_cond,       # raw | markdown_baseline | translated | mcp
             "model": model,               # the translator (claude/trained/...) or "mcp"
-            "agent_model": "claude" if cond == "mcp" else args.agent_model,  # MCP brain
+            "agent_model": mcp_brain if cond == "mcp" else args.agent_model,
             "driver": "playwright" if cond == "mcp" else args.driver,
             "bucket": bucket,  # "all" or a size/trap bucket label
             "n": a["n"],

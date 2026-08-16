@@ -390,3 +390,15 @@ Dominant discard: pages over the 28k budget (135/144) — page size, not constru
 Headroom: only offsets 0-1500 of 7,775 consumed; append-safe reruns scale to ~600+.
 **v3 corpus plan**: winner of round 2 + (v2 corpus 2,220 + m2w-train 156) = the run that attacks
 the 10% -> 35% real-web gap directly.
+
+## Cross-provider baseline validation + SFT-4B-v2 battery
+
+- **Identity-LoRA methodology VALIDATED**: stock qwen/qwen3.5-9b via OpenRouter on the same 26
+  held-out tasks = 23.1% valid / 4.2% recall / 4.8% full — IDENTICAL to our identity-LoRA 9B
+  through Flash. Two independent serving stacks, same numbers; the zero-shot baselines are
+  judge-proof. (Flash also served it 3x faster: 9.8s vs 29.5s avg.)
+- **SFT-4B-v2** (flash-1784398052-5eda8ac9): 100% on the 9100-9109 slice (now in-distribution for
+  it). Megashop distractor probe: different failure than v1 — single confident pick of the $59.99
+  earbuds, still blind to the $34.50 Volt Pods. Only the 9B has ever surfaced the correct cheapest
+  — the last semantic step looks capacity-gated, not data-gated. Strengthens the 9B-as-capability-
+  model thesis ahead of the GRPO-9B / SFT-9B-v2 results.

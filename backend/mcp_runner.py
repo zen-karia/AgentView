@@ -132,6 +132,15 @@ def _decide_claude(goal: str, snapshot: str, history: list[dict]) -> tuple[dict,
     return loads_first_json(text), tokens
 
 
+def _decide_openrouter(goal: str, snapshot: str, history: list[dict]) -> tuple[dict, int]:
+    from openrouter_llm import openrouter_agent_model, openrouter_json
+    from translator import loads_first_json
+
+    text, tokens = openrouter_json(_mcp_prompt(goal, snapshot, history),
+                                   max_tokens=1024, model=openrouter_agent_model())
+    return loads_first_json(text), tokens
+
+
 def _decide_gemini(goal: str, snapshot: str, history: list[dict]) -> tuple[dict, int]:
     from google import genai
     from google.genai import types
@@ -153,8 +162,11 @@ def _decide_gemini(goal: str, snapshot: str, history: list[dict]) -> tuple[dict,
 
 
 def _decide(brain: str, goal: str, snapshot: str, history: list[dict]) -> tuple[dict, int]:
-    return _decide_claude(goal, snapshot, history) if brain == "claude" \
-        else _decide_gemini(goal, snapshot, history)
+    if brain == "openrouter":
+        return _decide_openrouter(goal, snapshot, history)
+    if brain == "gemini":
+        return _decide_gemini(goal, snapshot, history)
+    return _decide_claude(goal, snapshot, history)
 
 
 async def run_mcp_task(task, brain: str = "claude"):

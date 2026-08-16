@@ -33,6 +33,8 @@ def decide(
         return _gemini_decide(goal, view, history)
     if model == "claude":
         return _claude_decide(goal, view, history)
+    if model == "openrouter":
+        return _openrouter_decide(goal, view, history)
     raise ValueError(f"unknown agent model: {model}")
 
 
@@ -217,4 +219,18 @@ def _claude_decide(
     from translator import loads_first_json
 
     text, tokens = claude_json(_decide_prompt(goal, view, history), max_tokens=1024)
+    return _parse_choice(loads_first_json(text), view), tokens
+
+
+def _openrouter_decide(
+    goal: str, view: AgentView, history: list[dict]
+) -> tuple[ActionChoice, int]:
+    """Agent via OpenRouter (OPENROUTER_AGENT_MODEL, e.g. a Claude slug) -- lets the
+    whole stack run on one OpenRouter key."""
+    from openrouter_llm import openrouter_agent_model, openrouter_json
+
+    from translator import loads_first_json
+
+    text, tokens = openrouter_json(_decide_prompt(goal, view, history),
+                                   max_tokens=1024, model=openrouter_agent_model())
     return _parse_choice(loads_first_json(text), view), tokens

@@ -11,11 +11,18 @@ from __future__ import annotations
 import os
 
 OPENROUTER_BASE = "https://openrouter.ai/api/v1"
-_DEFAULT_MODEL = "google/gemini-3.5-flash"
+_DEFAULT_MODEL = "google/gemini-3.5-flash"        # translator seat
+_DEFAULT_AGENT_MODEL = "anthropic/claude-haiku-4.5"  # agent seat + MCP brain
 
 
 def openrouter_model() -> str:
+    """Translator-seat model (OPENROUTER_MODEL)."""
     return os.getenv("OPENROUTER_MODEL") or _DEFAULT_MODEL
+
+
+def openrouter_agent_model() -> str:
+    """Agent-seat / MCP-brain model (OPENROUTER_AGENT_MODEL)."""
+    return os.getenv("OPENROUTER_AGENT_MODEL") or _DEFAULT_AGENT_MODEL
 
 
 def openrouter_json(prompt: str, max_tokens: int = 4096, model: str | None = None) -> tuple[str, int]:

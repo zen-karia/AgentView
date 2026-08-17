@@ -31,19 +31,25 @@ def openrouter_mcp_model() -> str:
     return os.getenv("OPENROUTER_MCP_MODEL") or openrouter_agent_model()
 
 
-def openrouter_json(prompt: str, max_tokens: int = 4096, model: str | None = None) -> tuple[str, int]:
-    """Return (text, real input tokens) from one OpenRouter chat completion."""
+def openrouter_json(prompt: str, max_tokens: int = 4096, model: str | None = None,
+                    json_mode: bool = True) -> tuple[str, int]:
+    """Return (text, real input tokens) from one OpenRouter chat completion. json_mode
+    forces a valid JSON object (so chattier models like gemini-flash can't emit prose
+    or an unterminated string that overruns max_tokens)."""
     from openai import OpenAI
 
     key = os.getenv("OPENROUTER_API_KEY")
     if not key:
         raise RuntimeError("set OPENROUTER_API_KEY to use the openrouter path")
     client = OpenAI(base_url=OPENROUTER_BASE, api_key=key)
-    resp = client.chat.completions.create(
-        model=model or openrouter_model(),
-        messages=[{"role": "user", "content": prompt}],
-        max_tokens=max_tokens,
-    )
+    kwargs = {
+        "model": model or openrouter_model(),
+        "messages": [{"role": "user", "content": prompt}],
+        "max_tokens": max_tokens,
+    }
+    if json_mode:
+        kwargs["response_format"] = {"type": "json_object"}
+    resp = client.chat.completions.create(**kwargs)
     text = resp.choices[0].message.content or ""
     usage = getattr(resp, "usage", None)
     tokens = getattr(usage, "prompt_tokens", None) or len(prompt) // 4

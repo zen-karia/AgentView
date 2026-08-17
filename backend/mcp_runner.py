@@ -112,7 +112,7 @@ The accessibility snapshot lists elements with refs like [ref=e34]. Put that exa
 ref (e.g. "e34") in "target" -- it is REQUIRED. Pick the SINGLE next tool call to
 make progress on the goal. When the goal is already satisfied, return done.
 
-Reply with JSON only:
+Reply with JSON only (keep "thought" to ONE short sentence):
 {{"thought": str, "done": bool, "tool": "browser_click"|"browser_type",
   "args": {{"element": str, "target": str, "text": str (browser_type only)}}}}
 
@@ -137,7 +137,7 @@ def _decide_openrouter(goal: str, snapshot: str, history: list[dict]) -> tuple[d
     from translator import loads_first_json
 
     text, tokens = openrouter_json(_mcp_prompt(goal, snapshot, history),
-                                   max_tokens=1024, model=openrouter_mcp_model())
+                                   max_tokens=2048, model=openrouter_mcp_model())
     return loads_first_json(text), tokens
 
 

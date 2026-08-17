@@ -402,3 +402,16 @@ the 10% -> 35% real-web gap directly.
   earbuds, still blind to the $34.50 Volt Pods. Only the 9B has ever surfaced the correct cheapest
   — the last semantic step looks capacity-gated, not data-gated. Strengthens the 9B-as-capability-
   model thesis ahead of the GRPO-9B / SFT-9B-v2 results.
+
+## CRITICAL FINDING: synthetic-heavy SFT suppresses latent real-web grounding
+
+Stock Qwen3.5-9B base (OpenRouter) on the Mind2Web sample: **20% strict element accuracy**
+(12.5% contract-valid; 17/40 call errors on OpenRouter — completed-call hit rate higher still).
+Our SFT-9B-v1 scored **10% strict** on the same rows. Training on the synthetic-only corpus
+DOUBLED contract validity (27.5% vs 12.5%) but HALVED real-web element accuracy — the base's
+latent web knowledge was partially overwritten by generator-distribution habits.
+Consequences: (1) round 3's m2w-train mixing is not merely additive knowledge — it is forgetting
+mitigation; (2) the demo narrative gains a sophisticated beat: "we measured our own fine-tune
+suppressing base knowledge, and fixed it with data diversity"; (3) the base's 20% row joins the
+benchmark curve as the true zero-shot anchor for grounding (the ~0% rows measure the CONTRACT
+being unknown, not the web being unknown).

@@ -415,3 +415,13 @@ mitigation; (2) the demo narrative gains a sophisticated beat: "we measured our 
 suppressing base knowledge, and fixed it with data diversity"; (3) the base's 20% row joins the
 benchmark curve as the true zero-shot anchor for grounding (the ~0% rows measure the CONTRACT
 being unknown, not the web being unknown).
+
+## Dose-confirmation + ROUND 3 submitted (the forgetting-mitigation test)
+
+SFT-4B-v2 on Mind2Web: valid 27.5% / strict **2.5%** (4B-v1: 7.5%/7.5%). Second data point locks
+the pattern: synthetic volume raises contract validity, LOWERS real-web grounding. Full curve:
+base-9B 20% strict -> 9B-v1 10% -> 4B-v1 7.5% -> 4B-v2 2.5%.
+**SFT-4B-v3 submitted** (flash-1784412078-c0e897bc, $6.15): 2,688 rows = v2 corpus + m2w-train
+x3 upsample (~17% real-web). Success criterion: m2w valid stays >=27% AND strict recovers toward
+the base's 20% — proving the contract and the web can be learned simultaneously.
+Also add the round-2 fleet monitor to include c0e897bc.

@@ -133,11 +133,11 @@ def _decide_claude(goal: str, snapshot: str, history: list[dict]) -> tuple[dict,
 
 
 def _decide_openrouter(goal: str, snapshot: str, history: list[dict]) -> tuple[dict, int]:
-    from openrouter_llm import openrouter_agent_model, openrouter_json
+    from openrouter_llm import openrouter_json, openrouter_mcp_model
     from translator import loads_first_json
 
     text, tokens = openrouter_json(_mcp_prompt(goal, snapshot, history),
-                                   max_tokens=1024, model=openrouter_agent_model())
+                                   max_tokens=1024, model=openrouter_mcp_model())
     return loads_first_json(text), tokens
 
 

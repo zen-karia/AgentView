@@ -21,8 +21,14 @@ def openrouter_model() -> str:
 
 
 def openrouter_agent_model() -> str:
-    """Agent-seat / MCP-brain model (OPENROUTER_AGENT_MODEL)."""
+    """Agent-seat model (OPENROUTER_AGENT_MODEL)."""
     return os.getenv("OPENROUTER_AGENT_MODEL") or _DEFAULT_AGENT_MODEL
+
+
+def openrouter_mcp_model() -> str:
+    """MCP-brain model (OPENROUTER_MCP_MODEL); defaults to the agent-seat model, so
+    set it only to drive MCP with a different model (e.g. gemini-3.5-flash)."""
+    return os.getenv("OPENROUTER_MCP_MODEL") or openrouter_agent_model()
 
 
 def openrouter_json(prompt: str, max_tokens: int = 4096, model: str | None = None) -> tuple[str, int]:

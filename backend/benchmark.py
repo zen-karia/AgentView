@@ -44,7 +44,9 @@ def main() -> None:
     ap.add_argument("--driver", default="fake", choices=["fake", "playwright"])
     ap.add_argument("--reps", type=int, default=1, help="runs per task (averages latency/success noise)")
     ap.add_argument("--with-mcp", action="store_true",
-                    help="also run the real Playwright-MCP condition (needs Gemini key)")
+                    help="also run the real Playwright-MCP condition")
+    ap.add_argument("--skip-baselines", action="store_true",
+                    help="omit raw + markdown_baseline; compare only translated[*] and mcp")
     ap.add_argument("--freesolo-model", default=None,
                     help="override the trained-translator model (<run-id>)")
     args = ap.parse_args()
@@ -58,9 +60,9 @@ def main() -> None:
     # holding the agent + view schema constant. raw/markdown/mcp stay as context.
     translators = ([m.strip() for m in args.translators.split(",")]
                    if args.translators else [args.model])
-    conditions = (["raw", "markdown_baseline"]
-                  + [f"translated[{m}]" for m in translators]
-                  + (["mcp"] if args.with_mcp else []))
+    conditions = ([] if args.skip_baselines else ["raw", "markdown_baseline"]) \
+        + [f"translated[{m}]" for m in translators] \
+        + (["mcp"] if args.with_mcp else [])
 
     # MCP has no translator -- its brain IS the agent. Track the agent seat so the
     # whole run stays on one model family (falls back to claude for stub agents).

@@ -446,3 +446,16 @@ real-web mixing (SFT-4B-v3 training now; if it works, a 9B-v3 follows as the lik
   full-match — nearly matches the 823-gold-row v0 and sits 17pts under full SFT. The "did we need
   labels?" ablation now has a measured answer: yes for the last 17 points, no for the first 83.
 - Watcher discipline fixed: all deploy monitors now emit failure states too.
+
+## GRPO-9B (v1-init): NEGATIVE RESULT — advantage collapse from a mis-banded prompt pool
+
+Step-100 checkpoint: v2-slice 25.7% valid / 15% full-match / 0% impossible (init was 100%across);
+megashop selectors corrupted ([data-av-id="33"] .add). Cause: the GRPO prompt pool was the FULL
+training dataset — prompts the init already solves ~100%, violating our own D11/D16
+partial-success-band rule (AutoWebGLM's 1..n-1 lesson). Solved prompts yield zero group advantage;
+the gradient was sampling noise at temperature 0.7. The reward design tested fine; the pool was wrong.
+- Fix for any future GRPO: prompt pool = tasks the init solves 20-70% (megashop-class + m2w-train
+  prompts), not the corpus.
+- GRPO-9B-v2 (in flight) is partially band-corrected by accident: its v3 pool contains ~17%
+  real-web prompts the init fails — kept running as the "partial band" data point.
+- Negative results with known causes are table rows too.

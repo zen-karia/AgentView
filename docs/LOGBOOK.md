@@ -425,3 +425,13 @@ base-9B 20% strict -> 9B-v1 10% -> 4B-v1 7.5% -> 4B-v2 2.5%.
 x3 upsample (~17% real-web). Success criterion: m2w valid stays >=27% AND strict recovers toward
 the base's 20% — proving the contract and the web can be learned simultaneously.
 Also add the round-2 fleet monitor to include c0e897bc.
+
+## SFT-9B-v2 battery: the forgetting gradient in one model
+
+- v2-slice: 100% across the board (in-distribution).
+- Megashop: PERFECT candidate set retained (both earbuds incl. the $34.50 Volt Pods) — near-OOD
+  competence survived the added synthetic dose; still the only model family to solve this.
+- Mind2Web: valid 10% (v1: 27.5%), strict 7.5% (v1: 10%) — far-OOD degraded on BOTH axes at 9B
+  (n=40, 11 call errors; noisy but directionally consistent with the 4B dose effect).
+Gradient: in-distribution perfect -> near-OOD retained -> far-OOD eroded. All hopes on v3's
+real-web mixing (SFT-4B-v3 training now; if it works, a 9B-v3 follows as the likely final model).

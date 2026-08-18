@@ -460,3 +460,13 @@ the gradient was sampling noise at temperature 0.7. The reward design tested fin
   real-web prompts the init fails — kept running as the "partial band" data point.
 - Negative results with known causes are table rows too.
 - GRPO-9B (mis-banded) Mind2Web row: 0/0/0 — collapse confirmed end-to-end. Row banked; autopsy complete.
+
+## v3 caveat discovered + v4 plan (user call: 9B regardless of window)
+
+- **v3 flaw (mine)**: its config kept max_context_tokens=8192 while m2w rows average ~14.6k tokens
+  — those rows are truncated (label at sequence end = answer eaten) or dropped in training. v3's
+  real-web dose is compromised; treat its verdict as a LOWER BOUND on mixing benefits.
+- **v4 runs (submit at harvest, ~45 min)**: corpus = v2 (2,220) + up to 2,000 full-sweep m2w rows;
+  max_context_tokens=32768 (the clean fix), epochs=1. BOTH sizes: 4B (lands inside the 6-7h window)
+  and 9B (user-ordered; ~7-9h, lands post-window as the final artifact). Note 32k ctx jumps GPU
+  class — quotes will show it; user cap $149 still governs.

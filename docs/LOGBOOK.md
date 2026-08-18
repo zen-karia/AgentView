@@ -435,3 +435,14 @@ Also add the round-2 fleet monitor to include c0e897bc.
   (n=40, 11 call errors; noisy but directionally consistent with the 4B dose effect).
 Gradient: in-distribution perfect -> near-OOD retained -> far-OOD eroded. All hopes on v3's
 real-web mixing (SFT-4B-v3 training now; if it works, a 9B-v3 follows as the likely final model).
+
+## Deploy failures diagnosed + OPD surprise
+
+- **Diagnosis**: GRPO-4B (9cfaf775) artifacts are corrupt (attempt-1 CUDA OOM + hf_upload HTTP
+  error in worker logs; full/step-150/step-140 deploys all fail). NOT systemic: GRPO-9B's step-100
+  checkpoint DEPLOYS AND SERVES, and OPD-4B deploys fine. GRPO-4B row abandoned (retraining is $1.77
+  if ever wanted); GRPO story rides on the 9B + stacked 9B-v2.
+- **OPD-4B (ZERO labeled data, glm-5.2 teacher, $1.33+$6.88)**: v2-slice 88.6% valid / 83.3%
+  full-match — nearly matches the 823-gold-row v0 and sits 17pts under full SFT. The "did we need
+  labels?" ablation now has a measured answer: yes for the last 17 points, no for the first 83.
+- Watcher discipline fixed: all deploy monitors now emit failure states too.

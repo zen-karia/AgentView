@@ -459,3 +459,4 @@ the gradient was sampling noise at temperature 0.7. The reward design tested fin
 - GRPO-9B-v2 (in flight) is partially band-corrected by accident: its v3 pool contains ~17%
   real-web prompts the init fails — kept running as the "partial band" data point.
 - Negative results with known causes are table rows too.
+- GRPO-9B (mis-banded) Mind2Web row: 0/0/0 — collapse confirmed end-to-end. Row banked; autopsy complete.

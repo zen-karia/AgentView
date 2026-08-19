@@ -18,7 +18,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from validator import validate  # noqa: E402
+from model.pipeline.reward.validator import validate  # noqa: E402
 
 FIXTURES_PATH = Path(__file__).resolve().parents[2] / "data" / "fixtures" / "validator-parity.json"
 

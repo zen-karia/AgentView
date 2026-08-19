@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>DemoShop (60 items)</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; }
+    nav a { margin-right: 12px; }
+    .grid { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; }
+    .product-card { border: 1px solid #ddd; padding: 8px; width: 200px; }
+    .price { font-weight: 600; }
+    footer div { display: inline-block; margin-right: 12px; color: #666; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/">Home</a><a href="/deals">Deals</a><a href="/new">New</a>
+    <a href="/account">Account</a><a href="/cart">Cart</a>
+  </nav>
+  <div style="display:none">
+    best shirts online cheap shirts blue shirts red shirts discount apparel
+    free shipping trending fashion 2026 buy now limited stock
+  </div>
+  <h1>Shop</h1>
+  <aside class="filters">Filter by: color, price, size, brand</aside>
+  <ul id="grid" class="grid"></ul>
+  <div id="cart">Cart: <span id="cart-items"></span></div>
+  <footer>
+    <div>About</div><div>Careers</div><div>Privacy Policy</div><div>Terms</div>
+    <div>Returns</div><div>Contact</div>
+    <p>&copy; 2026 DemoShop Inc. Free shipping over $50.</p>
+  </footer>
+  <script>
+    window.__PRODUCTS__ = [{"id": "p1", "name": "Red Shirt", "price": 13, "color": "red"}, {"id": "p2", "name": "Green Shirt", "price": 14, "color": "green"}, {"id": "p3", "name": "Black Shirt", "price": 15, "color": "black"}, {"id": "p4", "name": "White Shirt", "price": 16, "color": "white"}, {"id": "p5", "name": "Grey Shirt", "price": 17, "color": "grey"}, {"id": "p6", "name": "Blue Hat", "price": 12, "color": "blue"}, {"id": "p7", "name": "Red Hat", "price": 20, "color": "red"}, {"id": "p8", "name": "Green Hat", "price": 21, "color": "green"}, {"id": "p9", "name": "Black Hat", "price": 22, "color": "black"}, {"id": "p10", "name": "White Hat", "price": 23, "color": "white"}, {"id": "p11", "name": "Grey Hat", "price": 24, "color": "grey"}, {"id": "p12", "name": "Blue Shoes", "price": 19, "color": "blue"}, {"id": "p13", "name": "Red Shoes", "price": 27, "color": "red"}, {"id": "p14", "name": "Green Shoes", "price": 28, "color": "green"}, {"id": "p15", "name": "Black Shoes", "price": 29, "color": "black"}, {"id": "p16", "name": "White Shoes", "price": 30, "color": "white"}, {"id": "p17", "name": "Grey Shoes", "price": 31, "color": "grey"}, {"id": "p18", "name": "Blue Jacket", "price": 26, "color": "blue"}, {"id": "p19", "name": "Red Jacket", "price": 34, "color": "red"}, {"id": "p20", "name": "Green Jacket", "price": 35, "color": "green"}, {"id": "p21", "name": "Black Jacket", "price": 36, "color": "black"}, {"id": "p22", "name": "White Jacket", "price": 37, "color": "white"}, {"id": "p23", "name": "Grey Jacket", "price": 38, "color": "grey"}, {"id": "p24", "name": "Blue Bag", "price": 33, "color": "blue"}, {"id": "p25", "name": "Red Bag", "price": 41, "color": "red"}, {"id": "p26", "name": "Green Bag", "price": 42, "color": "green"}, {"id": "p27", "name": "Black Bag", "price": 43, "color": "black"}, {"id": "p28", "name": "White Bag", "price": 44, "color": "white"}, {"id": "p29", "name": "Grey Bag", "price": 45, "color": "grey"}, {"id": "p30", "name": "Blue Watch", "price": 40, "color": "blue"}, {"id": "p31", "name": "Red Watch", "price": 48, "color": "red"}, {"id": "p32", "name": "Green Watch", "price": 49, "color": "green"}, {"id": "p33", "name": "Black Watch", "price": 50, "color": "black"}, {"id": "p34", "name": "White Watch", "price": 51, "color": "white"}, {"id": "p35", "name": "Grey Watch", "price": 52, "color": "grey"}, {"id": "p36", "name": "Blue Shirt", "price": 47, "color": "blue"}, {"id": "p37", "name": "Red Shirt", "price": 55, "color": "red"}, {"id": "p38", "name": "Green Shirt", "price": 56, "color": "green"}, {"id": "p39", "name": "Black Shirt", "price": 57, "color": "black"}, {"id": "p40", "name": "White Shirt", "price": 58, "color": "white"}, {"id": "p41", "name": "Grey Shirt", "price": 59, "color": "grey"}, {"id": "p42", "name": "Blue Hat", "price": 54, "color": "blue"}, {"id": "p43", "name": "Red Hat", "price": 62, "color": "red"}, {"id": "p44", "name": "Green Hat", "price": 63, "color": "green"}, {"id": "p45", "name": "Black Hat", "price": 64, "color": "black"}, {"id": "p46", "name": "White Hat", "price": 65, "color": "white"}, {"id": "p47", "name": "Grey Hat", "price": 66, "color": "grey"}, {"id": "p48", "name": "Blue Shoes", "price": 61, "color": "blue"}, {"id": "p49", "name": "Red Shoes", "price": 69, "color": "red"}, {"id": "p50", "name": "Green Shoes", "price": 70, "color": "green"}, {"id": "p51", "name": "Black Shoes", "price": 71, "color": "black"}, {"id": "p52", "name": "White Shoes", "price": 72, "color": "white"}, {"id": "p53", "name": "Grey Shoes", "price": 73, "color": "grey"}, {"id": "p54", "name": "Blue Jacket", "price": 68, "color": "blue"}, {"id": "p55", "name": "Red Jacket", "price": 76, "color": "red"}, {"id": "p56", "name": "Green Jacket", "price": 77, "color": "green"}, {"id": "p57", "name": "Black Jacket", "price": 78, "color": "black"}, {"id": "p58", "name": "White Jacket", "price": 79, "color": "white"}, {"id": "p59", "name": "Grey Jacket", "price": 80, "color": "grey"}, {"id": "p60", "name": "Blue Bag", "price": 75, "color": "blue"}];
+    window.__CART__ = [];
+    window.__STATE__ = { cart: window.__CART__, products: window.__PRODUCTS__ };
+    function add(id) {
+      window.__CART__.push(id);
+      document.getElementById('cart-items').textContent = window.__CART__.join(', ');
+    }
+    const grid = document.getElementById('grid');
+    window.__PRODUCTS__.forEach(function (p) {
+      const li = document.createElement('li');
+      li.className = 'product-card';
+      li.dataset.color = p.color;
+      li.innerHTML =
+        '<span class="name">' + p.name + '</span> - ' +
+        '<span class="price">$' + p.price + '</span> (' + p.color + ') ' +
+        '<button id="add-' + p.id + '" onclick="add(\'' + p.id + '\')">Add to cart</button>';
+      grid.appendChild(li);
+    });
+  </script>
+</body>
+</html>

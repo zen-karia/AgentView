@@ -1,0 +1,28 @@
+# Freesolo Flash SFT config for the AgentView translator (Layer 1).
+#
+#   flash train configs/sft.toml --dry-run   # validate
+#   flash train configs/sft.toml --cost       # preview cost
+#   flash train configs/sft.toml              # run -> <run-id>
+#
+# The dataset is produced by datagen.py (Freesolo JSONL: input/output/metadata),
+# using the SAME prompt as inference (prompts.py) so train == serve.
+
+model = "Qwen/Qwen3.5-4B"
+algorithm = "sft"
+seed = 42
+
+[environment]
+# `flash env setup` scaffolds an environment; place dataset/train.jsonl in it,
+# publish it, then set this to <your-org>/<env-name>.
+id = "your-org/agentview"
+
+[train]
+epochs = 3
+max_examples = 1000
+lora_rank = 32
+lora_alpha = 64
+learning_rate = 0.0001
+batch_size = 16
+# Inputs include full page HTML -- bloated demo pages run a few thousand tokens.
+# Raise this if datagen rows exceed it (truncation silently hurts quality).
+max_context_tokens = 8192

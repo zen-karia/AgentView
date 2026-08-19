@@ -1,0 +1,76 @@
+"""CLI: run a task under one or all conditions and print the result.
+
+  python3 run.py                    # t01, translated, stub
+  python3 run.py --condition raw
+  python3 run.py --all-conditions   # race raw vs markdown vs translated (the demo)
+
+Run from inside backend/ so the flat module imports resolve.
+"""
+from __future__ import annotations
+
+import argparse
+import os
+
+from envload import load_env
+from harness import run_task
+from logger import save_run
+from tasks import SITES, TASKS
+
+load_env()  # pull backend/.env into the environment before anything reads a key
+
+
+def _playwright_factory():
+    """Return a factory that builds a fresh real-browser driver on a task's site."""
+    from playwright_driver import PlaywrightDriver
+
+    return lambda task: PlaywrightDriver(SITES[task.site])
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--task", default="t01_small_cheapest_blue")
+    ap.add_argument(
+        "--condition",
+        default="translated",
+        choices=["translated", "raw", "markdown_baseline"],
+    )
+    ap.add_argument("--model", default="stub", choices=["stub", "gemini", "claude", "openrouter", "trained"],
+                    help="translator model (produces the AgentView; openrouter=OPENROUTER_MODEL)")
+    ap.add_argument("--agent-model", default="stub", choices=["stub", "gemini", "claude", "openrouter"],
+                    help="reasoner model (consumes the view; openrouter=OPENROUTER_AGENT_MODEL)")
+    ap.add_argument("--driver", default="fake", choices=["fake", "playwright"],
+                    help="fake = in-memory; playwright = real browser on the demo site")
+    ap.add_argument("--freesolo-model", default=None,
+                    help="override the trained-translator model (<run-id>); "
+                         "defaults to FREESOLO_MODEL, then Freesolo's default model")
+    ap.add_argument("--all-conditions", action="store_true")
+    args = ap.parse_args()
+
+    if args.freesolo_model:  # CLI flag wins over .env / default
+        os.environ["FREESOLO_MODEL"] = args.freesolo_model
+
+    make_driver = _playwright_factory() if args.driver == "playwright" else None
+
+    task = TASKS[args.task]
+    conditions = (
+        ["raw", "markdown_baseline", "translated"]
+        if args.all_conditions
+        else [args.condition]
+    )
+
+    for cond in conditions:
+        run = run_task(
+            task, cond, args.model,
+            agent_model=args.agent_model, make_driver=make_driver,
+        )
+        save_run(run)
+        mark = "PASS" if run.success else "FAIL"
+        print(
+            f"[{mark}] {cond:<17} steps={run.steps} "
+            f"tok(transl/agent/total)={run.translator_tokens}/{run.agent_tokens}/{run.tokens} "
+            f"latency={run.latency_ms}ms"
+        )
+
+
+if __name__ == "__main__":
+    main()

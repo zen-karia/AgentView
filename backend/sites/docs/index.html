@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Help Center &mdash; DemoShop</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; }
+    nav a { margin-right: 12px; }
+    .articles { list-style: none; padding: 8px; }
+    .doc { padding: 6px 0; }
+    footer div { display: inline-block; margin-right: 12px; color: #666; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/">Home</a><a href="/help">Help</a><a href="/account">Account</a>
+    <a href="/contact">Contact</a>
+  </nav>
+
+  <div style="display:none">
+    support knowledge base faq troubleshooting guides how-to 2026 popular articles
+  </div>
+
+  <h1>Help Center</h1>
+  <input id="search" placeholder="Search articles" />
+  <!-- Open-button selectors mirror FakeDocsDriver: #open-{doc_id} -->
+  <ul id="articles" class="articles"></ul>
+
+  <div id="reader">Open an article to read it.</div>
+
+  <footer>
+    <div>Privacy Policy</div><div>Terms</div><div>Status</div><div>Contact</div>
+    <p>&copy; 2026 DemoShop Inc.</p>
+  </footer>
+
+  <script>
+    window.__DOCS__ = [
+      { id: 'd1', title: 'Getting Started Guide', topic: 'onboarding' },
+      { id: 'd2', title: 'Billing and Invoices', topic: 'billing' },
+      { id: 'd3', title: 'Reset Your Password', topic: 'password' },
+      { id: 'd4', title: 'API Rate Limits', topic: 'api' },
+      { id: 'd5', title: 'Export Your Data', topic: 'export' },
+      { id: 'd6', title: 'Two-Factor Security', topic: 'security' },
+      { id: 'd7', title: 'Managing Teams', topic: 'teams' },
+      { id: 'd8', title: 'Third-Party Integrations', topic: 'integrations' },
+      { id: 'd9', title: 'Keyboard Shortcuts', topic: 'shortcuts' },
+      { id: 'd10', title: 'Notification Settings', topic: 'notifications' },
+      { id: 'd11', title: 'Deleting Your Account', topic: 'deletion' },
+      { id: 'd12', title: 'Mobile App Setup', topic: 'mobile' },
+    ];
+
+    // Deterministic state PlaywrightDriver.state() reads for the verifier.
+    window.__STATE__ = { opened: null, docs: window.__DOCS__ };
+
+    function open_(id) {
+      window.__STATE__.opened = id;
+      const d = window.__DOCS__.find(function (x) { return x.id === id; });
+      document.getElementById('reader').textContent = 'Reading: ' + (d ? d.title : id);
+    }
+
+    const list = document.getElementById('articles');
+    window.__DOCS__.forEach(function (d) {
+      const li = document.createElement('li');
+      li.className = 'doc';
+      li.dataset.topic = d.topic;
+      li.innerHTML =
+        '<span class="title">' + d.title + '</span> ' +
+        '<button id="open-' + d.id + '" onclick="open_(\'' + d.id + '\')">Open</button>';
+      list.appendChild(li);
+    });
+
+    console.log('help center loaded');
+  </script>
+</body>
+</html>

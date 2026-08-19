@@ -5,7 +5,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
-venv/
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
@@ -143,8 +142,18 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
 
-# Regenerable heavy datasets (rebuild: pipeline/ingest-m2w-train.js, scripts/build-smoke.js, cat of row files)
-data/rows/m2w-train.jsonl
-data/rows/m2w-cap2000.jsonl
-data/rows/train-v*.jsonl
-flash-env/dataset/train.jsonl
+# AgentView run logs (generated)
+backend/runs/
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# generated training data
+backend/dataset/
+
+# secrets
+.env
+
+# playwright-mcp working dir
+backend/.playwright-mcp/

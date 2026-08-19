@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DemoShop</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; }
+    nav a { margin-right: 12px; }
+    .grid { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; }
+    .product-card { border: 1px solid #ddd; padding: 8px; width: 200px; }
+    .price { font-weight: 600; }
+    footer div { display: inline-block; margin-right: 12px; color: #666; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/">Home</a><a href="/deals">Deals</a><a href="/new">New Arrivals</a>
+    <a href="/account">Account</a><a href="/cart">Cart</a>
+  </nav>
+
+  <!-- SEO noise a real page carries; irrelevant to any task -->
+  <div style="display:none">
+    best shirts online cheap shirts blue shirts red shirts discount apparel
+    free shipping trending fashion 2026 buy now limited stock
+  </div>
+
+  <h1>Shop</h1>
+  <aside class="filters">Filter by: color, price, size, brand, rating</aside>
+
+  <!-- Selectors mirror backend/driver.py FakeShopDriver: #add-{product_id} -->
+  <ul id="grid" class="grid"></ul>
+
+  <div id="cart">Cart: <span id="cart-items"></span></div>
+
+  <footer>
+    <div>About</div><div>Careers</div><div>Privacy Policy</div><div>Terms</div>
+    <div>Returns</div><div>Contact</div>
+    <p>&copy; 2026 DemoShop Inc. All rights reserved. Free shipping over $50.</p>
+  </footer>
+
+  <script>
+    // Same catalog as FakeShopDriver: 4 anchors + 26 filler. Mirror exactly.
+    window.__PRODUCTS__ = (function () {
+      const anchors = [
+        { id: 'p1', name: 'Blue Shirt', price: 19, color: 'blue' },
+        { id: 'p2', name: 'Blue Shirt Premium', price: 25, color: 'blue' },
+        { id: 'p3', name: 'Red Shirt', price: 15, color: 'red' },
+        { id: 'p4', name: 'Green Hat', price: 30, color: 'green' },
+      ];
+      const colors = ['red', 'green', 'black', 'white', 'grey'];
+      const filler = [];
+      for (let i = 5; i < 31; i++) {
+        filler.push({ id: 'p' + i, name: 'Catalog Item ' + i, price: 35 + (i % 45), color: colors[i % 5] });
+      }
+      return anchors.concat(filler);
+    })();
+
+    // Deterministic state PlaywrightDriver.state() reads for the verifier.
+    window.__CART__ = [];
+    function add(id) {
+      window.__CART__.push(id);
+      document.getElementById('cart-items').textContent = window.__CART__.join(', ');
+    }
+
+    const grid = document.getElementById('grid');
+    window.__PRODUCTS__.forEach(function (p) {
+      const li = document.createElement('li');
+      li.className = 'product-card';
+      li.dataset.color = p.color;
+      li.innerHTML =
+        '<span class="name">' + p.name + '</span> - ' +
+        '<span class="price">$' + p.price + '</span> (' + p.color + ') ' +
+        '<button id="add-' + p.id + '" onclick="add(\'' + p.id + '\')">Add to cart</button>';
+      grid.appendChild(li);
+    });
+
+    console.log('analytics loaded');
+  </script>
+</body>
+</html>

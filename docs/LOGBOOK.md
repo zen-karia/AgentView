@@ -500,3 +500,27 @@ synthetic corpus taught the contract; 184 real rows reconnected the web; togethe
 teacher. Caveats on record: n=40, 10 call errors counted as misses (completed-call hit ~70%),
 strict direct-generation protocol. Run: flash-1784420928-c6ce6a72. 4B-v4 and 4B-v3 verdicts
 pending; all remaining evals in flight.
+
+## FINAL RESULT TABLE (all arms, identical frozen harness)
+
+In-distribution (v2 slice, 70 tasks) — both v4s: 100% valid / recall / full-match, megashop
+distractor SOLVED (both surface the true-cheapest $34.50 item). Real-web data cost zero
+in-distribution competence and GAVE the 4B the distractor win it lacked pre-v4.
+
+Real-web (Mind2Web, 40 rows, same pipeline every arm):
+| Arm | valid | strict elem acc | note |
+|---|---|---|---|
+| stock 9B base | 12.5% | 20% | latent web knowledge, no contract |
+| 9B-v1 synthetic-only | 27.5% | 10% | forgetting dip |
+| 4B-v3 (truncated m2w, 8k ctx) | 75% | 0% | caveat CONFIRMED: contract learned, answers truncated away |
+| **4B-v4 (32k, full m2w dose)** | 72.5% | **55.0%** | dose beat capacity |
+| **9B-v4 (16k, filtered m2w)** | 75.0% | 52.5% | capability model |
+| gemini-3.5-flash | 32.5% | 35% | teacher |
+| glm-5.2 | 5% | 30% | independent frontier |
+
+**HEADLINE: both v4s beat both frontier models on real-web element grounding, through the
+identical harness, for ~$7-11 of training each.** 4B-v4 is the demo pick (beats teacher AND wins
+cost/latency). 9B-v4 the capability flagship. Pretrim gold-survival 95% throughout (harness ceiling).
+Method ablation complete: base contract-blind -> synthetic SFT learns contract but forgets web ->
+mixed corpus does both -> beats teacher; OPD (zero labels) = 83% in-dist; GRPO negative (pool
+mis-banding, autopsied). Total training spend ~$100 of $149.

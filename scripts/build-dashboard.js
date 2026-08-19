@@ -23,11 +23,13 @@ const RUNS = [
   { id: 'flash-1784388428-de80fdef', what: 'SFT v1 (1,546)', model: '2B', cost: 1.74, status: 'done' },
   { id: 'flash-1784388430-882e2acc', what: 'SFT v1 (1,546)', model: '4B', cost: 3.55, status: 'done' },
   { id: 'flash-1784388432-7182d132', what: 'SFT v1 (1,546)', model: '9B', cost: 7.33, status: 'done' },
-  { id: 'flash-1784398052-5eda8ac9', what: 'SFT v2 (2,220)', model: '4B', cost: 5.09, status: 'training' },
-  { id: 'flash-1784398053-9cfaf775', what: 'GRPO (gold-match reward)', model: '4B', cost: 1.77, status: 'training' },
-  { id: 'flash-1784400092-e7645618', what: 'SFT v2 (2,220)', model: '9B', cost: 10.5, status: 'training' },
-  { id: 'flash-1784401748-3270721c', what: 'GRPO (gold-match reward)', model: '9B', cost: 6.58, status: 'training' },
-  { id: 'flash-1784405799-33ba51e2', what: 'OPD from glm-5.2 (data-free)', model: '4B', cost: 1.33, status: 'training' },
+  { id: 'flash-1784398052-5eda8ac9', what: 'SFT v2 (2,220)', model: '4B', cost: 5.09, status: 'done' },
+  { id: 'flash-1784398053-9cfaf775', what: 'GRPO (artifacts corrupted)', model: '4B', cost: 1.77, status: 'done' },
+  { id: 'flash-1784400092-e7645618', what: 'SFT v2 (2,220)', model: '9B', cost: 10.5, status: 'done' },
+  { id: 'flash-1784401748-3270721c', what: 'GRPO (advantage collapse — autopsied)', model: '9B', cost: 6.58, status: 'done' },
+  { id: 'flash-1784405799-33ba51e2', what: 'OPD glm-5.2, 0 labels → 83% in-dist', model: '4B', cost: 1.33, status: 'done' },
+  { id: 'flash-1784420990-1f1e3398', what: 'SFT v4 (+real web) → 55% Mind2Web', model: '4B', cost: 7.22, status: 'done' },
+  { id: 'flash-1784420928-c6ce6a72', what: 'SFT v4 (+real web) → 52.5% Mind2Web', model: '9B', cost: 11.31, status: 'done' },
 ];
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -157,8 +159,8 @@ footer{margin-top:44px;padding-top:14px;border-top:1px solid var(--line);
 </header>
 
 <div class="kpis">
-  <div class="kpi"><div class="n win">100%</div><div class="l">end-to-end task success — our 2B ($0.92)</div><div class="d">18 held-out tasks, driver sees only our JSON</div></div>
-  <div class="kpi"><div class="n">61.1%</div><div class="l">same tasks, raw a11y snapshot (no AgentView)</div><div class="d">the measured “why not Playwright MCP”</div></div>
+  <div class="kpi"><div class="n win">55%</div><div class="l">real-web element accuracy — our 4B-v4 ($7.22)</div><div class="d">Gemini 35% · GLM-5.2 30% · same harness</div></div>
+  <div class="kpi"><div class="n">100%</div><div class="l">end-to-end task success (driver sees only our JSON)</div><div class="d">a11y-snapshot baseline: 61.1%</div></div>
   <div class="kpi"><div class="n">256/256</div><div class="l">full held-out page-set sweep, all metrics</div><div class="d">frozen pre-training, sha-manifested</div></div>
   <div class="kpi"><div class="n">${corpusTotal.toLocaleString()}</div><div class="l">validator-passed training rows</div><div class="d">every row logged with provenance</div></div>
 </div>
@@ -180,22 +182,23 @@ footer{margin-top:44px;padding-top:14px;border-top:1px solid var(--line);
 <tr><th>adapter</th><th>corpus</th><th class="num">valid</th><th class="num">element recall</th><th class="num">full-task match</th><th class="num">latency</th></tr>
 <tr><td>2B v0</td><td>823 gold-only</td><td class="num">70.0%</td><td class="num">64.7%</td><td class="num">65.0%</td><td class="num">3.1 s</td></tr>
 <tr><td>2B v1</td><td>1,546 (+teacher)</td><td class="num">84.3%</td><td class="num">83.8%</td><td class="num">81.7%</td><td class="num">3.0 s</td></tr>
-<tr class="best"><td>4B v1</td><td>1,546 (+teacher)</td><td class="num">100%</td><td class="num">100%</td><td class="num">100%</td><td class="num">4.6 s</td></tr>
-<tr class="best"><td>9B v1</td><td>1,546 (+teacher)</td><td class="num">100%</td><td class="num">100%</td><td class="num">100%</td><td class="num">8.3 s</td></tr>
+<tr><td>4B v1</td><td>1,546 (+teacher)</td><td class="num">100%</td><td class="num">100%</td><td class="num">100%</td><td class="num">4.6 s</td></tr>
+<tr class="best"><td>4B v4</td><td>+ real web</td><td class="num">100%</td><td class="num">100%</td><td class="num">100%</td><td class="num">7.9 s</td></tr>
+<tr class="best"><td>9B v4</td><td>+ real web</td><td class="num">100%</td><td class="num">100%</td><td class="num">100%</td><td class="num">8.3 s</td></tr>
 </table>
-<div class="note">Teacher tier alone bought +14–19 points at 2B. In-distribution saturates at 4B — the decision-grade differences are below, on real-web pages.</div>
+<div class="note">Teacher tier bought +14–19 points at 2B. In-distribution saturates at 4B; adding real-web data kept it at 100% AND gave the 4B the distractor-comparison win it previously lacked. The decision-grade separation is on real-web pages, below.</div>
 </div>
 
 <h2>Real web (Mind2Web sample, 40 steps, 9 sites) — strict element accuracy</h2>
 <div class="panel">
   <div class="legend"><span><span class="sw" style="background:var(--ours)"></span>AgentView (ours)</span>
   <span><span class="sw" style="background:var(--cmp)"></span>frontier reference</span></div>
-  ${bar('2B v0', 0.025, 'ours', 'valid 0%')}
-  ${bar('4B v1', 0.075, 'ours', 'valid 7.5%')}
-  ${bar('9B v1', 0.1, 'ours', 'contract-valid 27.5% — near Gemini')}
-  ${bar('GLM-5.2 (independent)', 0.3, 'cmp', 'valid only 5%')}
-  ${bar('gemini-3.5-flash', 0.35, 'cmp', 'valid 32.5%')}
-  <div class="note">Pretrim keeps the gold element alive on <b>95%</b> of real-web pages — the harness ceiling. The gap to frontier is training distribution; Mind2Web <i>train-split</i> ingestion is the staged lever. Eval-only test data, enforced in code.</div>
+  ${bar('stock 9B base', 0.2, 'cmp', 'latent web knowledge, no contract')}
+  ${bar('9B-v1 (synthetic only)', 0.1, 'ours', 'the forgetting dip')}
+  ${bar('gemini-3.5-flash', 0.35, 'cmp', 'teacher · valid 32.5%')}
+  ${bar('9B-v4 (+real web)', 0.525, 'ours', 'valid 75%')}
+  ${bar('4B-v4 (+real web, $7.22)', 0.55, 'ours', 'valid 72.5% — beats the teacher')}
+  <div class="note">Both v4s beat both frontier models on real-web grounding through the identical harness. Synthetic-only SFT <i>forgot</i> the web (20%→10%); mixing 156 human-labeled Mind2Web <i>train-split</i> rows recovered and surpassed it (→55%). Pretrim keeps the gold element alive on <b>95%</b> of pages (harness ceiling). Test split never trained on — enforced in code.</div>
 </div>
 
 <h2>Corpus — live from the <span class="mono">examples</span> collection</h2>

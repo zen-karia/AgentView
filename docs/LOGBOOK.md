@@ -470,3 +470,15 @@ the gradient was sampling noise at temperature 0.7. The reward design tested fin
   max_context_tokens=32768 (the clean fix), epochs=1. BOTH sizes: 4B (lands inside the 6-7h window)
   and 9B (user-ordered; ~7-9h, lands post-window as the final artifact). Note 32k ctx jumps GPU
   class — quotes will show it; user cap $149 still governs.
+
+## v4 fleet submitted (the same-data-as-open-source runs)
+
+- **9B-v4**: flash-1784420928-c6ce6a72 — 2,404 rows (2,220 synthetic + 184 m2w filtered <=14k
+  tokens, zero truncation), ctx 16,384 (32k physically impossible for 9B: needs >=184GB VRAM,
+  B200 tops at 180), 1 epoch, H200, $11.31, ~2.6h.
+- **4B-v4**: flash-1784420990-1f1e3398 — 2,730 rows (full 510-row m2w harvest, up to 28k tokens),
+  ctx 32,768 FITS on B200 (169/180GB), 1 epoch, $7.22, ~1.2h. The 4B gets the BIGGER real-web
+  dose than the 9B (irony of VRAM ceilings).
+- Sweep continues appending (510+ rows and counting) — v5 material.
+- In flight: 4B-v3 (~1h), GRPO-9B-v2 (~15min), 4B-v4 (~1.2h), 9B-v4 (~2.6h). All monitored.
+- Spend committed: ~$88 of $149.

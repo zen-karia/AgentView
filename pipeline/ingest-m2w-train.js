@@ -72,7 +72,8 @@ async function fetchSteps(want) {
   const steps = [];
   const seenUid = new Set();
   const offsets = [];
-  for (let o = 0; o < 7775; o += 100) offsets.push(o);
+  // Full-split coverage (window length 20 -> step 20 fetches every row once).
+  for (let o = 0; o < 7775; o += 20) offsets.push(o);
   for (const offset of offsets) {
     if (steps.length >= want) break;
     assertTrainSplit(SPLIT);

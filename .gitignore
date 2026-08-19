@@ -142,3 +142,9 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# Regenerable heavy datasets (rebuild: pipeline/ingest-m2w-train.js, scripts/build-smoke.js, cat of row files)
+data/rows/m2w-train.jsonl
+data/rows/m2w-cap2000.jsonl
+data/rows/train-v*.jsonl
+flash-env/dataset/train.jsonl

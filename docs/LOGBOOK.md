@@ -482,3 +482,21 @@ the gradient was sampling noise at temperature 0.7. The reward design tested fin
 - Sweep continues appending (510+ rows and counting) — v5 material.
 - In flight: 4B-v3 (~1h), GRPO-9B-v2 (~15min), 4B-v4 (~1.2h), 9B-v4 (~2.6h). All monitored.
 - Spend committed: ~$88 of $149.
+
+## HEADLINE RESULT: 9B-v4 beats Gemini on real-web grounding through the identical harness
+
+Mind2Web sample (same 40 rows, same pipeline, all arms):
+
+| Arm | contract-valid | strict element acc |
+|---|---|---|
+| stock 9B base | 12.5% | 20% |
+| 9B-v1 (synthetic-only) | 27.5% | 10% (the forgetting dip) |
+| **9B-v4 (+184 clean real-web rows, 16k ctx, 1 epoch, $11.31)** | **75%** | **52.5%** |
+| gemini-3.5-flash | 32.5% | 35% |
+| glm-5.2 | 5% | 30% |
+
+Forgetting-mitigation confirmed and overshot: 10% -> 52.5%, past both frontier references. The
+synthetic corpus taught the contract; 184 real rows reconnected the web; together they beat the
+teacher. Caveats on record: n=40, 10 call errors counted as misses (completed-call hit ~70%),
+strict direct-generation protocol. Run: flash-1784420928-c6ce6a72. 4B-v4 and 4B-v3 verdicts
+pending; all remaining evals in flight.

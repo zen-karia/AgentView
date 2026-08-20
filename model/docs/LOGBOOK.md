@@ -524,3 +524,17 @@ cost/latency). 9B-v4 the capability flagship. Pretrim gold-survival 95% througho
 Method ablation complete: base contract-blind -> synthetic SFT learns contract but forgets web ->
 mixed corpus does both -> beats teacher; OPD (zero labels) = 83% in-dist; GRPO negative (pool
 mis-banding, autopsied). Total training spend ~$100 of $149.
+
+## GRPO final tally: 0/2 net-positive — RL-as-configured hurt (both autopsied)
+
+Stacked GRPO-9B-v2 (init = SFT-9B-v2 @ 100% slice): dropped to 70% valid / 51.7% full-match,
+58s/call, still misses the cheapest earbud — second RL regression. Both GRPO runs traced to the
+same root cause: prompt pool = already-solved corpus under an 8k rollout cap => near-zero group
+advantage => policy drift. The correctly-banded GRPO (init=v4, real-web-only pool, 32k rollout)
+was never run — that is the honest "future work" line, not a claim. GRPO chapter closes as a
+documented negative with a specified fix. All training + eval for the project COMPLETE.
+
+## Full Mind2Web train-split harvested: 4,272 rows / 69 sites (v5 corpus, on disk)
+
+Deterministic sweep of the entire train split finished: 4,272 validator-passed real-web rows
+(~27x the v4 dose). Available for a v5 round if a higher real-web number is wanted; not yet trained.

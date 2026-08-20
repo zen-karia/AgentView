@@ -33,73 +33,75 @@ def run_task(
     # make_driver(task) overrides the task's default (e.g. a real PlaywrightDriver
     # pointed at the task's site). Each run gets a fresh driver so state never leaks.
     driver = make_driver(task) if make_driver is not None else task.make_driver()
-    history: list[dict] = []
-    turns: list[dict] = []
-    translator_tokens = 0
-    agent_tokens = 0
-    page_tokens = 0  # full first-page size, for the goal-conditioning ratio
-    t0 = time.time()
+    try:
+        history: list[dict] = []
+        turns: list[dict] = []
+        translator_tokens = 0
+        agent_tokens = 0
+        page_tokens = 0  # full first-page size, for the goal-conditioning ratio
+        t0 = time.time()
 
-    for step in range(MAX_STEPS):
-        page = driver.snapshot()
-        if step == 0:
-            page_tokens = len(page.html) // 4
-        view, tok = translate(
-            TranslatorInput(task.goal, page), condition, translator_model, driver
+        for step in range(MAX_STEPS):
+            page = driver.snapshot()
+            if step == 0:
+                page_tokens = len(page.html) // 4
+            view, tok = translate(
+                TranslatorInput(task.goal, page), condition, translator_model, driver
+            )
+            translator_tokens += tok
+
+            # Training pair for this turn: (translator input -> AgentView it produced).
+            # Kept only from success:true runs by the data-gen script.
+            train = None
+            if record_training:
+                train = {
+                    "prompt": translate_prompt(task.goal, page.url, page.html),
+                    "agentview": asdict(view),
+                }
+
+            choice, atok = decide(task.goal, view, history, agent_model)
+            agent_tokens += atok
+            if choice.done or not choice.name:
+                turns.append({"step": step, "action": None, "thought": choice.thought, "train": train})
+                break
+
+            grounded, info = ground_check(view, choice, driver)
+            turns.append({
+                "step": step,
+                "action": choice.name,
+                "params": choice.params,
+                "grounded": grounded,
+                "info": info,
+                "thought": choice.thought,
+                "train": train,
+            })
+            if not grounded:
+                # Translator surfaced an ungroundable action -> defect signal. Stop.
+                break
+
+            driver.execute(info, choice.name, choice.params)  # info == resolved selector
+            history.append({"name": choice.name, "params": choice.params})
+
+        success = bool(task.check(driver))
+        driver_label = "playwright" if type(driver).__name__ == "PlaywrightDriver" else "fake"
+        return RunLog(
+            task_id=task.id,
+            condition=condition,
+            model=translator_model,
+            success=success,
+            steps=len(history),
+            tokens=translator_tokens + agent_tokens,
+            latency_ms=int((time.time() - t0) * 1000),
+            timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            agent_model=agent_model,
+            driver=driver_label,
+            turns=turns,
+            translator_tokens=translator_tokens,
+            agent_tokens=agent_tokens,
+            page_tokens=page_tokens,
         )
-        translator_tokens += tok
-
-        # Training pair for this turn: (translator input -> AgentView it produced).
-        # Kept only from success:true runs by the data-gen script.
-        train = None
-        if record_training:
-            train = {
-                "prompt": translate_prompt(task.goal, page.url, page.html),
-                "agentview": asdict(view),
-            }
-
-        choice, atok = decide(task.goal, view, history, agent_model)
-        agent_tokens += atok
-        if choice.done or not choice.name:
-            turns.append({"step": step, "action": None, "thought": choice.thought, "train": train})
-            break
-
-        grounded, info = ground_check(view, choice, driver)
-        turns.append({
-            "step": step,
-            "action": choice.name,
-            "params": choice.params,
-            "grounded": grounded,
-            "info": info,
-            "thought": choice.thought,
-            "train": train,
-        })
-        if not grounded:
-            # Translator surfaced an ungroundable action -> defect signal. Stop.
-            break
-
-        driver.execute(info, choice.name, choice.params)  # info == resolved selector
-        history.append({"name": choice.name, "params": choice.params})
-
-    success = bool(task.check(driver))
-    driver_label = "playwright" if type(driver).__name__ == "PlaywrightDriver" else "fake"
-    log = RunLog(
-        task_id=task.id,
-        condition=condition,
-        model=translator_model,
-        success=success,
-        steps=len(history),
-        tokens=translator_tokens + agent_tokens,
-        latency_ms=int((time.time() - t0) * 1000),
-        timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
-        agent_model=agent_model,
-        driver=driver_label,
-        turns=turns,
-        translator_tokens=translator_tokens,
-        agent_tokens=agent_tokens,
-        page_tokens=page_tokens,
-    )
-    # Real drivers (Playwright) hold a browser open; release it.
-    if hasattr(driver, "close"):
-        driver.close()
-    return log
+    finally:
+        # Release the browser even on error, so one failed run can't leak a live
+        # sync-Playwright loop that makes every later task fail with "async API".
+        if hasattr(driver, "close"):
+            driver.close()

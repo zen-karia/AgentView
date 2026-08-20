@@ -48,7 +48,7 @@ def translate(
         if model == "openrouter":
             return _openrouter_translate(inp)
         if model == "trained":
-            return _trained_translate(inp)  # TODO(layer-1)
+            return _trained_translate(inp, driver)
         raise ValueError(f"unknown model: {model}")
     if condition == "raw":
         return _raw_view(inp)
@@ -267,22 +267,34 @@ def _openrouter_translate(inp: TranslatorInput) -> tuple[AgentView, int]:
     return _agentview_from_dict(loads_first_json(text)), tokens
 
 
-def _trained_translate(inp: TranslatorInput) -> tuple[AgentView, int]:
-    """Layer 1: the Freesolo-trained small model on its OpenAI-compatible endpoint.
-    Same prompt as Layer 0; response_format pins the AgentView JSON schema.
+def _trained_translate(inp: TranslatorInput, driver=None) -> tuple[AgentView, int]:
+    """Layer 1: our Freesolo-trained small model (4B-v4) on its OpenAI-compatible
+    endpoint. This is the real link between the model lane and this backend.
+
+    The model was trained on a data-av-id-annotated page and emits contract-B
+    (kind/target_selector/value_hint). agentview_bridge adapts both ends:
+      1. annotate the LIVE page so [data-av-id="N"] selectors resolve on execute;
+      2. prompt the model with the exact system+user shape it trained on;
+      3. map its contract-B output into the backend AgentView the harness runs.
 
     From `flash deploy` / `flash deployments --json`, set:
-      FREESOLO_API_KEY, FREESOLO_BASE_URL (openai_base_url), FREESOLO_MODEL (<run-id>).
+      FREESOLO_API_KEY, FREESOLO_MODEL (<run-id>), and FREESOLO_BASE_URL for a
+      non-default deployment.
     """
     import freesolo
+    import agentview_bridge as bridge
 
-    # Only the API key is truly required. Model defaults to DEFAULT_MODEL until a
-    # <run-id> is supplied via FREESOLO_MODEL / --freesolo-model. Base URL defaults
-    # to Freesolo's endpoint, overridden by FREESOLO_BASE_URL for a non-default one.
     api_key = os.getenv(freesolo.API_KEY_ENV)
     if not api_key:
         raise RuntimeError(f"set {freesolo.API_KEY_ENV} to use --model trained")
     model = os.getenv(freesolo.MODEL_ENV) or freesolo.DEFAULT_MODEL
+
+    # Stamp the same data-av-id ids the model was trained to target onto the live
+    # page, then read the annotated HTML back so model input == live page state.
+    page_html = inp.page.html
+    if driver is not None and hasattr(driver, "annotate_dom"):
+        driver.annotate_dom()
+        page_html = driver.snapshot().html
 
     from openai import OpenAI
 
@@ -290,13 +302,12 @@ def _trained_translate(inp: TranslatorInput) -> tuple[AgentView, int]:
     client = OpenAI(base_url=base_url, api_key=api_key)
     resp = client.chat.completions.create(
         model=model,
-        messages=[{"role": "user",
-                   "content": translate_prompt(inp.goal, inp.page.url, inp.page.html)}],
+        messages=bridge.build_messages(inp.goal, page_html),
         response_format={"type": "json_schema",
                          "json_schema": {"schema": freesolo.AGENTVIEW_SCHEMA}},
     )
     data = loads_first_json(resp.choices[0].message.content)
-    view = _agentview_from_dict(data)
+    view = bridge.to_backend_view(data, inp.goal)
     usage = getattr(resp, "usage", None)
-    tokens = getattr(usage, "prompt_tokens", None) or len(inp.page.html) // 4
+    tokens = getattr(usage, "prompt_tokens", None) or len(page_html) // 4
     return view, tokens

@@ -17,14 +17,15 @@ API_KEY_ENV = "FREESOLO_API_KEY"
 BASE_URL_ENV = "FREESOLO_BASE_URL"  # override ONLY for a non-default deployment
 MODEL_ENV = "FREESOLO_MODEL"        # the deployed <run-id>
 
-# Per docs, the CLI/client defaults to https://api.freesolo.co; FREESOLO_BASE_URL
-# overrides it for a non-default deployment. So base URL is optional, not required.
-DEFAULT_BASE_URL = "https://api.freesolo.co"
+# Our deployed serving endpoint (from `flash deployments --json`). FREESOLO_BASE_URL
+# overrides it if a redeploy lands on a different host.
+DEFAULT_BASE_URL = "https://clado-ai--freesolo-lora-serving.modal.run/v1"
 DEFAULT_BASE_MODEL = "Qwen/Qwen3.5-4B"
 
-# Model the trained-translator seat calls until it's overridden by FREESOLO_MODEL
-# (env) or the --freesolo-model CLI flag with a fine-tuned <run-id>.
-DEFAULT_MODEL = "Qwen/Qwen3.5-9B"
+# The demo model: 4B-v4 (SFT on synthetic + Mind2Web-train real-web rows) — 55%
+# strict element accuracy on the Mind2Web sample vs Gemini 35%, 100% in-distribution.
+# Override with FREESOLO_MODEL / --freesolo-model to try 9B-v4 (…c6ce6a72) etc.
+DEFAULT_MODEL = "flash-1784420990-1f1e3398"
 
 
 def resolve_base_url(override: str | None) -> str:
@@ -33,12 +34,14 @@ def resolve_base_url(override: str | None) -> str:
     base = (override or DEFAULT_BASE_URL).rstrip("/")
     return base if base.endswith("/v1") else base + "/v1"
 
-# JSON schema for the AgentView. Passed as response_format so the trained model is
-# guaranteed to emit valid AgentView JSON at inference (Freesolo structured outputs).
+# The TRAINED model's contract (mirrors model/contracts/agentview.schema.json —
+# the schema the 4B-v4 adapter was trained under). Passed as response_format so
+# structured-output decoding matches training. agentview_bridge.to_backend_view
+# maps this into the backend's AgentView shape after the call.
 AGENTVIEW_SCHEMA = {
     "type": "object",
     "properties": {
-        "summary": {"type": "string"},
+        "schema_version": {"type": "string"},
         "relevant_content": {
             "type": "array",
             "items": {
@@ -46,9 +49,9 @@ AGENTVIEW_SCHEMA = {
                 "properties": {
                     "id": {"type": "string"},
                     "text": {"type": "string"},
-                    "meta": {"type": "object"},
+                    "selector": {"type": "string"},
                 },
-                "required": ["id", "text"],
+                "required": ["id", "text", "selector"],
             },
         },
         "actions": {
@@ -56,16 +59,18 @@ AGENTVIEW_SCHEMA = {
             "items": {
                 "type": "object",
                 "properties": {
-                    "name": {"type": "string"},
+                    "id": {"type": "string"},
+                    "kind": {"type": "string", "enum": ["click", "type", "select"]},
                     "description": {"type": "string"},
-                    "params": {"type": "object"},
                     "target_selector": {"type": "string"},
+                    "content_refs": {"type": "array", "items": {"type": "string"}},
+                    "value_hint": {"type": "string"},
                 },
-                "required": ["name", "target_selector"],
+                "required": ["id", "kind", "description", "target_selector"],
             },
         },
     },
-    "required": ["summary", "relevant_content", "actions"],
+    "required": ["schema_version", "relevant_content", "actions"],
 }
 
 

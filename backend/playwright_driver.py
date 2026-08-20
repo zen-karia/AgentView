@@ -37,11 +37,23 @@ class PlaywrightDriver:
     def execute(self, selector: str, action_name: str, params: dict[str, Any]) -> None:
         if self._page.query_selector(selector) is None:
             return
-        if action_name in ("fill", "type"):
+        # Fill when the verb says so OR the choice carries a value (the trained-model
+        # bridge names actions a1/a2… so the verb isn't in the name, but type/select
+        # actions always carry params.value). Every native backend action separates
+        # cleanly: fill/type carry value; add_to_cart/submit/open_doc/click don't.
+        if action_name in ("fill", "type") or "value" in params:
             self._page.fill(selector, str(params.get("value", "")))
         else:
-            # add_to_cart, submit, open_doc, generic click -- all resolve to a click
             self._page.click(selector)
+
+    def annotate_dom(self) -> None:
+        """Stamp document-order data-av-id ids on interactive elements, mirroring
+        model/src/annotate.js, so the trained model's [data-av-id="N"] selectors
+        resolve on this live page. Called by translator._trained_translate before
+        it snapshots + prompts the model. Idempotent enough for one call per step."""
+        from agentview_bridge import ANNOTATE_JS
+
+        self._page.evaluate(ANNOTATE_JS)
 
     def state(self) -> dict[str, Any]:
         # Generic: a form exposes window.__STATE__ (values/submitted); the shop

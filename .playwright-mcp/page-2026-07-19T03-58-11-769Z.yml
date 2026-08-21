@@ -1,0 +1,825 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - link "Home" [ref=e3] [cursor=pointer]:
+      - /url: /
+    - link "Deals" [ref=e4] [cursor=pointer]:
+      - /url: /deals
+    - link "New" [ref=e5] [cursor=pointer]:
+      - /url: /new
+    - link "Account" [ref=e6] [cursor=pointer]:
+      - /url: /account
+    - link "Cart" [ref=e7] [cursor=pointer]:
+      - /url: /cart
+  - heading "Shop" [level=1] [ref=e8]
+  - complementary [ref=e9]: "Filter by: color, price, size, brand"
+  - list [ref=e10]:
+    - listitem [ref=e11]:
+      - text: Red Shirt - $23 (red)
+      - button "Add to wishlist" [ref=e12]
+      - button "Add to cart" [ref=e13]
+    - listitem [ref=e14]:
+      - text: Green Shirt - $36 (green)
+      - button "Add to wishlist" [ref=e15]
+      - button "Add to cart" [ref=e16]
+    - listitem [ref=e17]:
+      - text: Black Shirt - $49 (black)
+      - button "Add to wishlist" [ref=e18]
+      - button "Add to cart" [ref=e19]
+    - listitem [ref=e20]:
+      - text: White Shirt - $62 (white)
+      - button "Add to wishlist" [ref=e21]
+      - button "Add to cart" [ref=e22]
+    - listitem [ref=e23]:
+      - text: Grey Shirt - $75 (grey)
+      - button "Add to wishlist" [ref=e24]
+      - button "Add to cart" [ref=e25]
+    - listitem [ref=e26]:
+      - text: Blue Hat - $88 (blue)
+      - button "Add to wishlist" [ref=e27]
+      - button "Add to cart" [ref=e28]
+    - listitem [ref=e29]:
+      - text: Red Hat - $11 (red)
+      - button "Add to wishlist" [ref=e30]
+      - button "Add to cart" [ref=e31]
+    - listitem [ref=e32]:
+      - text: Green Hat - $24 (green)
+      - button "Add to wishlist" [ref=e33]
+      - button "Add to cart" [ref=e34]
+    - listitem [ref=e35]:
+      - text: Black Hat - $37 (black)
+      - button "Add to wishlist" [ref=e36]
+      - button "Add to cart" [ref=e37]
+    - listitem [ref=e38]:
+      - text: White Hat - $50 (white)
+      - button "Add to wishlist" [ref=e39]
+      - button "Add to cart" [ref=e40]
+    - listitem [ref=e41]:
+      - text: Grey Hat - $63 (grey)
+      - button "Add to wishlist" [ref=e42]
+      - button "Add to cart" [ref=e43]
+    - listitem [ref=e44]:
+      - text: Blue Shoes - $76 (blue)
+      - button "Add to wishlist" [ref=e45]
+      - button "Add to cart" [ref=e46]
+    - listitem [ref=e47]:
+      - text: Red Shoes - $89 (red)
+      - button "Add to wishlist" [ref=e48]
+      - button "Add to cart" [ref=e49]
+    - listitem [ref=e50]:
+      - text: Green Shoes - $12 (green)
+      - button "Add to wishlist" [ref=e51]
+      - button "Add to cart" [ref=e52]
+    - listitem [ref=e53]:
+      - text: Black Shoes - $25 (black)
+      - button "Add to wishlist" [ref=e54]
+      - button "Add to cart" [ref=e55]
+    - listitem [ref=e56]:
+      - text: White Shoes - $38 (white)
+      - button "Add to wishlist" [ref=e57]
+      - button "Add to cart" [ref=e58]
+    - listitem [ref=e59]:
+      - text: Grey Shoes - $51 (grey)
+      - button "Add to wishlist" [ref=e60]
+      - button "Add to cart" [ref=e61]
+    - listitem [ref=e62]:
+      - text: Blue Jacket - $64 (blue)
+      - button "Add to wishlist" [ref=e63]
+      - button "Add to cart" [ref=e64]
+    - listitem [ref=e65]:
+      - text: Red Jacket - $77 (red)
+      - button "Add to wishlist" [ref=e66]
+      - button "Add to cart" [ref=e67]
+    - listitem [ref=e68]:
+      - text: Green Jacket - $90 (green)
+      - button "Add to wishlist" [ref=e69]
+      - button "Add to cart" [ref=e70]
+    - listitem [ref=e71]:
+      - text: Black Jacket - $13 (black)
+      - button "Add to wishlist" [ref=e72]
+      - button "Add to cart" [ref=e73]
+    - listitem [ref=e74]:
+      - text: White Jacket - $26 (white)
+      - button "Add to wishlist" [ref=e75]
+      - button "Add to cart" [ref=e76]
+    - listitem [ref=e77]:
+      - text: Grey Jacket - $39 (grey)
+      - button "Add to wishlist" [ref=e78]
+      - button "Add to cart" [ref=e79]
+    - listitem [ref=e80]:
+      - text: Blue Bag - $52 (blue)
+      - button "Add to wishlist" [ref=e81]
+      - button "Add to cart" [ref=e82]
+    - listitem [ref=e83]:
+      - text: Red Bag - $65 (red)
+      - button "Add to wishlist" [ref=e84]
+      - button "Add to cart" [ref=e85]
+    - listitem [ref=e86]:
+      - text: Green Bag - $78 (green)
+      - button "Add to wishlist" [ref=e87]
+      - button "Add to cart" [ref=e88]
+    - listitem [ref=e89]:
+      - text: Black Bag - $91 (black)
+      - button "Add to wishlist" [ref=e90]
+      - button "Add to cart" [ref=e91]
+    - listitem [ref=e92]:
+      - text: White Bag - $14 (white)
+      - button "Add to wishlist" [ref=e93]
+      - button "Add to cart" [ref=e94]
+    - listitem [ref=e95]:
+      - text: Grey Bag - $27 (grey)
+      - button "Add to wishlist" [ref=e96]
+      - button "Add to cart" [ref=e97]
+    - listitem [ref=e98]:
+      - text: Blue Watch - $40 (blue)
+      - button "Add to wishlist" [ref=e99]
+      - button "Add to cart" [ref=e100]
+    - listitem [ref=e101]:
+      - text: Red Watch - $53 (red)
+      - button "Add to wishlist" [ref=e102]
+      - button "Add to cart" [ref=e103]
+    - listitem [ref=e104]:
+      - text: Green Watch - $66 (green)
+      - button "Add to wishlist" [ref=e105]
+      - button "Add to cart" [ref=e106]
+    - listitem [ref=e107]:
+      - text: Black Watch - $79 (black)
+      - button "Add to wishlist" [ref=e108]
+      - button "Add to cart" [ref=e109]
+    - listitem [ref=e110]:
+      - text: White Watch - $92 (white)
+      - button "Add to wishlist" [ref=e111]
+      - button "Add to cart" [ref=e112]
+    - listitem [ref=e113]:
+      - text: Grey Watch - $15 (grey)
+      - button "Add to wishlist" [ref=e114]
+      - button "Add to cart" [ref=e115]
+    - listitem [ref=e116]:
+      - text: Blue Shirt - $28 (blue)
+      - button "Add to wishlist" [ref=e117]
+      - button "Add to cart" [ref=e118]
+    - listitem [ref=e119]:
+      - text: Red Shirt - $41 (red)
+      - button "Add to wishlist" [ref=e120]
+      - button "Add to cart" [ref=e121]
+    - listitem [ref=e122]:
+      - text: Green Shirt - $54 (green)
+      - button "Add to wishlist" [ref=e123]
+      - button "Add to cart" [ref=e124]
+    - listitem [ref=e125]:
+      - text: Black Shirt - $67 (black)
+      - button "Add to wishlist" [ref=e126]
+      - button "Add to cart" [ref=e127]
+    - listitem [ref=e128]:
+      - text: White Shirt - $80 (white)
+      - button "Add to wishlist" [ref=e129]
+      - button "Add to cart" [ref=e130]
+    - listitem [ref=e131]:
+      - text: Grey Shirt - $93 (grey)
+      - button "Add to wishlist" [ref=e132]
+      - button "Add to cart" [ref=e133]
+    - listitem [ref=e134]:
+      - text: Blue Hat - $16 (blue)
+      - button "Add to wishlist" [ref=e135]
+      - button "Add to cart" [ref=e136]
+    - listitem [ref=e137]:
+      - text: Red Hat - $29 (red)
+      - button "Add to wishlist" [ref=e138]
+      - button "Add to cart" [ref=e139]
+    - listitem [ref=e140]:
+      - text: Green Hat - $42 (green)
+      - button "Add to wishlist" [ref=e141]
+      - button "Add to cart" [ref=e142]
+    - listitem [ref=e143]:
+      - text: Black Hat - $55 (black)
+      - button "Add to wishlist" [ref=e144]
+      - button "Add to cart" [ref=e145]
+    - listitem [ref=e146]:
+      - text: White Hat - $68 (white)
+      - button "Add to wishlist" [ref=e147]
+      - button "Add to cart" [ref=e148]
+    - listitem [ref=e149]:
+      - text: Grey Hat - $81 (grey)
+      - button "Add to wishlist" [ref=e150]
+      - button "Add to cart" [ref=e151]
+    - listitem [ref=e152]:
+      - text: Blue Shoes - $94 (blue)
+      - button "Add to wishlist" [ref=e153]
+      - button "Add to cart" [ref=e154]
+    - listitem [ref=e155]:
+      - text: Red Shoes - $17 (red)
+      - button "Add to wishlist" [ref=e156]
+      - button "Add to cart" [ref=e157]
+    - listitem [ref=e158]:
+      - text: Green Shoes - $30 (green)
+      - button "Add to wishlist" [ref=e159]
+      - button "Add to cart" [ref=e160]
+    - listitem [ref=e161]:
+      - text: Black Shoes - $43 (black)
+      - button "Add to wishlist" [ref=e162]
+      - button "Add to cart" [ref=e163]
+    - listitem [ref=e164]:
+      - text: White Shoes - $56 (white)
+      - button "Add to wishlist" [ref=e165]
+      - button "Add to cart" [ref=e166]
+    - listitem [ref=e167]:
+      - text: Grey Shoes - $69 (grey)
+      - button "Add to wishlist" [ref=e168]
+      - button "Add to cart" [ref=e169]
+    - listitem [ref=e170]:
+      - text: Blue Jacket - $82 (blue)
+      - button "Add to wishlist" [ref=e171]
+      - button "Add to cart" [ref=e172]
+    - listitem [ref=e173]:
+      - text: Red Jacket - $95 (red)
+      - button "Add to wishlist" [ref=e174]
+      - button "Add to cart" [ref=e175]
+    - listitem [ref=e176]:
+      - text: Green Jacket - $18 (green)
+      - button "Add to wishlist" [ref=e177]
+      - button "Add to cart" [ref=e178]
+    - listitem [ref=e179]:
+      - text: Black Jacket - $31 (black)
+      - button "Add to wishlist" [ref=e180]
+      - button "Add to cart" [ref=e181]
+    - listitem [ref=e182]:
+      - text: White Jacket - $44 (white)
+      - button "Add to wishlist" [ref=e183]
+      - button "Add to cart" [ref=e184]
+    - listitem [ref=e185]:
+      - text: Grey Jacket - $57 (grey)
+      - button "Add to wishlist" [ref=e186]
+      - button "Add to cart" [ref=e187]
+    - listitem [ref=e188]:
+      - text: Blue Bag - $70 (blue)
+      - button "Add to wishlist" [ref=e189]
+      - button "Add to cart" [ref=e190]
+    - listitem [ref=e191]:
+      - text: Red Bag - $83 (red)
+      - button "Add to wishlist" [ref=e192]
+      - button "Add to cart" [ref=e193]
+    - listitem [ref=e194]:
+      - text: Green Bag - $96 (green)
+      - button "Add to wishlist" [ref=e195]
+      - button "Add to cart" [ref=e196]
+    - listitem [ref=e197]:
+      - text: Black Bag - $19 (black)
+      - button "Add to wishlist" [ref=e198]
+      - button "Add to cart" [ref=e199]
+    - listitem [ref=e200]:
+      - text: White Bag - $32 (white)
+      - button "Add to wishlist" [ref=e201]
+      - button "Add to cart" [ref=e202]
+    - listitem [ref=e203]:
+      - text: Grey Bag - $45 (grey)
+      - button "Add to wishlist" [ref=e204]
+      - button "Add to cart" [ref=e205]
+    - listitem [ref=e206]:
+      - text: Blue Watch - $58 (blue)
+      - button "Add to wishlist" [ref=e207]
+      - button "Add to cart" [ref=e208]
+    - listitem [ref=e209]:
+      - text: Red Watch - $71 (red)
+      - button "Add to wishlist" [ref=e210]
+      - button "Add to cart" [ref=e211]
+    - listitem [ref=e212]:
+      - text: Green Watch - $84 (green)
+      - button "Add to wishlist" [ref=e213]
+      - button "Add to cart" [ref=e214]
+    - listitem [ref=e215]:
+      - text: Black Watch - $97 (black)
+      - button "Add to wishlist" [ref=e216]
+      - button "Add to cart" [ref=e217]
+    - listitem [ref=e218]:
+      - text: White Watch - $20 (white)
+      - button "Add to wishlist" [ref=e219]
+      - button "Add to cart" [ref=e220]
+    - listitem [ref=e221]:
+      - text: Grey Watch - $33 (grey)
+      - button "Add to wishlist" [ref=e222]
+      - button "Add to cart" [ref=e223]
+    - listitem [ref=e224]:
+      - text: Blue Shirt - $46 (blue)
+      - button "Add to wishlist" [ref=e225]
+      - button "Add to cart" [ref=e226]
+    - listitem [ref=e227]:
+      - text: Red Shirt - $59 (red)
+      - button "Add to wishlist" [ref=e228]
+      - button "Add to cart" [ref=e229]
+    - listitem [ref=e230]:
+      - text: Green Shirt - $72 (green)
+      - button "Add to wishlist" [ref=e231]
+      - button "Add to cart" [ref=e232]
+    - listitem [ref=e233]:
+      - text: Black Shirt - $85 (black)
+      - button "Add to wishlist" [ref=e234]
+      - button "Add to cart" [ref=e235]
+    - listitem [ref=e236]:
+      - text: White Shirt - $98 (white)
+      - button "Add to wishlist" [ref=e237]
+      - button "Add to cart" [ref=e238]
+    - listitem [ref=e239]:
+      - text: Grey Shirt - $21 (grey)
+      - button "Add to wishlist" [ref=e240]
+      - button "Add to cart" [ref=e241]
+    - listitem [ref=e242]:
+      - text: Blue Hat - $34 (blue)
+      - button "Add to wishlist" [ref=e243]
+      - button "Add to cart" [ref=e244]
+    - listitem [ref=e245]:
+      - text: Red Hat - $47 (red)
+      - button "Add to wishlist" [ref=e246]
+      - button "Add to cart" [ref=e247]
+    - listitem [ref=e248]:
+      - text: Green Hat - $60 (green)
+      - button "Add to wishlist" [ref=e249]
+      - button "Add to cart" [ref=e250]
+    - listitem [ref=e251]:
+      - text: Black Hat - $73 (black)
+      - button "Add to wishlist" [ref=e252]
+      - button "Add to cart" [ref=e253]
+    - listitem [ref=e254]:
+      - text: White Hat - $86 (white)
+      - button "Add to wishlist" [ref=e255]
+      - button "Add to cart" [ref=e256]
+    - listitem [ref=e257]:
+      - text: Grey Hat - $99 (grey)
+      - button "Add to wishlist" [ref=e258]
+      - button "Add to cart" [ref=e259]
+    - listitem [ref=e260]:
+      - text: Blue Shoes - $22 (blue)
+      - button "Add to wishlist" [ref=e261]
+      - button "Add to cart" [ref=e262]
+    - listitem [ref=e263]:
+      - text: Red Shoes - $35 (red)
+      - button "Add to wishlist" [ref=e264]
+      - button "Add to cart" [ref=e265]
+    - listitem [ref=e266]:
+      - text: Green Shoes - $48 (green)
+      - button "Add to wishlist" [ref=e267]
+      - button "Add to cart" [ref=e268]
+    - listitem [ref=e269]:
+      - text: Black Shoes - $61 (black)
+      - button "Add to wishlist" [ref=e270]
+      - button "Add to cart" [ref=e271]
+    - listitem [ref=e272]:
+      - text: White Shoes - $74 (white)
+      - button "Add to wishlist" [ref=e273]
+      - button "Add to cart" [ref=e274]
+    - listitem [ref=e275]:
+      - text: Grey Shoes - $87 (grey)
+      - button "Add to wishlist" [ref=e276]
+      - button "Add to cart" [ref=e277]
+    - listitem [ref=e278]:
+      - text: Blue Jacket - $10 (blue)
+      - button "Add to wishlist" [ref=e279]
+      - button "Add to cart" [ref=e280]
+    - listitem [ref=e281]:
+      - text: Red Jacket - $23 (red)
+      - button "Add to wishlist" [ref=e282]
+      - button "Add to cart" [ref=e283]
+    - listitem [ref=e284]:
+      - text: Green Jacket - $36 (green)
+      - button "Add to wishlist" [ref=e285]
+      - button "Add to cart" [ref=e286]
+    - listitem [ref=e287]:
+      - text: Black Jacket - $49 (black)
+      - button "Add to wishlist" [ref=e288]
+      - button "Add to cart" [ref=e289]
+    - listitem [ref=e290]:
+      - text: White Jacket - $62 (white)
+      - button "Add to wishlist" [ref=e291]
+      - button "Add to cart" [ref=e292]
+    - listitem [ref=e293]:
+      - text: Grey Jacket - $75 (grey)
+      - button "Add to wishlist" [ref=e294]
+      - button "Add to cart" [ref=e295]
+    - listitem [ref=e296]:
+      - text: Blue Bag - $88 (blue)
+      - button "Add to wishlist" [ref=e297]
+      - button "Add to cart" [ref=e298]
+    - listitem [ref=e299]:
+      - text: Red Bag - $11 (red)
+      - button "Add to wishlist" [ref=e300]
+      - button "Add to cart" [ref=e301]
+    - listitem [ref=e302]:
+      - text: Green Bag - $24 (green)
+      - button "Add to wishlist" [ref=e303]
+      - button "Add to cart" [ref=e304]
+    - listitem [ref=e305]:
+      - text: Black Bag - $37 (black)
+      - button "Add to wishlist" [ref=e306]
+      - button "Add to cart" [ref=e307]
+    - listitem [ref=e308]:
+      - text: White Bag - $50 (white)
+      - button "Add to wishlist" [ref=e309]
+      - button "Add to cart" [ref=e310]
+    - listitem [ref=e311]:
+      - text: Grey Bag - $63 (grey)
+      - button "Add to wishlist" [ref=e312]
+      - button "Add to cart" [ref=e313]
+    - listitem [ref=e314]:
+      - text: Blue Watch - $76 (blue)
+      - button "Add to wishlist" [ref=e315]
+      - button "Add to cart" [ref=e316]
+    - listitem [ref=e317]:
+      - text: Red Watch - $89 (red)
+      - button "Add to wishlist" [ref=e318]
+      - button "Add to cart" [ref=e319]
+    - listitem [ref=e320]:
+      - text: Green Watch - $12 (green)
+      - button "Add to wishlist" [ref=e321]
+      - button "Add to cart" [ref=e322]
+    - listitem [ref=e323]:
+      - text: Black Watch - $25 (black)
+      - button "Add to wishlist" [ref=e324]
+      - button "Add to cart" [ref=e325]
+    - listitem [ref=e326]:
+      - text: White Watch - $38 (white)
+      - button "Add to wishlist" [ref=e327]
+      - button "Add to cart" [ref=e328]
+    - listitem [ref=e329]:
+      - text: Grey Watch - $51 (grey)
+      - button "Add to wishlist" [ref=e330]
+      - button "Add to cart" [ref=e331]
+    - listitem [ref=e332]:
+      - text: Blue Shirt - $64 (blue)
+      - button "Add to wishlist" [ref=e333]
+      - button "Add to cart" [ref=e334]
+    - listitem [ref=e335]:
+      - text: Red Shirt - $77 (red)
+      - button "Add to wishlist" [ref=e336]
+      - button "Add to cart" [ref=e337]
+    - listitem [ref=e338]:
+      - text: Green Shirt - $90 (green)
+      - button "Add to wishlist" [ref=e339]
+      - button "Add to cart" [ref=e340]
+    - listitem [ref=e341]:
+      - text: Black Shirt - $13 (black)
+      - button "Add to wishlist" [ref=e342]
+      - button "Add to cart" [ref=e343]
+    - listitem [ref=e344]:
+      - text: White Shirt - $26 (white)
+      - button "Add to wishlist" [ref=e345]
+      - button "Add to cart" [ref=e346]
+    - listitem [ref=e347]:
+      - text: Grey Shirt - $39 (grey)
+      - button "Add to wishlist" [ref=e348]
+      - button "Add to cart" [ref=e349]
+    - listitem [ref=e350]:
+      - text: Blue Hat - $52 (blue)
+      - button "Add to wishlist" [ref=e351]
+      - button "Add to cart" [ref=e352]
+    - listitem [ref=e353]:
+      - text: Red Hat - $65 (red)
+      - button "Add to wishlist" [ref=e354]
+      - button "Add to cart" [ref=e355]
+    - listitem [ref=e356]:
+      - text: Green Hat - $78 (green)
+      - button "Add to wishlist" [ref=e357]
+      - button "Add to cart" [ref=e358]
+    - listitem [ref=e359]:
+      - text: Black Hat - $91 (black)
+      - button "Add to wishlist" [ref=e360]
+      - button "Add to cart" [ref=e361]
+    - listitem [ref=e362]:
+      - text: White Hat - $14 (white)
+      - button "Add to wishlist" [ref=e363]
+      - button "Add to cart" [ref=e364]
+    - listitem [ref=e365]:
+      - text: Grey Hat - $27 (grey)
+      - button "Add to wishlist" [ref=e366]
+      - button "Add to cart" [ref=e367]
+    - listitem [ref=e368]:
+      - text: Blue Shoes - $40 (blue)
+      - button "Add to wishlist" [ref=e369]
+      - button "Add to cart" [ref=e370]
+    - listitem [ref=e371]:
+      - text: Red Shoes - $53 (red)
+      - button "Add to wishlist" [ref=e372]
+      - button "Add to cart" [ref=e373]
+    - listitem [ref=e374]:
+      - text: Green Shoes - $66 (green)
+      - button "Add to wishlist" [ref=e375]
+      - button "Add to cart" [ref=e376]
+    - listitem [ref=e377]:
+      - text: Black Shoes - $79 (black)
+      - button "Add to wishlist" [ref=e378]
+      - button "Add to cart" [ref=e379]
+    - listitem [ref=e380]:
+      - text: White Shoes - $92 (white)
+      - button "Add to wishlist" [ref=e381]
+      - button "Add to cart" [ref=e382]
+    - listitem [ref=e383]:
+      - text: Grey Shoes - $15 (grey)
+      - button "Add to wishlist" [ref=e384]
+      - button "Add to cart" [ref=e385]
+    - listitem [ref=e386]:
+      - text: Blue Jacket - $28 (blue)
+      - button "Add to wishlist" [ref=e387]
+      - button "Add to cart" [ref=e388]
+    - listitem [ref=e389]:
+      - text: Red Jacket - $41 (red)
+      - button "Add to wishlist" [ref=e390]
+      - button "Add to cart" [ref=e391]
+    - listitem [ref=e392]:
+      - text: Green Jacket - $54 (green)
+      - button "Add to wishlist" [ref=e393]
+      - button "Add to cart" [ref=e394]
+    - listitem [ref=e395]:
+      - text: Black Jacket - $67 (black)
+      - button "Add to wishlist" [ref=e396]
+      - button "Add to cart" [ref=e397]
+    - listitem [ref=e398]:
+      - text: White Jacket - $80 (white)
+      - button "Add to wishlist" [ref=e399]
+      - button "Add to cart" [ref=e400]
+    - listitem [ref=e401]:
+      - text: Grey Jacket - $93 (grey)
+      - button "Add to wishlist" [ref=e402]
+      - button "Add to cart" [ref=e403]
+    - listitem [ref=e404]:
+      - text: Blue Bag - $16 (blue)
+      - button "Add to wishlist" [ref=e405]
+      - button "Add to cart" [ref=e406]
+    - listitem [ref=e407]:
+      - text: Red Bag - $29 (red)
+      - button "Add to wishlist" [ref=e408]
+      - button "Add to cart" [ref=e409]
+    - listitem [ref=e410]:
+      - text: Green Bag - $42 (green)
+      - button "Add to wishlist" [ref=e411]
+      - button "Add to cart" [ref=e412]
+    - listitem [ref=e413]:
+      - text: Black Bag - $55 (black)
+      - button "Add to wishlist" [ref=e414]
+      - button "Add to cart" [ref=e415]
+    - listitem [ref=e416]:
+      - text: White Bag - $68 (white)
+      - button "Add to wishlist" [ref=e417]
+      - button "Add to cart" [ref=e418]
+    - listitem [ref=e419]:
+      - text: Grey Bag - $81 (grey)
+      - button "Add to wishlist" [ref=e420]
+      - button "Add to cart" [ref=e421]
+    - listitem [ref=e422]:
+      - text: Blue Watch - $94 (blue)
+      - button "Add to wishlist" [ref=e423]
+      - button "Add to cart" [ref=e424]
+    - listitem [ref=e425]:
+      - text: Red Watch - $17 (red)
+      - button "Add to wishlist" [ref=e426]
+      - button "Add to cart" [ref=e427]
+    - listitem [ref=e428]:
+      - text: Green Watch - $30 (green)
+      - button "Add to wishlist" [ref=e429]
+      - button "Add to cart" [ref=e430]
+    - listitem [ref=e431]:
+      - text: Black Watch - $43 (black)
+      - button "Add to wishlist" [ref=e432]
+      - button "Add to cart" [ref=e433]
+    - listitem [ref=e434]:
+      - text: White Watch - $56 (white)
+      - button "Add to wishlist" [ref=e435]
+      - button "Add to cart" [ref=e436]
+    - listitem [ref=e437]:
+      - text: Grey Watch - $69 (grey)
+      - button "Add to wishlist" [ref=e438]
+      - button "Add to cart" [ref=e439]
+    - listitem [ref=e440]:
+      - text: Blue Shirt - $82 (blue)
+      - button "Add to wishlist" [ref=e441]
+      - button "Add to cart" [ref=e442]
+    - listitem [ref=e443]:
+      - text: Red Shirt - $95 (red)
+      - button "Add to wishlist" [ref=e444]
+      - button "Add to cart" [ref=e445]
+    - listitem [ref=e446]:
+      - text: Green Shirt - $18 (green)
+      - button "Add to wishlist" [ref=e447]
+      - button "Add to cart" [ref=e448]
+    - listitem [ref=e449]:
+      - text: Black Shirt - $31 (black)
+      - button "Add to wishlist" [ref=e450]
+      - button "Add to cart" [ref=e451]
+    - listitem [ref=e452]:
+      - text: White Shirt - $44 (white)
+      - button "Add to wishlist" [ref=e453]
+      - button "Add to cart" [ref=e454]
+    - listitem [ref=e455]:
+      - text: Grey Shirt - $57 (grey)
+      - button "Add to wishlist" [ref=e456]
+      - button "Add to cart" [ref=e457]
+    - listitem [ref=e458]:
+      - text: Blue Hat - $70 (blue)
+      - button "Add to wishlist" [ref=e459]
+      - button "Add to cart" [ref=e460]
+    - listitem [ref=e461]:
+      - text: Red Hat - $83 (red)
+      - button "Add to wishlist" [ref=e462]
+      - button "Add to cart" [ref=e463]
+    - listitem [ref=e464]:
+      - text: Green Hat - $96 (green)
+      - button "Add to wishlist" [ref=e465]
+      - button "Add to cart" [ref=e466]
+    - listitem [ref=e467]:
+      - text: Black Hat - $19 (black)
+      - button "Add to wishlist" [ref=e468]
+      - button "Add to cart" [ref=e469]
+    - listitem [ref=e470]:
+      - text: White Hat - $32 (white)
+      - button "Add to wishlist" [ref=e471]
+      - button "Add to cart" [ref=e472]
+    - listitem [ref=e473]:
+      - text: Grey Hat - $45 (grey)
+      - button "Add to wishlist" [ref=e474]
+      - button "Add to cart" [ref=e475]
+    - listitem [ref=e476]:
+      - text: Blue Shoes - $58 (blue)
+      - button "Add to wishlist" [ref=e477]
+      - button "Add to cart" [ref=e478]
+    - listitem [ref=e479]:
+      - text: Red Shoes - $71 (red)
+      - button "Add to wishlist" [ref=e480]
+      - button "Add to cart" [ref=e481]
+    - listitem [ref=e482]:
+      - text: Green Shoes - $84 (green)
+      - button "Add to wishlist" [ref=e483]
+      - button "Add to cart" [ref=e484]
+    - listitem [ref=e485]:
+      - text: Black Shoes - $97 (black)
+      - button "Add to wishlist" [ref=e486]
+      - button "Add to cart" [ref=e487]
+    - listitem [ref=e488]:
+      - text: White Shoes - $20 (white)
+      - button "Add to wishlist" [ref=e489]
+      - button "Add to cart" [ref=e490]
+    - listitem [ref=e491]:
+      - text: Grey Shoes - $33 (grey)
+      - button "Add to wishlist" [ref=e492]
+      - button "Add to cart" [ref=e493]
+    - listitem [ref=e494]:
+      - text: Blue Jacket - $46 (blue)
+      - button "Add to wishlist" [ref=e495]
+      - button "Add to cart" [ref=e496]
+    - listitem [ref=e497]:
+      - text: Red Jacket - $59 (red)
+      - button "Add to wishlist" [ref=e498]
+      - button "Add to cart" [ref=e499]
+    - listitem [ref=e500]:
+      - text: Green Jacket - $72 (green)
+      - button "Add to wishlist" [ref=e501]
+      - button "Add to cart" [ref=e502]
+    - listitem [ref=e503]:
+      - text: Black Jacket - $85 (black)
+      - button "Add to wishlist" [ref=e504]
+      - button "Add to cart" [ref=e505]
+    - listitem [ref=e506]:
+      - text: White Jacket - $98 (white)
+      - button "Add to wishlist" [ref=e507]
+      - button "Add to cart" [ref=e508]
+    - listitem [ref=e509]:
+      - text: Grey Jacket - $21 (grey)
+      - button "Add to wishlist" [ref=e510]
+      - button "Add to cart" [ref=e511]
+    - listitem [ref=e512]:
+      - text: Blue Bag - $34 (blue)
+      - button "Add to wishlist" [ref=e513]
+      - button "Add to cart" [ref=e514]
+    - listitem [ref=e515]:
+      - text: Red Bag - $47 (red)
+      - button "Add to wishlist" [ref=e516]
+      - button "Add to cart" [ref=e517]
+    - listitem [ref=e518]:
+      - text: Green Bag - $60 (green)
+      - button "Add to wishlist" [ref=e519]
+      - button "Add to cart" [ref=e520]
+    - listitem [ref=e521]:
+      - text: Black Bag - $73 (black)
+      - button "Add to wishlist" [ref=e522]
+      - button "Add to cart" [ref=e523]
+    - listitem [ref=e524]:
+      - text: White Bag - $86 (white)
+      - button "Add to wishlist" [ref=e525]
+      - button "Add to cart" [ref=e526]
+    - listitem [ref=e527]:
+      - text: Grey Bag - $99 (grey)
+      - button "Add to wishlist" [ref=e528]
+      - button "Add to cart" [ref=e529]
+    - listitem [ref=e530]:
+      - text: Blue Watch - $22 (blue)
+      - button "Add to wishlist" [ref=e531]
+      - button "Add to cart" [ref=e532]
+    - listitem [ref=e533]:
+      - text: Red Watch - $35 (red)
+      - button "Add to wishlist" [ref=e534]
+      - button "Add to cart" [ref=e535]
+    - listitem [ref=e536]:
+      - text: Green Watch - $48 (green)
+      - button "Add to wishlist" [ref=e537]
+      - button "Add to cart" [ref=e538]
+    - listitem [ref=e539]:
+      - text: Black Watch - $61 (black)
+      - button "Add to wishlist" [ref=e540]
+      - button "Add to cart" [ref=e541]
+    - listitem [ref=e542]:
+      - text: White Watch - $74 (white)
+      - button "Add to wishlist" [ref=e543]
+      - button "Add to cart" [ref=e544]
+    - listitem [ref=e545]:
+      - text: Grey Watch - $87 (grey)
+      - button "Add to wishlist" [ref=e546]
+      - button "Add to cart" [ref=e547]
+    - listitem [ref=e548]:
+      - text: Blue Shirt - $10 (blue)
+      - button "Add to wishlist" [ref=e549]
+      - button "Add to cart" [ref=e550]
+    - listitem [ref=e551]:
+      - text: Red Shirt - $23 (red)
+      - button "Add to wishlist" [ref=e552]
+      - button "Add to cart" [ref=e553]
+    - listitem [ref=e554]:
+      - text: Green Shirt - $36 (green)
+      - button "Add to wishlist" [ref=e555]
+      - button "Add to cart" [ref=e556]
+    - listitem [ref=e557]:
+      - text: Black Shirt - $49 (black)
+      - button "Add to wishlist" [ref=e558]
+      - button "Add to cart" [ref=e559]
+    - listitem [ref=e560]:
+      - text: White Shirt - $62 (white)
+      - button "Add to wishlist" [ref=e561]
+      - button "Add to cart" [ref=e562]
+    - listitem [ref=e563]:
+      - text: Grey Shirt - $75 (grey)
+      - button "Add to wishlist" [ref=e564]
+      - button "Add to cart" [ref=e565]
+    - listitem [ref=e566]:
+      - text: Blue Hat - $88 (blue)
+      - button "Add to wishlist" [ref=e567]
+      - button "Add to cart" [ref=e568]
+    - listitem [ref=e569]:
+      - text: Red Hat - $11 (red)
+      - button "Add to wishlist" [ref=e570]
+      - button "Add to cart" [ref=e571]
+    - listitem [ref=e572]:
+      - text: Green Hat - $24 (green)
+      - button "Add to wishlist" [ref=e573]
+      - button "Add to cart" [ref=e574]
+    - listitem [ref=e575]:
+      - text: Black Hat - $37 (black)
+      - button "Add to wishlist" [ref=e576]
+      - button "Add to cart" [ref=e577]
+    - listitem [ref=e578]:
+      - text: White Hat - $50 (white)
+      - button "Add to wishlist" [ref=e579]
+      - button "Add to cart" [ref=e580]
+    - listitem [ref=e581]:
+      - text: Grey Hat - $63 (grey)
+      - button "Add to wishlist" [ref=e582]
+      - button "Add to cart" [ref=e583]
+    - listitem [ref=e584]:
+      - text: Blue Shoes - $76 (blue)
+      - button "Add to wishlist" [ref=e585]
+      - button "Add to cart" [ref=e586]
+    - listitem [ref=e587]:
+      - text: Red Shoes - $89 (red)
+      - button "Add to wishlist" [ref=e588]
+      - button "Add to cart" [ref=e589]
+    - listitem [ref=e590]:
+      - text: Green Shoes - $12 (green)
+      - button "Add to wishlist" [ref=e591]
+      - button "Add to cart" [ref=e592]
+    - listitem [ref=e593]:
+      - text: Black Shoes - $25 (black)
+      - button "Add to wishlist" [ref=e594]
+      - button "Add to cart" [ref=e595]
+    - listitem [ref=e596]:
+      - text: White Shoes - $38 (white)
+      - button "Add to wishlist" [ref=e597]
+      - button "Add to cart" [ref=e598]
+    - listitem [ref=e599]:
+      - text: Grey Shoes - $51 (grey)
+      - button "Add to wishlist" [ref=e600]
+      - button "Add to cart" [ref=e601]
+    - listitem [ref=e602]:
+      - text: Blue Jacket - $64 (blue)
+      - button "Add to wishlist" [ref=e603]
+      - button "Add to cart" [ref=e604]
+    - listitem [ref=e605]:
+      - text: Red Jacket - $77 (red)
+      - button "Add to wishlist" [ref=e606]
+      - button "Add to cart" [ref=e607]
+    - listitem [ref=e608]:
+      - text: Green Jacket - $90 (green)
+      - button "Add to wishlist" [ref=e609]
+      - button "Add to cart" [ref=e610]
+  - generic [ref=e611]: "Cart:"
+  - generic [ref=e612]: "Wishlist:"
+  - contentinfo [ref=e613]:
+    - generic [ref=e614]: About
+    - generic [ref=e615]: Careers
+    - generic [ref=e616]: Privacy Policy
+    - generic [ref=e617]: Terms
+    - generic [ref=e618]: Returns
+    - generic [ref=e619]: Contact
+    - paragraph [ref=e620]: © 2026 DemoShop Inc. Free shipping over $50.

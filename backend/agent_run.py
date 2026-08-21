@@ -7,10 +7,11 @@ Claude Code pulls out the url + goal and runs this. Or call it directly:
   python3 agent_run.py "open https://example.com and add the cheapest blue shirt to the cart"
 
 It opens the url in a real browser, turns the LIVE page into an AgentView via the
-chosen translator (--model trained = your Freesolo model; openrouter = gemini
-prompting, the safe default on arbitrary sites), lets the agent act, prints each
-step's reasoning + action AS IT GOES, then persists the run + full turn trace to
-agentview.runs.
+trained model by default (--model trained, your Freesolo model). Add
+--fallback openrouter to have a prompted frontier model take over ONLY when the
+trained model can't produce a view (the Layer-1 -> Layer-0 story). It then lets
+the agent act, prints each step's reasoning + action AS IT GOES, and persists the
+run + full turn trace to agentview.runs.
 
 There is no automatic success check on an arbitrary page -- read the step log and
 the final state.
@@ -41,9 +42,13 @@ def _parse(argv=None) -> argparse.Namespace:
     ap.add_argument("text", nargs="*", help="natural language, e.g. 'open <url> and <goal>'")
     ap.add_argument("--url", help="page to open (else extracted from the text)")
     ap.add_argument("--goal", help="task in plain English (else the whole text)")
-    ap.add_argument("--model", default="openrouter",
+    ap.add_argument("--model", default="trained",
                     choices=["stub", "gemini", "claude", "openrouter", "trained"],
-                    help="translator that builds the AgentView (trained = your model)")
+                    help="translator that builds the AgentView (default: trained = your model)")
+    ap.add_argument("--fallback", default=None,
+                    choices=["gemini", "claude", "openrouter"],
+                    help="Layer-0 fallback: if the trained model returns an empty view, "
+                         "re-translate that step with this prompted model (logged transparently)")
     ap.add_argument("--agent-model", default="openrouter",
                     choices=["stub", "gemini", "claude", "openrouter"])
     ap.add_argument("--steps", type=int, default=8, help="max agent steps")
@@ -77,6 +82,12 @@ def main(argv=None) -> None:
                 ptok = len(page.html) // 4
             view, tok = translate(TranslatorInput(args.goal, page), "translated", args.model, driver)
             ttok += tok
+            # Layer-1 first; fall back to a frontier translator only if the trained
+            # model couldn't surface any action (its "can't advance" signal).
+            if not view.actions and args.fallback and args.fallback != args.model:
+                print(f"      ↳ {args.model} produced no actions — falling back to {args.fallback}")
+                view, tok = translate(TranslatorInput(args.goal, page), "translated", args.fallback, driver)
+                ttok += tok
             choice, at = decide(args.goal, view, history, args.agent_model)
             atok += at
 

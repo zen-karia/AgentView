@@ -1,0 +1,19 @@
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { fileURLToPath, URL } from "node:url";
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      "@contracts": fileURLToPath(new URL("./src/contracts", import.meta.url)),
+      "@mocks": fileURLToPath(new URL("./src/mocks", import.meta.url)),
+      "@components": fileURLToPath(new URL("./src/components", import.meta.url)),
+      "@app": fileURLToPath(new URL("./src/app", import.meta.url)),
+    },
+  },
+  server: {
+    port: 5173,
+  },
+});

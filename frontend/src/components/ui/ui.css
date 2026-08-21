@@ -1,0 +1,158 @@
+/* Shared UI primitive styles. Coordinate additions (shared surface). */
+
+/* --- Card / Panel --- */
+.ui-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+.ui-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px 0;
+}
+
+.ui-card__title {
+  font-size: 0.95rem;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+}
+
+.ui-card__subtitle {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.ui-card__body {
+  padding: 16px 18px 18px;
+}
+
+/* --- Badge --- */
+.ui-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  background: var(--surface-2);
+  white-space: nowrap;
+}
+
+.ui-badge--good {
+  color: var(--delta-good);
+  border-color: color-mix(in srgb, var(--delta-good) 40%, transparent);
+  background: color-mix(in srgb, var(--delta-good) 12%, transparent);
+}
+
+.ui-badge--accent {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  background: var(--accent-weak);
+}
+
+/* --- Segmented control --- */
+.ui-seg {
+  display: inline-flex;
+  padding: 3px;
+  gap: 2px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  flex-wrap: wrap;
+}
+
+.ui-seg__btn {
+  border: 0;
+  background: transparent;
+  color: var(--text-secondary);
+  padding: 6px 13px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 550;
+  transition: background 0.12s ease, color 0.12s ease;
+  white-space: nowrap;
+}
+
+.ui-seg__btn:hover {
+  color: var(--text-primary);
+}
+
+.ui-seg__btn[aria-pressed="true"] {
+  background: var(--surface-1);
+  color: var(--text-primary);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+/* --- Stat tile --- */
+.ui-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 18px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  min-width: 0;
+}
+
+.ui-stat__label {
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+}
+
+.ui-stat__value {
+  font-size: 1.9rem;
+  font-weight: 680;
+  line-height: 1.05;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.ui-stat__unit {
+  font-size: 0.95rem;
+  font-weight: 550;
+  color: var(--text-secondary);
+}
+
+.ui-stat__delta {
+  font-size: 0.78rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ui-stat__delta--good {
+  color: var(--delta-good);
+}
+
+.ui-stat__delta--bad {
+  color: var(--delta-bad);
+}
+
+.ui-stat__foot {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+/* --- swatch dot (condition identity) --- */
+.ui-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex: 0 0 auto;
+}

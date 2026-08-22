@@ -24,6 +24,7 @@ from envload import load_env
 load_env()
 
 from mcp.server.fastmcp import FastMCP
+from mcp.server.transport_security import TransportSecuritySettings
 
 from agent_run import run_workflow
 
@@ -31,6 +32,10 @@ mcp = FastMCP(
     "agentview",
     instructions="Run a goal-conditioned web-agent workflow on any URL using the "
     "AgentView trained perception model. Call agentview_run with a url and a goal.",
+    # We sit behind an ngrok tunnel (host changes each restart) and gate with a
+    # bearer token, so disable the SDK's default localhost-only host check (which
+    # rejects the ngrok domain with 421 Misdirected Request).
+    transport_security=TransportSecuritySettings(enable_dns_rebinding_protection=False),
 )
 
 

@@ -8,7 +8,6 @@ export default defineConfig({
   resolve: {
     alias: {
       "@contracts": fileURLToPath(new URL("./src/contracts", import.meta.url)),
-      "@mocks": fileURLToPath(new URL("./src/mocks", import.meta.url)),
       "@components": fileURLToPath(new URL("./src/components", import.meta.url)),
       "@app": fileURLToPath(new URL("./src/app", import.meta.url)),
     },

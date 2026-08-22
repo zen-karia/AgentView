@@ -41,13 +41,6 @@ export function ConditionCards({ results }: { results: ConditionResult[] }) {
               {meta.kind} · {meta.tech}
             </div>
 
-            <div className="bm-cond__hero">
-              <span className="bm-cond__hero-val tnum">
-                {formatMetric(r.metrics.successRate, "successRate")}
-              </span>
-              <span className="bm-cond__hero-label">success</span>
-            </div>
-
             <div className="bm-cond__rows">
               {ROWS.map(({ metric, label }) => (
                 <div key={metric} className="bm-cond__row">

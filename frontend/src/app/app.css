@@ -45,32 +45,6 @@
   font-size: 0.8rem;
 }
 
-.app__nav {
-  display: flex;
-  gap: 4px;
-  margin-left: 8px;
-}
-
-.app__tab {
-  border: 0;
-  background: transparent;
-  color: var(--text-secondary);
-  padding: 7px 14px;
-  border-radius: 8px;
-  font-size: 0.88rem;
-  font-weight: 550;
-}
-
-.app__tab:hover {
-  background: var(--surface-2);
-  color: var(--text-primary);
-}
-
-.app__tab--active {
-  background: var(--accent-weak);
-  color: var(--accent);
-}
-
 .app__spacer {
   flex: 1;
 }

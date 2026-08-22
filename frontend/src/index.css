@@ -40,11 +40,10 @@
   --accent-weak: rgba(57, 135, 229, 0.14);
 
   /* --- condition identity colours (dark) --- */
-  --cond-raw: #3987e5;
-  --cond-markdown: #008300;
-  --cond-a11y: #d55181;
-  --cond-stagehand: #c98500;
-  --cond-prompted_av: #199e70;
+  --cond-prompted_gemini: #3987e5;
+  --cond-prompted_claude: #00a447;
+  --cond-mcp_gemini: #d55181;
+  --cond-mcp_claude: #c98500;
   --cond-trained_av: #d95926;
 
   /* --- shape --- */
@@ -79,11 +78,10 @@
   --accent: #2a78d6;
   --accent-weak: rgba(42, 120, 214, 0.1);
 
-  --cond-raw: #2a78d6;
-  --cond-markdown: #008300;
-  --cond-a11y: #e87ba4;
-  --cond-stagehand: #eda100;
-  --cond-prompted_av: #1baf7a;
+  --cond-prompted_gemini: #2a78d6;
+  --cond-prompted_claude: #008300;
+  --cond-mcp_gemini: #e87ba4;
+  --cond-mcp_claude: #eda100;
   --cond-trained_av: #eb6834;
 
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.06);

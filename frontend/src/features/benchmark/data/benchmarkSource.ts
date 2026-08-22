@@ -1,25 +1,61 @@
-/* =========================================================================
-   Benchmark data adapter. The dashboard depends only on BenchmarkSource, so
-   the mock can be swapped for a MongoDB-backed API without touching the UI.
+import type { BenchmarkRun, BenchmarkSource } from "@contracts";
 
-   Future real adapter (sketch):
-     class ApiBenchmarkSource implements BenchmarkSource {
-       async listRuns() { return (await fetch("/api/benchmark/runs")).json(); }
-       async getRun(id) { return (await fetch(`/api/benchmark/runs/${id}`)).json(); }
-     }
-   ========================================================================= */
-import type { BenchmarkSource } from "@contracts";
-import { BENCHMARK_RUNS } from "./benchmarkRuns";
+type Fetcher = (input: string, init?: RequestInit) => Promise<Response>;
 
-/** In-memory mock. Async on purpose so the swap to a real fetch is a no-op. */
-export const mockBenchmarkSource: BenchmarkSource = {
-  async listRuns() {
-    return BENCHMARK_RUNS;
-  },
-  async getRun(id) {
-    return BENCHMARK_RUNS.find((r) => r.id === id);
-  },
-};
+function endpoint(baseUrl: string, path: string): string {
+  return `${baseUrl.replace(/\/$/, "")}${path}`;
+}
 
-/** The source the app currently reads from. Point this at the API adapter later. */
-export const benchmarkSource = mockBenchmarkSource;
+function isBenchmarkRun(value: unknown): value is BenchmarkRun {
+  if (typeof value !== "object" || value === null) return false;
+  const run = value as Partial<BenchmarkRun>;
+  return (
+    typeof run.id === "string" &&
+    typeof run.label === "string" &&
+    typeof run.createdAt === "string" &&
+    typeof run.trainingStage === "string" &&
+    Array.isArray(run.tasks)
+  );
+}
+
+async function readJson(response: Response): Promise<unknown> {
+  if (!response.ok) {
+    throw new Error(`Benchmark API request failed (${response.status})`);
+  }
+  try {
+    return await response.json();
+  } catch {
+    throw new Error("Benchmark API returned invalid JSON");
+  }
+}
+
+export function createApiBenchmarkSource(
+  apiBaseUrl: string,
+  fetcher: Fetcher = fetch,
+): BenchmarkSource {
+  return {
+    async listRuns() {
+      const payload = await readJson(
+        await fetcher(endpoint(apiBaseUrl, "/api/benchmark/runs")),
+      );
+      if (!Array.isArray(payload) || !payload.every(isBenchmarkRun)) {
+        throw new Error("Benchmark API returned an invalid benchmark run list");
+      }
+      return payload;
+    },
+
+    async getRun(id) {
+      const payload = await readJson(
+        await fetcher(
+          endpoint(apiBaseUrl, `/api/benchmark/runs/${encodeURIComponent(id)}`),
+        ),
+      );
+      return isBenchmarkRun(payload) ? payload : undefined;
+    },
+  };
+}
+
+const apiBaseUrl =
+  import.meta.env?.VITE_API_BASE_URL ?? "http://127.0.0.1:8787";
+
+export const benchmarkSource = createApiBenchmarkSource(apiBaseUrl);

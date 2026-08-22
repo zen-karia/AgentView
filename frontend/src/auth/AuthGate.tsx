@@ -33,7 +33,7 @@ export function AuthGate({ children }: AuthGateProps) {
         description={
           error
             ? "Auth0 returned an error. You can safely retry the hosted login flow."
-            : "Sign in to access your benchmark runs, live agent races, and task-conditioned translations."
+            : "Sign in to access benchmark runs from the AgentView backend."
         }
       >
         {error && <p className="auth-error" role="alert">{error.message}</p>}

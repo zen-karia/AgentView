@@ -30,7 +30,7 @@ interface Datum {
   runCount: number;
 }
 
-/** Per-metric comparison across the six conditions. Bars carry condition
+/** Per-metric comparison across the conditions returned by the backend. Bars carry condition
     identity colour; the winner is marked (★ + full opacity) so the "who wins"
     read and the "which condition" read are both direct — never colour-alone. */
 export function ConditionChart({ results, metric }: ConditionChartProps) {

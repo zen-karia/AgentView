@@ -3,7 +3,7 @@ import { CONDITION_META, METRIC_META, METRIC_ORDER } from "@contracts";
 import { winnerFor } from "../lib/aggregate";
 import { formatMetric } from "../lib/format";
 
-/** Full six-condition × six-metric grid. Best value per column is highlighted;
+/** Full condition × metric grid. Best value per column is highlighted;
     every row is labelled, so the table is the color-independent view. */
 export function ComparisonTable({ results }: { results: ConditionResult[] }) {
   const winners = Object.fromEntries(

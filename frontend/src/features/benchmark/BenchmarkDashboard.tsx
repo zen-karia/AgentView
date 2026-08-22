@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import type { BenchmarkRun, MetricKey, TrainingStage } from "@contracts";
-import { METRIC_META, METRIC_ORDER, TRAINING_STAGE_META, TRAINING_STAGE_ORDER } from "@contracts";
+import type { BenchmarkRun, MetricKey } from "@contracts";
+import { METRIC_META, METRIC_ORDER } from "@contracts";
 import { Card, SegmentedControl } from "@components/ui";
-import { TASKS } from "@mocks/scenarios";
 import { benchmarkSource } from "./data/benchmarkSource";
 import { ALL_TASKS, resultsForScope } from "./lib/aggregate";
 import type { TaskScope } from "./lib/aggregate";
@@ -15,100 +14,150 @@ import { ComparisonTable } from "./components/ComparisonTable";
 import { BenchmarkHistory } from "./components/BenchmarkHistory";
 import "./benchmark.css";
 
-const METRIC_OPTIONS = METRIC_ORDER.map((m) => ({
-  value: m,
-  label: METRIC_META[m].shortLabel,
+const METRIC_OPTIONS = METRIC_ORDER.map((metric) => ({
+  value: metric,
+  label: METRIC_META[metric].shortLabel,
 }));
 
+type LoadState =
+  | { status: "loading" }
+  | { status: "error"; message: string }
+  | { status: "ready"; runs: BenchmarkRun[] };
+
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : "Unable to load benchmark runs";
+}
+
 export function BenchmarkDashboard() {
-  const [runs, setRuns] = useState<BenchmarkRun[]>([]);
-  const [runId, setRunId] = useState<string>("");
+  const [loadState, setLoadState] = useState<LoadState>({ status: "loading" });
+  const [runId, setRunId] = useState("");
   const [scope, setScope] = useState<TaskScope>(ALL_TASKS);
   const [metric, setMetric] = useState<MetricKey>("steps");
+  const [retryToken, setRetryToken] = useState(0);
 
   useEffect(() => {
-    let live = true;
-    benchmarkSource.listRuns().then((loaded) => {
-      if (!live) return;
-      setRuns(loaded);
-      setRunId((prev) => prev || loaded[0]?.id || "");
-    });
-    return () => {
-      live = false;
-    };
-  }, []);
+    let active = true;
+    setLoadState({ status: "loading" });
 
-  const run = useMemo(() => runs.find((r) => r.id === runId), [runs, runId]);
+    benchmarkSource.listRuns().then(
+      (runs) => {
+        if (!active) return;
+        setLoadState({ status: "ready", runs });
+        setRunId((current) =>
+          runs.some((run) => run.id === current) ? current : runs[0]?.id ?? "",
+        );
+      },
+      (error: unknown) => {
+        if (active) setLoadState({ status: "error", message: errorMessage(error) });
+      },
+    );
+
+    return () => {
+      active = false;
+    };
+  }, [retryToken]);
+
+  const runs = loadState.status === "ready" ? loadState.runs : [];
+  const run = useMemo(() => runs.find((item) => item.id === runId), [runs, runId]);
   const results = useMemo(() => (run ? resultsForScope(run, scope) : []), [run, scope]);
 
-  if (!run) {
+  useEffect(() => {
+    if (run && scope !== ALL_TASKS && !run.tasks.some((task) => task.taskId === scope)) {
+      setScope(ALL_TASKS);
+    }
+  }, [run, scope]);
+
+  if (loadState.status === "loading") {
     return (
       <Card title="Benchmark">
-        <p style={{ color: "var(--text-secondary)" }}>Loading benchmark runs…</p>
+        <p className="bm-state" role="status">Loading benchmark runs from the backend…</p>
       </Card>
     );
   }
 
-  // Training stage is a dimension over runs: one run per stage.
-  const stageOptions = TRAINING_STAGE_ORDER.filter((s) =>
-    runs.some((r) => r.trainingStage === s),
-  ).map((s) => ({ value: s, label: TRAINING_STAGE_META[s].shortLabel }));
+  if (loadState.status === "error") {
+    return (
+      <Card title="Backend unavailable" subtitle={loadState.message}>
+        <div className="bm-state">
+          <p>Start <code>backend/api.py</code> and confirm the API URL, then retry.</p>
+          <button type="button" className="bm-action" onClick={() => setRetryToken((value) => value + 1)}>
+            Retry
+          </button>
+        </div>
+      </Card>
+    );
+  }
 
-  const selectStage = (stage: TrainingStage) => {
-    const target = runs.find((r) => r.trainingStage === stage);
-    if (target) setRunId(target.id);
-  };
+  if (runs.length === 0 || !run) {
+    return (
+      <Card title="No benchmark runs">
+        <div className="bm-state">
+          <p>No benchmark runs are available yet. Run the backend benchmark with MongoDB logging enabled, then retry.</p>
+          <button type="button" className="bm-action" onClick={() => setRetryToken((value) => value + 1)}>
+            Retry
+          </button>
+        </div>
+      </Card>
+    );
+  }
 
   return (
     <div className="bm">
-      <BenchmarkToolbar
-        tasks={TASKS}
-        scope={scope}
-        onScope={setScope}
-        stageOptions={stageOptions}
-        stage={run.trainingStage}
-        onStage={selectStage}
-      />
-
-      <BestConditionCallout results={results} />
-
-      <KpiRow results={results} />
-
-      <Card
-        title="Per-metric comparison"
-        subtitle="Six approaches — raw page → trained AgentView"
-        actions={
-          <SegmentedControl
-            ariaLabel="Select metric"
-            options={METRIC_OPTIONS}
-            value={metric}
-            onChange={setMetric}
-          />
-        }
-      >
-        <div className="bm-chart__head">
-          <span className="bm-chart__hint">
-            {METRIC_META[metric].label} —{" "}
-            {METRIC_META[metric].better === "higher" ? "higher is better" : "lower is better"}. ★ marks the winner.
-          </span>
+      <div className="bm__run-heading">
+        <div>
+          <span className="bm__toolbar-label">Backend benchmark</span>
+          <h1>{run.label}</h1>
+          {run.note && <p>{run.note}</p>}
         </div>
-        <ConditionChart results={results} metric={metric} />
-      </Card>
+        <time dateTime={run.createdAt}>{new Date(run.createdAt).toLocaleString()}</time>
+      </div>
 
-      <Card title="Conditions" subtitle="Per-condition metric summary">
-        <ConditionCards results={results} />
-      </Card>
+      <BenchmarkToolbar tasks={run.tasks} scope={scope} onScope={setScope} />
 
-      <Card title="Full comparison" subtitle="Best value per metric highlighted">
-        <ComparisonTable results={results} />
-      </Card>
+      {results.length === 0 ? (
+        <Card title="No task results">
+          <p className="bm-state">This benchmark run has no task results to display.</p>
+        </Card>
+      ) : (
+        <>
+          <BestConditionCallout results={results} />
+          <KpiRow results={results} />
 
-      <Card
-        title="Benchmark history"
-        subtitle="Each entry is a full task × condition sweep at one training stage"
-      >
-        <BenchmarkHistory runs={runs} activeRunId={runId} onSelect={setRunId} />
-      </Card>
+          <Card
+            title="Per-metric comparison"
+            subtitle="Conditions recorded by the backend benchmark"
+            actions={
+              <SegmentedControl
+                ariaLabel="Select metric"
+                options={METRIC_OPTIONS}
+                value={metric}
+                onChange={setMetric}
+              />
+            }
+          >
+            <div className="bm-chart__head">
+              <span className="bm-chart__hint">
+                {METRIC_META[metric].label} — {METRIC_META[metric].better === "higher" ? "higher is better" : "lower is better"}. ★ marks the winner.
+              </span>
+            </div>
+            <ConditionChart results={results} metric={metric} />
+          </Card>
+
+          <Card title="Conditions" subtitle="Per-condition metric summary">
+            <ConditionCards results={results} />
+          </Card>
+
+          <Card title="Full comparison" subtitle="Best value per metric highlighted">
+            <ComparisonTable results={results} />
+          </Card>
+        </>
+      )}
+
+      {runs.length > 1 && (
+        <Card title="Benchmark history" subtitle="Runs returned by the benchmark API">
+          <BenchmarkHistory runs={runs} activeRunId={runId} onSelect={setRunId} />
+        </Card>
+      )}
     </div>
   );
 }

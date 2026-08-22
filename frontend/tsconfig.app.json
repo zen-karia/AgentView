@@ -23,7 +23,6 @@
     "paths": {
       "@contracts": ["src/contracts/index.ts"],
       "@contracts/*": ["src/contracts/*"],
-      "@mocks/*": ["src/mocks/*"],
       "@components/*": ["src/components/*"],
       "@app/*": ["src/app/*"]
     }

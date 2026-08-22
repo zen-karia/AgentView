@@ -1,8 +1,7 @@
 /* =========================================================================
    FROZEN SHARED CONTRACT — benchmark aggregates
    The shape the Benchmark Dashboard (Person 1) renders. Derived from RunLogs
-   (run-events.ts). Person 2 does not depend on this file; it is here so the
-   benchmark data adapter (mock now, MongoDB-backed later) has one target shape.
+   returned by backend/api.py.
    ========================================================================= */
 
 import type { Condition, TrainingStage } from "./run-events";
@@ -30,7 +29,6 @@ export interface MetricMeta {
 }
 
 export const METRIC_ORDER: MetricKey[] = [
-  "successRate",
   "steps",
   "tokens",
   "latencyMs",
@@ -89,7 +87,7 @@ export const METRIC_META: Record<MetricKey, MetricMeta> = {
   },
 };
 
-/** One condition's aggregated metrics. `successRate` is a 0–1 fraction. */
+/** One condition's aggregated metrics. The API may include undisplayed metrics. */
 export type MetricSet = Record<MetricKey, number>;
 
 export interface ConditionResult {
@@ -118,9 +116,7 @@ export interface BenchmarkRun {
   /** ISO-8601 timestamp of when this sweep was produced. */
   createdAt: string;
   /**
-   * The trained-AgentView training stage this sweep exercised. Only the
-   * `trained_av` condition's metrics depend on it; every other condition is
-   * identical across stages.
+   * Training stage reported by the backend benchmark.
    */
   trainingStage: TrainingStage;
   /** Free-text checkpoint note for the history list. */
@@ -129,8 +125,8 @@ export interface BenchmarkRun {
 }
 
 /**
- * The pluggable source of benchmark data. Implemented by a mock now and a
- * MongoDB-backed API adapter later — the dashboard only knows this interface.
+ * Pluggable source of benchmark data. The production implementation reads the
+ * MongoDB-backed HTTP API while the dashboard depends only on this interface.
  */
 export interface BenchmarkSource {
   listRuns(): Promise<BenchmarkRun[]>;

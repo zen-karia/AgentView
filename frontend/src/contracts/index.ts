@@ -1,4 +1,3 @@
-/* Barrel for the frozen shared contracts. Import from "@contracts". */
-export * from "./agent-view";
+/* Shared contracts mirrored by backend/api.py. */
 export * from "./run-events";
 export * from "./benchmark";

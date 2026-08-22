@@ -8,6 +8,8 @@ import type {
 } from "@contracts";
 import { CONDITION_ORDER, METRIC_META, METRIC_ORDER } from "@contracts";
 
+const AGGREGATE_METRICS: MetricKey[] = ["successRate", ...METRIC_ORDER];
+
 export const ALL_TASKS = "all" as const;
 export type TaskScope = string | typeof ALL_TASKS;
 
@@ -16,26 +18,31 @@ export type TaskScope = string | typeof ALL_TASKS;
  * Condition order is always canonical (worst → best pipeline order).
  */
 export function resultsForScope(run: BenchmarkRun, scope: TaskScope): ConditionResult[] {
-  if (scope !== ALL_TASKS) {
-    const task = run.tasks.find((t) => t.taskId === scope);
-    return task ? task.results : [];
-  }
+  const tasks = scope === ALL_TASKS
+    ? run.tasks
+    : run.tasks.filter((task) => task.taskId === scope);
 
-  return CONDITION_ORDER.map((condition) => {
-    const perTask = run.tasks.map(
-      (t) => t.results.find((r) => r.condition === condition)!,
+  return CONDITION_ORDER.flatMap((condition) => {
+    const matching = tasks.flatMap((task) =>
+      task.results.filter((result) => result.condition === condition),
     );
+    const runCount = matching.reduce((sum, result) => sum + result.runCount, 0);
+    if (matching.length === 0 || runCount === 0) return [];
+
     const metrics = {} as MetricSet;
-    for (const m of METRIC_ORDER) {
+    for (const m of AGGREGATE_METRICS) {
       const mean =
-        perTask.reduce((sum, r) => sum + r.metrics[m], 0) / perTask.length;
+        matching.reduce(
+          (sum, result) => sum + result.metrics[m] * result.runCount,
+          0,
+        ) / runCount;
       metrics[m] = m === "successRate" ? round(mean, 3) : round(mean, m === "steps" ? 1 : m === "costUsd" ? 4 : m === "energyWh" ? 2 : 0);
     }
-    return {
+    return [{
       condition,
-      runCount: perTask.reduce((sum, r) => sum + r.runCount, 0),
+      runCount,
       metrics,
-    };
+    }];
   });
 }
 
@@ -59,28 +66,16 @@ export function winnerFor(
   }).condition;
 }
 
-/** Signed fractional change of a condition vs the raw baseline for a metric. */
-export function deltaVsRaw(
-  results: ConditionResult[],
-  condition: Condition,
-  metric: MetricKey,
-): number | undefined {
-  const raw = results.find((r) => r.condition === "raw")?.metrics[metric];
-  const val = results.find((r) => r.condition === condition)?.metrics[metric];
-  if (raw == null || val == null || raw === 0) return undefined;
-  return (val - raw) / raw;
-}
-
 /**
  * The headline "best condition" overall: the trained condition with the highest
- * success rate, tie-broken by fewest tokens. Falls back to any condition.
+ * The most token-efficient condition, tie-broken by fewest steps.
  */
 export function overallBest(results: ConditionResult[]): ConditionResult | undefined {
   if (results.length === 0) return undefined;
   return [...results].sort((a, b) => {
-    if (b.metrics.successRate !== a.metrics.successRate) {
-      return b.metrics.successRate - a.metrics.successRate;
+    if (a.metrics.tokens !== b.metrics.tokens) {
+      return a.metrics.tokens - b.metrics.tokens;
     }
-    return a.metrics.tokens - b.metrics.tokens;
+    return a.metrics.steps - b.metrics.steps;
   })[0];
 }

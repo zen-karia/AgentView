@@ -289,7 +289,20 @@
     <p>© 2026 MegaPortal 3000 Inc. All buttons reserved. This site is 98% decoy by volume.</p>
   </div>
 
+  <!-- EmailJS: client-side email send so this page works as a DEPLOYED static URL
+       (no backend). It's a fetch under the hood -> automation-safe (won't hang
+       headless Chromium like mailto: did), so it fires when the MODEL clicks too. -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>
+    // Fill these three from https://dashboard.emailjs.com (Account -> API keys for
+    // the public key; Email Services -> Service ID; Email Templates -> Template ID).
+    // The public key is meant to be public; lock it down with EmailJS's allowed-
+    // origins list so only your deployed domain can use your quota.
+    const EMAILJS_PUBLIC_KEY  = "CYFg0VY1ZLv9LRj42";
+    const EMAILJS_SERVICE_ID  = "service_bvquakn";
+    const EMAILJS_TEMPLATE_ID = "template_wbd3bis";
+    if (window.emailjs) emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+
     // State the AgentView driver reads back as the "final page state".
     window.__STATE__ = {
       email_sent: false,
@@ -298,29 +311,31 @@
       sent_at: null
     };
 
-    // The ONE real action on the page.
+    // The ONE real action on the page. Records state (for the grader) AND fires a
+    // real email via EmailJS -- whether a human or the AgentView agent clicks it.
     function sendEmail() {
       window.__STATE__.email_sent = true;
-      // No Date.now in the sandboxed graders, but a normal browser has it:
       try { window.__STATE__.sent_at = new Date().toISOString(); } catch (e) {}
       var s = document.getElementById("email-status");
-      if (s) { s.textContent = "✓ Email sent to " + window.__STATE__.recipient; }
+      if (s) s.textContent = "sending…";
 
-      // Real send ONLY in a genuine human browser. Under Playwright/automation
-      // navigator.webdriver === true, and navigating to a mailto: (an external
-      // protocol with no handler) would hang headless Chromium — so the demo run
-      // just records the state above and never navigates.
-      if (!navigator.webdriver) {
-        try {
-          var subject = encodeURIComponent(window.__STATE__.subject);
-          var body = encodeURIComponent(
-            "This email was sent by pressing the single real button hidden inside " +
-            "a very messy page — the AgentView model found it."
-          );
-          window.location.href =
-            "mailto:" + window.__STATE__.recipient + "?subject=" + subject + "&body=" + body;
-        } catch (e) { /* no mail handler, ignore */ }
+      if (!window.emailjs) {
+        if (s) s.textContent = "✓ recorded (EmailJS SDK not loaded)";
+        return;
       }
+      // Template params must match your EmailJS template variables
+      // (e.g. {{to_email}}, {{subject}}, {{message}}). Set the template's "To"
+      // field to {{to_email}} so it sends to the recipient below.
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        to_email: window.__STATE__.recipient,
+        subject:  window.__STATE__.subject,
+        message:  "This email was sent by pressing the single real button hidden " +
+                  "inside a very messy page — the AgentView model found it."
+      }).then(function () {
+        if (s) s.textContent = "✓ Email sent to " + window.__STATE__.recipient;
+      }).catch(function (err) {
+        if (s) s.textContent = "✗ send failed: " + (err && err.text ? err.text : err);
+      });
     }
   </script>
 </body>

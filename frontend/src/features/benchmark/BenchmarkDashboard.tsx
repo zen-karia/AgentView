@@ -12,6 +12,7 @@ import { ConditionChart } from "./components/ConditionChart";
 import { ConditionCards } from "./components/ConditionCards";
 import { ComparisonTable } from "./components/ComparisonTable";
 import { BenchmarkHistory } from "./components/BenchmarkHistory";
+import { OpenBenchmarkComparison } from "./components/OpenBenchmarkComparison";
 import "./benchmark.css";
 
 const METRIC_OPTIONS = METRIC_ORDER.map((metric) => ({
@@ -69,35 +70,44 @@ export function BenchmarkDashboard() {
 
   if (loadState.status === "loading") {
     return (
-      <Card title="Benchmark">
-        <p className="bm-state" role="status">Loading benchmark runs from the backend…</p>
-      </Card>
+      <div className="bm">
+        <Card title="Benchmark">
+          <p className="bm-state" role="status">Loading benchmark runs from the backend…</p>
+        </Card>
+        <OpenBenchmarkComparison />
+      </div>
     );
   }
 
   if (loadState.status === "error") {
     return (
-      <Card title="Backend unavailable" subtitle={loadState.message}>
-        <div className="bm-state">
-          <p>Start <code>backend/api.py</code> and confirm the API URL, then retry.</p>
-          <button type="button" className="bm-action" onClick={() => setRetryToken((value) => value + 1)}>
-            Retry
-          </button>
-        </div>
-      </Card>
+      <div className="bm">
+        <Card title="Backend unavailable" subtitle={loadState.message}>
+          <div className="bm-state">
+            <p>Start <code>backend/api.py</code> and confirm the API URL, then retry.</p>
+            <button type="button" className="bm-action" onClick={() => setRetryToken((value) => value + 1)}>
+              Retry
+            </button>
+          </div>
+        </Card>
+        <OpenBenchmarkComparison />
+      </div>
     );
   }
 
   if (runs.length === 0 || !run) {
     return (
-      <Card title="No benchmark runs">
-        <div className="bm-state">
-          <p>No benchmark runs are available yet. Run the backend benchmark with MongoDB logging enabled, then retry.</p>
-          <button type="button" className="bm-action" onClick={() => setRetryToken((value) => value + 1)}>
-            Retry
-          </button>
-        </div>
-      </Card>
+      <div className="bm">
+        <Card title="No benchmark runs">
+          <div className="bm-state">
+            <p>No benchmark runs are available yet. Run the backend benchmark with MongoDB logging enabled, then retry.</p>
+            <button type="button" className="bm-action" onClick={() => setRetryToken((value) => value + 1)}>
+              Retry
+            </button>
+          </div>
+        </Card>
+        <OpenBenchmarkComparison />
+      </div>
     );
   }
 
@@ -158,6 +168,8 @@ export function BenchmarkDashboard() {
           <BenchmarkHistory runs={runs} activeRunId={runId} onSelect={setRunId} />
         </Card>
       )}
+
+      <OpenBenchmarkComparison />
     </div>
   );
 }

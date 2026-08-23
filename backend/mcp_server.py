@@ -36,6 +36,11 @@ mcp = FastMCP(
     # bearer token, so disable the SDK's default localhost-only host check (which
     # rejects the ngrok domain with 421 Misdirected Request).
     transport_security=TransportSecuritySettings(enable_dns_rebinding_protection=False),
+    # Plain-JSON, stateless responses (no long-lived SSE stream) -- proxies like
+    # ngrok buffer SSE, which makes tools/list hang. This makes every call a simple
+    # request/response any client handles cleanly through the tunnel.
+    json_response=True,
+    stateless_http=True,
 )
 
 

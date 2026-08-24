@@ -317,6 +317,12 @@
   font-weight: 500;
 }
 
+.bm-table__footnote {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+}
+
 /* --- history --- */
 .bm-history {
   display: grid;

@@ -12,3 +12,5 @@ anthropic>=0.117
 openai>=1.0
 pymongo>=4.7
 certifi>=2024.0  # CA bundle so Atlas TLS works on macOS python.org builds
+mcp>=1.2         # Playwright-MCP client + the AgentView MCP server (mcp_server.py)
+uvicorn>=0.30    # ASGI server for the MCP HTTP transport

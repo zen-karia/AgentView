@@ -66,44 +66,62 @@ def _parse(argv=None) -> argparse.Namespace:
     return args
 
 
-def main(argv=None) -> None:
-    args = _parse(argv)
-    driver = PlaywrightDriver(args.url)
+def run_workflow(url: str, goal: str, model: str = "trained",
+                 agent_model: str = "openrouter", fallback: str | None = "openrouter",
+                 steps: int = 8) -> dict:
+    """The reusable e2e core: open `url` in a real browser, build an AgentView with
+    `model`, let the agent act, persist the trace. Returns a dict with a readable
+    `log`, the step records, final page state, token counts, and the mongo task_id.
+    Both the CLI (main) and the MCP server call this."""
+    log: list[str] = []
+
+    def emit(line: str) -> None:
+        log.append(line)
+
+    driver = PlaywrightDriver(url)
     history: list[dict] = []
     turns: list[dict] = []
     ttok = atok = ptok = 0
     t0 = time.time()
-
-    print(f"\n🌐  {args.url}\n🎯  {args.goal}\n    translator={args.model}  agent={args.agent_model}\n")
+    emit(f"🌐  {url}")
+    emit(f"🎯  {goal}")
+    emit(f"    translator={model}  agent={agent_model}")
+    state: dict = {}
     try:
-        for step in range(args.steps):
-            page = driver.snapshot()
-            if step == 0:
-                ptok = len(page.html) // 4
-            view, tok = translate(TranslatorInput(args.goal, page), "translated", args.model, driver)
-            ttok += tok
-            # Layer-1 first; fall back to a frontier translator only if the trained
-            # model couldn't surface any action (its "can't advance" signal).
-            if not view.actions and args.fallback and args.fallback != args.model:
-                print(f"      ↳ {args.model} produced no actions — falling back to {args.fallback}")
-                view, tok = translate(TranslatorInput(args.goal, page), "translated", args.fallback, driver)
+        for step in range(steps):
+            try:
+                page = driver.snapshot()
+                if step == 0:
+                    ptok = len(page.html) // 4
+                view, tok = translate(TranslatorInput(goal, page), "translated", model, driver)
                 ttok += tok
-            choice, at = decide(args.goal, view, history, args.agent_model)
-            atok += at
+                # Layer-1 first; fall back to a frontier translator only if the trained
+                # model couldn't surface any action (its "can't advance" signal).
+                if not view.actions and fallback and fallback != model:
+                    emit(f"      ↳ {model} produced no view — falling back to {fallback}")
+                    view, tok = translate(TranslatorInput(goal, page), "translated", fallback, driver)
+                    ttok += tok
+                choice, at = decide(goal, view, history, agent_model)
+                atok += at
+            except Exception as exc:
+                # A flaky translate/decide (e.g. malformed model JSON) stops this run
+                # cleanly instead of crashing the caller/MCP tool.
+                emit(f"[{step}] ⚠️  step failed: {type(exc).__name__}: {str(exc)[:120]}")
+                break
 
             if choice.done or not choice.name:
-                print(f"[{step}] ✓ done — {choice.thought or 'goal satisfied'}")
+                emit(f"[{step}] ✓ done — {choice.thought or 'goal satisfied'}")
                 turns.append({"step": step, "action": None, "thought": choice.thought})
                 break
 
             grounded, info = ground_check(view, choice, driver)
-            print(f"[{step}] {choice.name}({choice.params})  ->  {info}   grounded={grounded}")
+            emit(f"[{step}] {choice.name}({choice.params})  ->  {info}   grounded={grounded}")
             if choice.thought:
-                print(f"      ↳ {choice.thought}")
+                emit(f"      ↳ {choice.thought}")
             turns.append({"step": step, "action": choice.name, "params": choice.params,
                           "grounded": grounded, "info": info, "thought": choice.thought})
             if not grounded:
-                print("      ✗ action didn't resolve to a real element — stopping")
+                emit("      ✗ action didn't resolve to a real element — stopping")
                 break
             driver.execute(info, choice.name, choice.params)
             history.append({"name": choice.name, "params": choice.params})
@@ -112,29 +130,37 @@ def main(argv=None) -> None:
             state = driver.state()
         except Exception:
             state = {}
-        print(f"\n📋  final page state: {state}")
+        emit(f"📋  final page state: {state}")
     finally:
         driver.close()
 
+    task_id = f"live-{int(t0 * 1000)}"
     run = RunLog(
-        task_id=f"live-{int(t0)}",
-        condition="translated",
-        model=args.model,
+        task_id=task_id, condition="translated", model=model,
         success=False,  # no automatic verifier on an arbitrary url
-        steps=len(history),
-        tokens=ttok + atok,
+        steps=len(history), tokens=ttok + atok,
         latency_ms=int((time.time() - t0) * 1000),
         timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
-        agent_model=args.agent_model,
-        driver="playwright",
-        turns=turns,
-        translator_tokens=ttok,
-        agent_tokens=atok,
-        page_tokens=ptok,
+        agent_model=agent_model, driver="playwright", turns=turns,
+        translator_tokens=ttok, agent_tokens=atok, page_tokens=ptok,
     )
-    save_run(run)
-    print(f"💾  saved trace to agentview.runs (task_id={run.task_id}, {run.steps} steps, "
-          f"{ttok + atok} tokens)")
+    try:
+        save_run(run)
+        emit(f"💾  saved trace to agentview.runs (task_id={task_id}, {len(history)} steps, {ttok + atok} tokens)")
+    except Exception as exc:
+        emit(f"⚠️  mongo save skipped: {exc}")
+
+    return {"url": url, "goal": goal, "translator": model, "agent": agent_model,
+            "steps": turns, "final_state": state, "translator_tokens": ttok,
+            "agent_tokens": atok, "latency_ms": run.latency_ms, "task_id": task_id,
+            "log": "\n".join(log)}
+
+
+def main(argv=None) -> None:
+    args = _parse(argv)
+    result = run_workflow(args.url, args.goal, model=args.model,
+                          agent_model=args.agent_model, fallback=args.fallback, steps=args.steps)
+    print("\n" + result["log"])
 
 
 if __name__ == "__main__":

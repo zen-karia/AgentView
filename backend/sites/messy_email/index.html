@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>MegaPortal 3000 :: Everything Everywhere All At Once</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Comic Sans MS", "Trebuchet MS", system-ui, sans-serif;
+      margin: 0;
+      background:
+        repeating-linear-gradient(45deg, #fdf6b2 0 18px, #ffe4e1 18px 36px),
+        #e0ffff;
+      color: #1a1a1a;
+      line-height: 1.35;
+    }
+    a { color: #0000ee; }
+    h1, h2, h3, h4 { margin: 4px 0; }
+
+    /* ---- global junk chrome ---- */
+    .os-bar {
+      position: sticky; top: 0; z-index: 50;
+      background: linear-gradient(#c0c0c0, #808080);
+      border-bottom: 2px solid #404040;
+      font-size: 12px; padding: 3px 8px;
+      display: flex; gap: 14px; flex-wrap: wrap;
+    }
+    .os-bar b { margin-right: 6px; }
+    .ticker {
+      background: #000; color: #0f0; font-family: monospace;
+      white-space: nowrap; overflow: hidden; padding: 4px 0;
+      border-bottom: 3px double #0f0;
+    }
+    .ticker span { display: inline-block; padding-left: 100%; animation: scroll 22s linear infinite; }
+    @keyframes scroll { to { transform: translateX(-100%); } }
+
+    .blink { animation: blink 1s steps(2, start) infinite; }
+    @keyframes blink { to { visibility: hidden; } }
+
+    .layout { display: grid; grid-template-columns: 190px 1fr 170px; gap: 10px; padding: 10px; }
+
+    /* ---- fake ad rails ---- */
+    .rail { display: flex; flex-direction: column; gap: 10px; }
+    .ad {
+      border: 3px ridge #ff00ff; background: #fffacd; padding: 8px;
+      text-align: center; font-size: 12px; transform: rotate(-1.5deg);
+    }
+    .ad.b { transform: rotate(2deg); border-color: #00ced1; }
+    .ad h4 { color: #d2691e; text-decoration: underline wavy #ff1493; }
+    .ad button { font-size: 11px; }
+
+    /* ---- the nested "windows" (pages inside pages) ---- */
+    .window {
+      border: 2px solid #333;
+      border-radius: 6px 6px 2px 2px;
+      background: #f7f7ff;
+      margin: 10px 0;
+      box-shadow: 4px 4px 0 rgba(0,0,0,.25);
+      overflow: hidden;
+    }
+    .titlebar {
+      display: flex; align-items: center; gap: 6px;
+      background: linear-gradient(#4a6cff, #21308f);
+      color: #fff; padding: 4px 8px; font-size: 12px; font-weight: bold;
+    }
+    .dots { display: flex; gap: 4px; }
+    .dot { width: 11px; height: 11px; border-radius: 50%; }
+    .dot.r { background: #ff5f57; } .dot.y { background: #febc2e; } .dot.g { background: #28c840; }
+    .tabs { display: flex; gap: 2px; background: #dcdce8; padding: 3px 3px 0; font-size: 11px; }
+    .tab { background: #b8b8cc; padding: 3px 9px; border-radius: 5px 5px 0 0; }
+    .tab.active { background: #f7f7ff; }
+    .urlbar {
+      background: #fff; border: 1px solid #aaa; margin: 4px; padding: 2px 6px;
+      font-family: monospace; font-size: 11px; color: #555; border-radius: 10px;
+    }
+    .win-body { padding: 8px; }
+
+    .muted { color: #777; font-size: 12px; }
+    .lorem { font-size: 12px; color: #444; }
+
+    /* ---- decoy buttons everywhere ---- */
+    button {
+      cursor: pointer; font-family: inherit;
+      border: 2px outset #ccc; background: #e8e8e8; padding: 4px 10px;
+      border-radius: 3px;
+    }
+    button:active { border-style: inset; }
+    .decoy { background: linear-gradient(#eee, #cfcfcf); }
+    .decoy.hot { background: linear-gradient(#ffd27f, #ff8c00); color: #400; }
+    .decoy.cool { background: linear-gradient(#a0e9ff, #1e90ff); color: #012; }
+
+    /* ---- the ONE real target ---- */
+    .send-email-btn {
+      background: linear-gradient(#8affc1, #12b866);
+      border: 2px solid #0a7a44; color: #04361f; font-weight: bold;
+      padding: 8px 16px; font-size: 15px; border-radius: 6px;
+      box-shadow: 0 2px 0 #0a7a44;
+    }
+    .send-email-btn:hover { filter: brightness(1.05); }
+    #email-status { font-size: 12px; color: #0a7a44; font-weight: bold; margin-top: 6px; }
+
+    /* ---- misc chaos ---- */
+    .grid-junk { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip { background: #ffe; border: 1px dashed #cc0; padding: 2px 6px; font-size: 11px; border-radius: 8px; }
+    table.junk { border-collapse: collapse; font-size: 11px; width: 100%; }
+    table.junk td, table.junk th { border: 1px solid #bbb; padding: 2px 5px; }
+    .cookie {
+      position: fixed; left: 8px; bottom: 8px; z-index: 60; max-width: 300px;
+      background: #222; color: #eee; padding: 8px 10px; font-size: 12px;
+      border: 2px solid #ffcc00; border-radius: 6px;
+    }
+    .chatw {
+      position: fixed; right: 10px; bottom: 10px; z-index: 40; width: 150px;
+      background: #fff; border: 2px solid #6a5acd; border-radius: 8px; font-size: 11px;
+      box-shadow: 0 3px 8px rgba(0,0,0,.3);
+    }
+    .chatw .head { background: #6a5acd; color: #fff; padding: 3px 6px; font-weight: bold; }
+    .chatw .body { padding: 6px; }
+    marquee { color: #b22222; font-weight: bold; }
+    .badge { background: red; color: #fff; border-radius: 8px; padding: 0 5px; font-size: 10px; }
+    .accordion { border: 1px solid #999; margin: 4px 0; }
+    .accordion summary { background: #ddd; padding: 3px 6px; cursor: pointer; font-size: 12px; }
+    .footer-junk { background: #333; color: #bbb; font-size: 11px; padding: 12px; margin-top: 14px; }
+    .footer-junk a { color: #9cf; margin-right: 10px; }
+    .spam-hidden { position: absolute; left: -9999px; }
+  </style>
+</head>
+<body>
+  <!-- SEO / junk keyword sludge -->
+  <div class="spam-hidden">
+    free money click here win prize crypto nft loan mortgage refinance best deals 2026
+    send email contact us newsletter subscribe unsubscribe login signup buy now cheap
+  </div>
+
+  <div class="os-bar">
+    <b>🪟 MegaPortal 3000</b>
+    <span>File</span><span>Edit</span><span>View</span><span>Insert</span><span>Format</span>
+    <span>Tools</span><span>Turbo</span><span>Window</span><span>Help?</span>
+    <span style="margin-left:auto">🔔 <span class="badge">99+</span> &nbsp; ⚙️ &nbsp; 👤 guest_4471</span>
+  </div>
+
+  <div class="ticker"><span>*** BREAKING *** you are the 1,000,000th visitor *** claim your free toaster *** stonks only go up *** 12 people are looking at this page *** limited stock *** act now *** definitely not a virus ***</span></div>
+
+  <marquee behavior="alternate" scrollamount="7">🎉 WELCOME TO THE INTERNET'S MESSIEST PAGE 🎉 &nbsp; buttons everywhere &nbsp; do NOT press the wrong one &nbsp; 🎈🎈🎈</marquee>
+
+  <div class="layout">
+
+    <!-- LEFT AD RAIL (decoys) -->
+    <aside class="rail">
+      <div class="ad"><h4>HOT SINGLES</h4><p class="blink">in your DOM!</p><button class="decoy hot" onclick="return false">Meet Now</button></div>
+      <div class="ad b"><h4>FREE V-BUCKS</h4><p>totally legit</p><button class="decoy cool" onclick="return false">Redeem</button></div>
+      <div class="ad"><h4>NEWSLETTER</h4><input placeholder="ur email"><button class="decoy" onclick="return false">Subscribe</button></div>
+      <div class="ad b"><h4>DOWNLOAD?</h4><button class="decoy" onclick="return false">Download.exe</button><button class="decoy" onclick="return false">Download²</button></div>
+      <div class="ad"><h4>SPIN 2 WIN</h4><button class="decoy hot" onclick="return false">🎰 SPIN</button></div>
+    </aside>
+
+    <!-- CENTER: pages inside pages inside pages -->
+    <main>
+      <h1>Dashboard <span class="badge">BETA</span> <span class="badge">v3.0.0.0</span></h1>
+      <p class="lorem">Lorem ipsum dolor sit amet, clickbaitur adipiscing elit. Nullam SEND MESSAGE malesuada,
+        button-us submit-em quis, faucibus <a href="#">login here</a> or <a href="#">sign up</a> or maybe don't.
+        Sed do eiusmod tempor incididunt ut labore et <b>SUBMIT</b> magna aliqua.</p>
+
+      <div class="grid-junk">
+        <span class="chip">#trending</span><span class="chip">#buttons</span><span class="chip">#chaos</span>
+        <span class="chip">#sendhelp</span><span class="chip">#lorem</span><span class="chip">#42</span>
+        <button class="decoy" onclick="return false">Accept All</button>
+        <button class="decoy" onclick="return false">Learn More</button>
+        <button class="decoy" onclick="return false">Buy Now</button>
+        <button class="decoy hot" onclick="return false">Send</button>
+        <button class="decoy" onclick="return false">Send Message</button>
+        <button class="decoy" onclick="return false">Submit Form</button>
+      </div>
+
+      <!-- Window level 1 -->
+      <div class="window">
+        <div class="titlebar"><span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span> Outer Window — untitled-1</div>
+        <div class="tabs"><span class="tab active">Home</span><span class="tab">Random.html</span><span class="tab">Ads</span><span class="tab">+</span></div>
+        <div class="urlbar">https://megaportal.example/outer/?ref=spam&utm=chaos#top</div>
+        <div class="win-body">
+          <p class="muted">You have 7 unread notifications and 4 pending SUBMIT requests.</p>
+          <button class="decoy" onclick="return false">Notifications</button>
+          <button class="decoy cool" onclick="return false">Send Feedback</button>
+
+          <details class="accordion"><summary>▶ Expand for important junk</summary>
+            <div class="win-body">
+              <table class="junk">
+                <tr><th>ID</th><th>Widget</th><th>Status</th><th>Action</th></tr>
+                <tr><td>0x1</td><td>Frobnicator</td><td>OK</td><td><button class="decoy" onclick="return false">Poke</button></td></tr>
+                <tr><td>0x2</td><td>Flux Capacitor</td><td>⚠</td><td><button class="decoy" onclick="return false">Reboot</button></td></tr>
+                <tr><td>0x3</td><td>Spam Cannon</td><td>ON</td><td><button class="decoy hot" onclick="return false">Fire</button></td></tr>
+              </table>
+            </div>
+          </details>
+
+          <!-- Window level 2 -->
+          <div class="window">
+            <div class="titlebar"><span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span> Nested Window — inbox.html</div>
+            <div class="tabs"><span class="tab">Trash</span><span class="tab active">Inbox</span><span class="tab">Drafts</span></div>
+            <div class="urlbar">file:///pages/inside/pages/inbox.html</div>
+            <div class="win-body">
+              <p class="lorem">Compose? Reply? Forward? So many verbs. Do NOT be fooled by these decoys:</p>
+              <button class="decoy" onclick="return false">Compose</button>
+              <button class="decoy" onclick="return false">Reply All</button>
+              <button class="decoy" onclick="return false">Forward</button>
+              <button class="decoy hot" onclick="return false">Send Draft</button>
+
+              <!-- Window level 3 -->
+              <div class="window">
+                <div class="titlebar"><span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span> Deeper Window — settings/panel.html</div>
+                <div class="urlbar">about:pages-inside-pages-inside-pages</div>
+                <div class="win-body">
+                  <p class="muted">Settings &gt; More Settings &gt; Even More Settings &gt; Buttons</p>
+                  <div class="grid-junk">
+                    <button class="decoy" onclick="return false">Save</button>
+                    <button class="decoy" onclick="return false">Cancel</button>
+                    <button class="decoy" onclick="return false">Apply</button>
+                    <button class="decoy cool" onclick="return false">Reset to Chaos</button>
+                    <button class="decoy" onclick="return false">Export Junk</button>
+                  </div>
+
+                  <!-- Window level 4 — the real button lives here, buried but visible -->
+                  <div class="window" style="background:#eaffea;">
+                    <div class="titlebar" style="background:linear-gradient(#12b866,#0a7a44);">
+                      <span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span>
+                      Innermost Window — the-actual-thing.html
+                    </div>
+                    <div class="urlbar">file:///finally/the/real/one.html</div>
+                    <div class="win-body">
+                      <p>To reach Ryan, use the one real control on this whole page:</p>
+                      <button id="send-email" class="send-email-btn" onclick="sendEmail()">📧 Send Email to Ryan</button>
+                      <div id="email-status">not sent yet</div>
+                      <p class="muted">(Everything else on this page is a decoy that does nothing.)</p>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <p class="lorem">More filler: Ut enim ad minim veniam, quis nostrud SUBMIT exercitation ullamco
+        laboris nisi ut aliquip ex ea commodo BUY NOW consequat. Duis aute irure dolor in
+        reprehenderit in voluptate SEND velit esse cillum.</p>
+
+      <div class="grid-junk">
+        <button class="decoy" onclick="return false">OK</button>
+        <button class="decoy" onclick="return false">Cancel</button>
+        <button class="decoy" onclick="return false">Yes</button>
+        <button class="decoy" onclick="return false">No</button>
+        <button class="decoy" onclick="return false">Maybe</button>
+        <button class="decoy hot" onclick="return false">CLICK ME</button>
+        <button class="decoy cool" onclick="return false">NO CLICK ME</button>
+      </div>
+    </main>
+
+    <!-- RIGHT AD RAIL (decoys) -->
+    <aside class="rail">
+      <div class="ad b"><h4>WEATHER</h4><p>It is raining buttons ☔</p></div>
+      <div class="ad"><h4>POLL</h4><p>Best button?</p><button class="decoy" onclick="return false">A</button><button class="decoy" onclick="return false">B</button></div>
+      <div class="ad b"><h4>MINI GAME</h4><button class="decoy hot" onclick="return false">▶ Play</button></div>
+      <div class="ad"><h4>CONTACT</h4><button class="decoy" onclick="return false">Send Message</button></div>
+      <div class="ad b"><h4>TOTALLY REAL</h4><button class="decoy cool" onclick="return false">Send Email</button><p class="muted">(fake decoy)</p></div>
+    </aside>
+  </div>
+
+  <!-- fixed junk overlays (kept away from the real button) -->
+  <div class="cookie">
+    🍪 We use 4,000 cookies. And 12 trackers. And your soul.
+    <div style="margin-top:6px">
+      <button class="decoy" onclick="return false">Accept</button>
+      <button class="decoy" onclick="return false">Accept More</button>
+      <button class="decoy" onclick="return false">Manage 400 Vendors</button>
+    </div>
+  </div>
+
+  <div class="chatw">
+    <div class="head">💬 SupportBot</div>
+    <div class="body">Hi! Need help? <button class="decoy" onclick="return false">Chat</button><button class="decoy" onclick="return false">Send</button></div>
+  </div>
+
+  <div class="footer-junk">
+    <a href="#">About</a><a href="#">Careers</a><a href="#">Privacy</a><a href="#">Terms</a>
+    <a href="#">Sitemap</a><a href="#">Login</a><a href="#">Subscribe</a><a href="#">Contact</a>
+    <p>© 2026 MegaPortal 3000 Inc. All buttons reserved. This site is 98% decoy by volume.</p>
+  </div>
+
+  <!-- EmailJS: client-side email send so this page works as a DEPLOYED static URL
+       (no backend). It's a fetch under the hood -> automation-safe (won't hang
+       headless Chromium like mailto: did), so it fires when the MODEL clicks too. -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>
+    // Fill these three from https://dashboard.emailjs.com (Account -> API keys for
+    // the public key; Email Services -> Service ID; Email Templates -> Template ID).
+    // The public key is meant to be public; lock it down with EmailJS's allowed-
+    // origins list so only your deployed domain can use your quota.
+    const EMAILJS_PUBLIC_KEY  = "CYFg0VY1ZLv9LRj42";
+    const EMAILJS_SERVICE_ID  = "service_bvquakn";
+    const EMAILJS_TEMPLATE_ID = "template_wbd3bis";
+    if (window.emailjs) emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+
+    // State the AgentView driver reads back as the "final page state".
+    window.__STATE__ = {
+      email_sent: false,
+      recipient: "ryanlin5967@gmail.com",
+      subject: "Hello from the AgentView demo",
+      sent_at: null
+    };
+
+    // The ONE real action on the page. Records state (for the grader) AND fires a
+    // real email via EmailJS -- whether a human or the AgentView agent clicks it.
+    function sendEmail() {
+      window.__STATE__.email_sent = true;
+      try { window.__STATE__.sent_at = new Date().toISOString(); } catch (e) {}
+      var s = document.getElementById("email-status");
+      if (s) s.textContent = "sending…";
+
+      if (!window.emailjs) {
+        if (s) s.textContent = "✓ recorded (EmailJS SDK not loaded)";
+        return;
+      }
+      // Template params must match your EmailJS template variables
+      // (e.g. {{to_email}}, {{subject}}, {{message}}). Set the template's "To"
+      // field to {{to_email}} so it sends to the recipient below.
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        to_email: window.__STATE__.recipient,
+        subject:  window.__STATE__.subject,
+        message:  "This email was sent by pressing the single real button hidden " +
+                  "inside a very messy page — the AgentView model found it."
+      }).then(function () {
+        if (s) s.textContent = "✓ Email sent to " + window.__STATE__.recipient;
+      }).catch(function (err) {
+        if (s) s.textContent = "✗ send failed: " + (err && err.text ? err.text : err);
+      });
+    }
+  </script>
+</body>
+</html>
